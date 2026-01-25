@@ -1,0 +1,65 @@
+#root {
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.con{
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.con div{
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.box1{
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.box2{
+  background-color: var(--color-secondary);
+  color: #fff;
+}
+
+.box3{
+  background-color: var(--color-cta);
+  color: #081217;
+}
+
+.box4 {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.box5 {
+  background-color: var(--color-text);
+  color: var(--color-bg);
+}
+
+.box6 {
+  background-color: var(--color-card);
+  color: var(--color-text);
+}
+
+.box7 {
+  background-color: var(--color-card-border-swatch, var(--color-card-border));
+  color: var(--color-text);
+}
+
+.box8 {
+  background-color: var(--color-muted-swatch, var(--color-muted));
+  color: var(--color-text);
+}

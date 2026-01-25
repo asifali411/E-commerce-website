@@ -1,0 +1,112 @@
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.55;
+  font-weight: 400;
+
+  color-scheme: light dark;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* ===== Light Theme ===== */
+  --color-primary: #3B5BDB;
+  /* Calm indigo-blue */
+  --color-secondary: #0D9488;
+  /* Muted teal */
+  --color-cta: #F97316;
+  /* Warm orange */
+
+  --color-bg: #F9FAFB;
+  /* Soft neutral background */
+  --color-text: #0F172A;
+  /* Strong readable text */
+
+  --color-card: #FFFFFF;
+  --color-card-border: rgba(15, 23, 42, 0.06);
+  --color-card-border-swatch: rgba(15, 23, 42, 0.1);
+
+  --color-muted: rgba(15, 23, 42, 0.6);
+  --color-muted-swatch: rgba(15, 23, 42, 0.12);
+
+  --border-radius: 10px;
+  --shadow-offset: 4px;
+}
+
+/* ===== Base Layout ===== */
+body {
+  margin: 0;
+  display: grid;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: 3rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+/* ===== Buttons ===== */
+button {
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 0.65em 1.4em;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.08s ease,
+    box-shadow 0.15s ease;
+
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button.secondary {
+  background-color: transparent;
+  color: var(--color-text);
+  border-color: var(--color-card-border);
+}
+
+/* ===== Cards ===== */
+.card {
+  background-color: var(--color-card);
+  color: var(--color-text);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-card-border);
+  padding: 1.25rem;
+}
+
+/* ===== Dark Mode ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #818CF8;
+    /* Softer indigo */
+    --color-secondary: #2DD4BF;
+    /* Brighter teal */
+    --color-cta: #FB923C;
+    /* Warm highlight */
+
+    --color-bg: #020617;
+    /* Deep navy */
+    --color-text: #E5E7EB;
+
+    --color-card: #0B1220;
+    --color-card-border: rgba(229, 231, 235, 0.06);
+    --color-card-border-swatch: rgba(229, 231, 235, 0.1);
+
+    --color-muted: rgba(229, 231, 235, 0.65);
+    --color-muted-swatch: rgba(229, 231, 235, 0.12);
+  }
+}
