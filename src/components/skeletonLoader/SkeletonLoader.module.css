@@ -1,0 +1,61 @@
+.card {
+    padding: 0.5rem;
+    border-radius: 7px;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-card-border);
+}
+
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-muted-swatch);
+    border: 1px solid var(--color-card-border);
+}
+
+.skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.35),
+            transparent);
+    animation: shimmer 1.4s infinite;
+}
+
+.images {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+}
+
+.title,
+.description {
+    padding: 0.5rem;
+    border-radius: 999px;
+    margin-top: 0.8rem;
+}
+
+.title {
+    width: 80%;
+    height: 1rem;
+}
+
+.description {
+    width: 40%;
+    height: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton::after {
+        animation: none;
+    }
+}

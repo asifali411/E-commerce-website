@@ -5,19 +5,25 @@
     bottom: 3%;
     left: 50%;
     translate: -50%;
-    border-radius: 7px;
-    background-color: var(--color-bg);
+    border-radius: 999px;
+    background-color: var(--color-card);
+    backdrop-filter: blur(5px);
     padding: 1rem 3rem;
     font-size: 0.7rem;
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    border: 2px solid var(--color-card-border-swatch);
+    border: 1px solid var(--color-card-border-swatch);
     color: var(--color-muted);
-    box-shadow: 0 0 2px var(--color-grey-100);
+    box-shadow: 0 0 5px var(--color-grey-200);
     cursor: default;
     gap: 1em;
-    transition:all 0.5s ease;
+    transition: all 0.5s ease;
+    transform: scale(0.8);
+}
+
+.container:focus-within, .container:hover{
+    transform: scale(1);
 }
 
 .iconContainer{
@@ -54,7 +60,7 @@
 .search {
     position: absolute;
     text-align: center;
-    border: 2px solid var(--color-card-border-swatch);
+    border: 1px solid var(--color-card-border-swatch);
     background-color: var(--color-bg);
     border-radius: 999px;
     scale: 0.8;

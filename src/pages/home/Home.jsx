@@ -2,6 +2,7 @@ import styles from './Home.module.css';
 import NavBar from '../../components/nav/NavBar';
 import Top from '../../components/top/Top';
 import ItemCard from '../../components/itemCard/ItemCard';
+import SkeletonLoader from '../../components/skeletonLoader/SkeletonLoader';
 
 const Home = () => {
     return (
@@ -9,20 +10,8 @@ const Home = () => {
             <Top></Top>
 
             <main>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
-                <ItemCard></ItemCard>
+                <SkeletonLoader></SkeletonLoader>
+                {/* <ItemCard></ItemCard> */}
             </main>
 
             <NavBar></NavBar>   

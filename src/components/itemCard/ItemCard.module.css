@@ -1,6 +1,7 @@
 .card{
     min-width: 220px;
     padding: 0.5rem;
+    padding-bottom: 1rem;
     border-radius: 7px;
     transition: all 0.25s ease;
     background-color: var(--color-bg);
