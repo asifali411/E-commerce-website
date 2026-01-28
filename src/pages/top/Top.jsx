@@ -6,12 +6,12 @@ const Top = () => {
         <form className={styles.container}>
             <h1>Lorem ipsum.</h1>
 
-            <div class={styles.search}> 
+            {/* <div class={styles.search}> 
                 <input type="text" class={styles.search__input} placeholder="Search..." />
                     <button class={styles.search__button}>
                         <Search size={'1rem'}/>
                     </button>
-            </div>
+            </div> */}
 
             <div className={styles.profile}>
                 <span>Profile Name</span>

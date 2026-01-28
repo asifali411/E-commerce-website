@@ -90,11 +90,21 @@
   --color-text: #0F172A;
 
   --color-card: #FFFFFF;
-  --color-card-border: rgba(15, 23, 42, 0.06);
-  --color-card-border-swatch: rgba(15, 23, 42, 0.1);
+  --color-card-border: #D1D5DB;
+  --color-card-border-swatch: #9CA3AF;
 
   --color-muted: rgba(15, 23, 42, 0.6);
-  --color-muted-swatch: rgba(15, 23, 42, 0.12);
+  --color-muted-swatch: #E5E7EB;
+
+  /* ===== Grey Scale ===== */
+  --color-grey-50: #F9FAFB;
+  --color-grey-100: #F3F4F6;
+  --color-grey-200: #E5E7EB;
+  --color-grey-300: #D1D5DB;
+  --color-grey-400: #9CA3AF;
+  --color-grey-500: #6B7280;
+  --color-grey-600: #4B5563;
+  --color-grey-700: #374151;
 
   --border-radius: 10px;
   --shadow-offset: 4px;
@@ -102,6 +112,31 @@
 
 *, *::before, *::after{
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/*Firefox*/
+@supports (-moz-appearance: none) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-grey-700) transparent;
+  }
+}
+
+/*Chromium, Safari ...*/
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: var(--color-grey-700);
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-grey-500);
 }
 
 /* ===== Base Layout ===== */
@@ -170,10 +205,20 @@ button.secondary {
     --color-text: #E5E7EB;
 
     --color-card: #0B1220;
-    --color-card-border: rgba(229, 231, 235, 0.06);
-    --color-card-border-swatch: rgba(229, 231, 235, 0.1);
+    --color-card-border: #3F3F46;
+    --color-card-border-swatch: #52525B;
 
     --color-muted: rgba(229, 231, 235, 0.65);
-    --color-muted-swatch: rgba(229, 231, 235, 0.12);
+    --color-muted-swatch: #27272A;
+
+    /* ===== Grey Scale (Dark) ===== */
+    --color-grey-50: #FAFAFA;
+    --color-grey-100: #F4F4F5;
+    --color-grey-200: #E4E4E7;
+    --color-grey-300: #D4D4D8;
+    --color-grey-400: #A1A1A6;
+    --color-grey-500: #71717A;
+    --color-grey-600: #52525B;
+    --color-grey-700: #3F3F46;
   }
 }

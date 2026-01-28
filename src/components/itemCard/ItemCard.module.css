@@ -1,0 +1,34 @@
+.card{
+    min-width: 220px;
+    padding: 0.5rem;
+    border-radius: 7px;
+    transition: all 0.25s ease;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-card-border-swatch);
+}
+
+.card:hover{
+    scale: 1.1;
+    box-shadow: 0 0 10px var(--color-grey-300);
+}
+
+.images{
+    width: 100%;
+    border-radius: 2px;
+    background-color: var(--color-muted-swatch);
+    border: 1px solid var(--color-card-border);
+
+    aspect-ratio: 1 / 1;
+}
+
+.title{
+    width: 100%;
+    margin-top: 1rem;
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+
+.description{
+    font-size: 0.8rem;
+    color: var(--color-muted);
+}
