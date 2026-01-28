@@ -1,6 +1,6 @@
 import styles from './Home.module.css';
-import NavBar from '../nav/NavBar';
-import Top from '../top/Top';
+import NavBar from '../../components/nav/NavBar';
+import Top from '../../components/top/Top';
 import ItemCard from '../../components/itemCard/ItemCard';
 
 const Home = () => {

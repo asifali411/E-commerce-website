@@ -25,13 +25,13 @@ const NavBar = () => {
             {navItem('notification', 'Notifications', Bell)}
             {navItem('settings', 'Settings', Settings)}
 
-            <div className={styles.search} style={{
+            <form className={styles.search} style={{
                 opacity: `${active === "search" ? "1" : "0"}`, top: `${active === "search" ? "calc(-100% - 0.5rem)" : "100%"}` }}>
                 <input type="text" class={styles.search__input} placeholder="Search..." />
                 <button class={styles.search__button}>
                     <Search size={'1rem'}/>
                 </button>
-            </div>
+            </form>
         </div>
     );
 };
