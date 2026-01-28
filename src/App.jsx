@@ -9,6 +9,9 @@ import ToolTip from './components/toolTip/ToolTIp';
 import Loader from './components/loader/Loader';
 import CheckBox from './components/checkBox/CheckBox';
 
+import NavBar from './pages/nav/NavBar';
+import Home from './pages/home/Home';
+
 function App() {
 
   return (
@@ -34,7 +37,7 @@ function App() {
         <CheckBox></CheckBox>
       </Card3D> */}
 
-      <div className="con">
+      {/* <div className="con">
         <div className="box1"> Primary</div>
         <div className="box2"> Secondary </div>
         <div className="box3"> CTA </div>
@@ -43,7 +46,9 @@ function App() {
         <div className="box6"> Card </div>
         <div className="box7"> Card Border </div>
         <div className="box8"> Muted </div>
-      </div>
+      </div> */}
+
+      <Home></Home>
     </>
   )
 }

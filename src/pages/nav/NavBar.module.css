@@ -1,0 +1,30 @@
+/* ==================================== ROOT ======================================*/
+
+.container{
+    position: fixed;
+    bottom: 5%;
+    left: 50%;
+    translate: -50%;
+    min-width: 280px;
+    /* border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius); */
+    border-radius: 7px;
+    background-color: var(--color-card-bg);
+    padding: 0.5rem;
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--color-card-border-swatch);
+    /* border-bottom: none; */
+    color: var(--color-muted);
+    box-shadow: 0 0 5px var(--color-muted-swatch);
+
+    transition:all 0.5s ease;
+}
+
+.container:hover{
+    min-width: 480px;
+    padding: 1rem;
+    font-size: 1rem;
+}
