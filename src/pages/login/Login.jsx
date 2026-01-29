@@ -25,14 +25,6 @@ const Login = () => {
                         <p>See what's going on with your account</p>
                     </header>
 
-                    <button type="button" className={styles.googleBtn}>
-                        <img src={googleLogo} alt="Google logo" />
-                        Continue with Google
-                    </button>
-
-                    <div className={styles.divider}>
-                        <span>OR</span>
-                    </div>
 
                     <form className={styles.form} onSubmit={handleSubmit}>
                         <div className={styles.inputGroup}>
