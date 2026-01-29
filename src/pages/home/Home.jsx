@@ -10,8 +10,13 @@ const Home = () => {
             <Top></Top>
 
             <main>
-                <SkeletonLoader></SkeletonLoader>
-                {/* <ItemCard></ItemCard> */}
+                <ItemCard 
+                    title="random bullshit"
+                    description="I stoled it."
+                    price="470"
+                    seller="vishy"
+                    timeLeft="2 days"
+                />
             </main>
 
             <NavBar></NavBar>   
