@@ -39,6 +39,7 @@
     opacity: 0;
     transition: all 0.25s ease;
     max-height: 0;
+    white-space: nowrap;
 }
 
 .iconContainer:hover{
@@ -92,4 +93,11 @@
 
 .search__button:hover {
     cursor: pointer;
+}
+
+@media (max-width: 764px) {
+    .container:focus-within,
+    .container:hover {
+        transform: scale(0.9);
+    }
 }

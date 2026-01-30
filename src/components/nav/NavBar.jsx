@@ -8,6 +8,8 @@ const NavBar = () => {
 
     const navItem = (name, label, Icon, extraStyle = {}) => (
         <div
+            tabIndex={0}
+            role='button'
             className={`${styles.iconContainer} ${active === name ? styles.selected : ''
                 }`}
             style={extraStyle}
@@ -35,7 +37,7 @@ const NavBar = () => {
             <form className={styles.search} style={{
                 opacity: `${active === "search" ? "1" : "0"}`, top: `${active === "search" ? "calc(-100% - 0.5rem)" : "100%"}` }}>
                 <input type="text" ref={searchInputRef} className={styles.search__input} placeholder="Search..." />
-                <button class={styles.search__button}>
+                <button className={styles.search__button}>
                     <Search size={'1rem'}/>
                 </button>
             </form>

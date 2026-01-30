@@ -1,5 +1,5 @@
 import styles from './Top.module.css';
-import { Search, CircleUserRound } from 'lucide-react';
+import { CircleUserRound } from 'lucide-react';
 
 const Top = () => {
     return (
@@ -8,6 +8,11 @@ const Top = () => {
             <div className={styles.profile}>
                 <span>Profile Name</span>
                 <CircleUserRound size={'2rem'}/>
+            </div>
+
+            <div className={styles.register}>
+                <button className={styles.secondary}>Login</button>
+                <button className={styles.primary}>Sign up</button>
             </div>
         </form>
     );

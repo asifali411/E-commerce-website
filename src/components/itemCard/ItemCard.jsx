@@ -40,7 +40,7 @@ const ItemCard = ({
 
                 <div className={styles.meta}>
                     <div>
-                        <span className={styles.label}>Current Bid</span>
+                        <span className={styles.label}>Starting Price</span>
                         <div className={styles.price}>&#8377; {price} </div>
                     </div>
 

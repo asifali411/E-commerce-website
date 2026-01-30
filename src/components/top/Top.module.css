@@ -20,68 +20,6 @@
     font-size: 2em;
 }
 
-/* ==================================== SEARCH BAR ======================================*/
-
-.search {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    text-align: center;
-    border: 2px solid var(--color-muted-swatch);
-    border-radius: 999px;
-    scale: 0.8;
-
-    transition: all 0.25s ease;
-}
-
-.search__input {
-    font-family: inherit;
-    font-size: inherit;
-    border: none;
-    padding: 0 2rem;
-    border-radius: 30px;
-    width: 20em;
-    transition: all ease-in-out .5s;
-    margin-right: -2rem;
-}
-
-.search__input:focus {
-    outline: none;
-}
-
-.search__input:focus ~ .search__button svg{
-    color: var(--color-text);
-}
-
-.search__input:focus~.search {
-    border: 1px solid var(--color-text);
-}
-
-.search:focus-within {
-    border-color: var(--color-text);
-}
-
-.search__input::-webkit-input-placeholder {
-    font-weight: 100;
-    color: #ccc;
-}
-
-.search__button {
-    border: none;
-    margin-top: .1em;
-    background-color: transparent;
-    border-radius: 999px;
-}
-
-.search__button:hover {
-    cursor: pointer;
-}
-
-.search__button svg{
-    color: var(--color-muted-swatch);
-    transition: all 0.25s ease;
-}
-
 /* ==================================== PROFILE ======================================*/
 
 .profile{
@@ -92,10 +30,46 @@
     font-size: 1rem;
     gap: 0.5rem;
     cursor: pointer;
+
+    display: none;
 }
 
 .profile svg{
     stroke-width: 1px;
+}
+
+/* ==================================== REGISTER ======================================*/
+
+.register{
+    margin-left: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    gap: 0.5rem;
+}
+
+.primary, .secondary{
+    padding: 0.4rem 1.5rem;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.primary{
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+}
+
+.primary:hover{
+    opacity: 0.9;
+}
+
+.secondary{
+    border: 1px solid var(--color-text);
+    background-color: transparent;
 }
 
 /* ==================================== RESPONSIVE ======================================*/
@@ -104,10 +78,6 @@
     .container h1{
         font-size: 1.5em;
     }
-
-    .search__input{
-        width: 10em;
-    }
 }
 
 @media (max-width: 480px) {
@@ -115,7 +85,7 @@
         font-size: 1em;
     }
 
-    .search {
+    .secondary{
         display: none;
     }
 }
