@@ -98,11 +98,11 @@
 }
 
 /* Button */
-.DetailBtn {
+.bidBtn {
     width: 100%;
     margin-top: 0.75rem;
     padding: 0.5rem;
-    border-radius: 20px;
+    border-radius: 7px;
     border: none;
     background: var(--color-primary);
     color: white;
@@ -111,7 +111,7 @@
     transition: all 250ms ease-in ;
 }
 
-.DetailBtn:hover {
+.bidBtn:hover {
     opacity: 0.9;
 }
 
