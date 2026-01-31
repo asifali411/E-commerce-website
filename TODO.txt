@@ -1,2 +1,1 @@
 
-1. remove temperory styles from src/components/card/Card.module.css

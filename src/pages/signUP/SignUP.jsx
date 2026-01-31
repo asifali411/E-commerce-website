@@ -3,10 +3,11 @@ import styles from './SignUP.module.css';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import mountain from '../../assets/mountain.jpg';
+import axios from 'axios';
 
 const SignUp = () => {
     // Regex
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gec\.tcr\.in$/i;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gectcr\.ac\.in$/i;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
     const contactNumberRegex = /^\d{10}$/;
 
@@ -199,13 +200,28 @@ const SignUp = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!validateStepTwo()) return;
 
-        //  backend logic
-        console.log('Signup data:', formData);
+        const payload = {
+            username: FormData.username,
+            email: formData.email,
+            phone_no: `${formData.contactNumber}`,
+            password: formData.password,
+            confirm_password: formData.confirmPassword
+        };
+
+        try {
+            const response = await axios.post("/api/register", payload);
+
+            console.log(response);
+        } catch (err) {
+            console.log('Status:', err.response?.status);
+            console.log('Data:', err.response?.data);
+            console.log('Headers:', err.response?.headers);
+        }
     };
 
     return (

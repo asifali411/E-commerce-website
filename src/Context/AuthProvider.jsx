@@ -22,6 +22,12 @@ const AuthProvider = ({ children }) => {
         return response.data.username;
     }
 
+    const refreshToken = async () => {
+        console.log("refreshing...");
+        await axios.post("/api/refresh", { withCredentials: true });
+        return fetchUser();
+    };
+
     useEffect(() => {
         const initAuth = async () => {
             try {
@@ -44,7 +50,8 @@ const AuthProvider = ({ children }) => {
         user,
         isAuthenticated: !!user,
         confirmLogin,
-        logout
+        logout,
+        refreshToken
     };
 
     return (

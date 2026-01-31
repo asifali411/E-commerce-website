@@ -10,15 +10,15 @@ const MyListings = () => {
             <Top></Top>
 
             <main>
-                <ItemCard 
+                {/* <ItemCard 
                     title="random bullshit"
                     description="I stoled it."
                     price="470"
                     seller="vishy"
                     timeLeft="2 days"
-                />
+                /> */}
 
-                {/* <SkeletonLoader></SkeletonLoader> */}
+                <SkeletonLoader></SkeletonLoader>
             </main>
 
             <NavBar></NavBar>
