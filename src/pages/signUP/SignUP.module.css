@@ -72,6 +72,15 @@
     border: none;
     cursor: pointer;
     font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.primaryBtn svg{
+   animation: rotate 1s linear infinite;
 }
 
 /* ================= FORM ================= */
@@ -138,14 +147,14 @@
     color: var(--color-primary);
 }
 
-/* ================= SIGN UP ================= */
+/* ================= Login ================= */
 
-.signUP{
+.login{
     text-align: center;
     color: var(--color-grey-600);
 }
 
-.signUP a{
+.login a{
     cursor: pointer;
     text-decoration: none;
     font-size: 0.85rem;
@@ -167,6 +176,17 @@
 
 .hidden{
     display: none;
+}
+
+/* ================= ANIMATION ================= */
+
+@keyframes rotate {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
 }
 
 /* ================= RESPONSIVE ================= */

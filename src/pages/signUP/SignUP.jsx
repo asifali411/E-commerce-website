@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import styles from './SignUP.module.css';
-import { Link } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import mountain from '../../assets/mountain.jpg';
 import axios from 'axios';
+import { useAuth } from '../../Context/AuthProvider'; 
 
 const SignUp = () => {
     // Regex
@@ -14,6 +15,11 @@ const SignUp = () => {
     const [step, setStep] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const navigation = useNavigate();
+    const { confirmLogin } = useAuth();
+
+    const [signUPLoading, setSignUPLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -202,11 +208,12 @@ const SignUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSignUPLoading(true);
 
         if (!validateStepTwo()) return;
 
         const payload = {
-            username: FormData.username,
+            username: formData.username,
             email: formData.email,
             phone_no: `${formData.contactNumber}`,
             password: formData.password,
@@ -216,11 +223,27 @@ const SignUp = () => {
         try {
             const response = await axios.post("/api/register", payload);
 
+            if(response.status === 200){
+                confirmLogin(formData.username);
+                navigation('/');
+            }
+
             console.log(response);
         } catch (err) {
             console.log('Status:', err.response?.status);
             console.log('Data:', err.response?.data);
             console.log('Headers:', err.response?.headers);
+
+            if(err.status === 400){
+                setErrorStates({ ...errorStates, username: true, email: true });
+                setErrors({
+                    ...errors,
+                    username: "Username or mail already in use.",
+                    email: "Username or mail already in use.",
+                });
+            }
+        } finally {
+            setSignUPLoading(false);
         }
     };
 
@@ -356,13 +379,14 @@ const SignUp = () => {
                                     </button>
 
                                     <button type="submit" className={styles.primaryBtn}>
+                                        { signUPLoading && ( <LoaderCircle size={'1.5rem'} /> )}
                                         Create Account
                                     </button>
                                 </div>
                             </>
                         )}
 
-                        <div className={styles.signUP}>
+                        <div className={styles.login}>
                             <Link to="/login">
                                 Already have an account? Log in.
                             </Link>
