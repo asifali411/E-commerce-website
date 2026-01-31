@@ -58,15 +58,8 @@
     white-space: nowrap;
 }
 
-.primary a, .secondary a{
-    text-decoration: none;
-}
-
 .primary{
     background-color: var(--color-primary);
-}
-
-.primary a{
     color: var(--color-bg);
 }
 
@@ -79,7 +72,7 @@
     background-color: transparent;
 }
 
-.secondary a{
+.secondary{
     color: var(--color-text);
 }
 

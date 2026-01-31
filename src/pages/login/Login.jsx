@@ -1,7 +1,6 @@
 import styles from './Login.module.css';
 import { Link } from 'react-router-dom';
 import mountain from '../../assets/mountain.jpg';
-import { ArrowRight } from 'lucide-react';
 
 const Login = () => {
     const handleSubmit = (e) => {
@@ -21,13 +20,6 @@ const Login = () => {
                 </div>
 
                 <div className={styles.right}>
-
-                    <div className={styles.returnHome}>
-                        <Link to="/">
-                            Home
-                            <ArrowRight />
-                        </Link>
-                    </div>
 
                     <header className={styles.header}>
                         <h1>Welcome back!</h1>

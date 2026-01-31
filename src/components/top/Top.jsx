@@ -1,8 +1,11 @@
 import styles from './Top.module.css';
 import { CircleUserRound } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Top = () => {
+
+    const navigation = useNavigate();
+
     return (
         <form className={styles.container}>
             <h1>Lorem ipsum.</h1>
@@ -12,15 +15,17 @@ const Top = () => {
             </div>
 
             <div className={styles.register}>
-                <button className={styles.secondary}>
-                    <Link to="/login">
-                        Login
-                    </Link>
+                <button 
+                className={styles.secondary}
+                onClick={() => {navigation("/login")}}
+                >
+                    Login
                 </button>
-                <button className={styles.primary}>
-                    <Link to="/register">
-                        Sign up
-                    </Link>
+                <button 
+                className={styles.primary}
+                onClick={() => { navigation("/register") }}
+                >
+                    Sign up
                 </button>
             </div>
         </form>

@@ -17,9 +17,11 @@ const Home = () => {
                     seller="vishy"
                     timeLeft="2 days"
                 />
+
+                {/* <SkeletonLoader></SkeletonLoader> */}
             </main>
 
-            <NavBar></NavBar>   
+            <NavBar></NavBar>
         </div>
     );
 };
