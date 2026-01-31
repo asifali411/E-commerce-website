@@ -37,7 +37,7 @@ const NavBar = () => {
         <div className={styles.container}>
             {navItem('home', 'Home', House)}
             {navItem('search', 'Search', Search,{ marginLeft: '2em' })}
-            {navItem('listings', 'My Listings', Wallet, { marginLeft: '1em' }, "/docs")}
+            {navItem('listings', 'My Listings', Wallet, { marginLeft: '1em' }, "/MyListings")}
             {navItem('notification', 'Notifications', Bell, {}, "/notification")}
             {navItem('settings', 'Settings', Settings, {}, "/settings")}
 
