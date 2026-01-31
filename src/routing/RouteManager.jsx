@@ -4,6 +4,7 @@ import Login from '../pages/login/Login';
 import SignUP from '../pages/signUP/SignUP';
 
 import Home from '../pages/home/Home';
+import MyListings from '../pages/myListings/MyListings';
 
 const RouteManager = () => {
     return (
@@ -32,6 +33,11 @@ const RouteManager = () => {
                         </>
                     }
                 />
+                <Route path='/MyListings' element = {
+                    <>
+                    <MyListings/>
+                    </>
+                }/>
 
                 <Route path="*"
                     element={

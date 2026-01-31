@@ -50,7 +50,7 @@ const ItemCard = ({
                     </div>
                 </div>
 
-                <button className={styles.bidBtn}>Place Bid</button>
+                <button className={styles.DetailBtn}>Show Details</button>
             </div>
         </div>
     );
