@@ -1,14 +1,12 @@
 import './App.css';
 
-import Home from './pages/home/Home';
-import Login from './pages/login/Login';
-import SignUP from './pages/signUP/SignUP';
+import RouteManager from './routing/RouteManager';
 
 function App() {
 
   return (
     <>
-      <Home></Home>
+      <RouteManager />
     </>
   )
 }

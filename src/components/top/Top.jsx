@@ -1,5 +1,6 @@
 import styles from './Top.module.css';
 import { CircleUserRound } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Top = () => {
     return (
@@ -11,8 +12,16 @@ const Top = () => {
             </div>
 
             <div className={styles.register}>
-                <button className={styles.secondary}>Login</button>
-                <button className={styles.primary}>Sign up</button>
+                <button className={styles.secondary}>
+                    <Link to="/login">
+                        Login
+                    </Link>
+                </button>
+                <button className={styles.primary}>
+                    <Link to="/register">
+                        Sign up
+                    </Link>
+                </button>
             </div>
         </form>
     );

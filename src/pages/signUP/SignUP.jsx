@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import styles from './SignUP.module.css';
-import googleLogo from '../../assets/google.webp';
+import { Link } from 'react-router-dom';
 import mountain from '../../assets/mountain.jpg';
+import { ArrowLeft } from 'lucide-react';
 
 const SignUP = () => {
     const [step, setStep] = useState(1);
@@ -47,6 +48,14 @@ const SignUP = () => {
         <div className={styles.container}>
             <div className={styles.card}>
                 <div className={styles.left}>
+
+                    <div className={styles.returnHome}>
+                        <Link to="/">
+                            <ArrowLeft />
+                            Home
+                        </Link>
+                    </div>
+
                     <header className={styles.header}>
                         <h1>Create an account</h1>
                         <p>Step {step} of 2</p>
@@ -156,7 +165,7 @@ const SignUP = () => {
                         )}
 
                         <div className={styles.signUP}>
-                            <a href="#">Already have an account? Log in.</a>
+                            <Link to="/login">Already have an account? Log in.</Link>
                         </div>
                     </form>
                 </div>

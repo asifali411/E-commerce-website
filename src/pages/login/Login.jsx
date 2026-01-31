@@ -1,6 +1,7 @@
 import styles from './Login.module.css';
-import googleLogo from '../../assets/google.webp';
+import { Link } from 'react-router-dom';
 import mountain from '../../assets/mountain.jpg';
+import { ArrowRight } from 'lucide-react';
 
 const Login = () => {
     const handleSubmit = (e) => {
@@ -20,6 +21,14 @@ const Login = () => {
                 </div>
 
                 <div className={styles.right}>
+
+                    <div className={styles.returnHome}>
+                        <Link to="/">
+                            Home
+                            <ArrowRight />
+                        </Link>
+                    </div>
+
                     <header className={styles.header}>
                         <h1>Welcome back!</h1>
                         <p>See what's going on with your account</p>
@@ -56,7 +65,7 @@ const Login = () => {
                         </button>
 
                         <div className={styles.signUP}>
-                            <a>new here? sign up.</a>
+                            <Link to="/register">new here? sign up.</Link>
                         </div>
                     </form>
                 </div>
