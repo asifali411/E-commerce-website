@@ -1,55 +1,166 @@
+import { useState } from 'react';
 import styles from './Login.module.css';
 import { Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import mountain from '../../assets/mountain.jpg';
 
 const Login = () => {
+    const [showPassword, setShowPassword] = useState(false);
+
+    const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+    });
+
+    const [errors, setErrors] = useState({
+        username: '',
+        password: '',
+    });
+
+    const [errorStates, setErrorStates] = useState({
+        username: false,
+        password: false,
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+
+        // Real-time validation if field had an error
+        if (errorStates[name]) {
+            validateField(name, value);
+        }
+    };
+
+    const validateField = (fieldName, value) => {
+        const newErrors = { ...errors };
+        const newErrorStates = { ...errorStates };
+
+        switch (fieldName) {
+            case 'username':
+                if (!value.trim()) {
+                    newErrors.username = 'Username is required';
+                    newErrorStates.username = true;
+                } else {
+                    newErrors.username = '';
+                    newErrorStates.username = false;
+                }
+                break;
+
+            case 'password':
+                if (!value) {
+                    newErrors.password = 'Password is required';
+                    newErrorStates.password = true;
+                } else {
+                    newErrors.password = '';
+                    newErrorStates.password = false;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        setErrors(newErrors);
+        setErrorStates(newErrorStates);
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        const newErrorStates = {};
+        let hasErrors = false;
+
+        if (!formData.username.trim()) {
+            newErrors.username = 'Username is required';
+            newErrorStates.username = true;
+            hasErrors = true;
+        }
+
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+            newErrorStates.password = true;
+            hasErrors = true;
+        }
+
+        setErrors(newErrors);
+        setErrorStates(newErrorStates);
+
+        return !hasErrors;
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: handle login
+
+        if (!validateForm()) return;
+
+        // backend logic
+        console.log('Login data:', formData);
     };
 
     return (
         <div className={styles.container}>
             <div className={styles.card}>
                 <div className={styles.left}>
-                    <img
-                        
-                        src={mountain}
-                        alt="Login illustration"
-                    />
+                    <img src={mountain} alt="Login illustration" />
                 </div>
 
                 <div className={styles.right}>
-
                     <header className={styles.header}>
                         <h1>Welcome back!</h1>
                         <p>See what's going on with your account</p>
                     </header>
 
-
                     <form className={styles.form} onSubmit={handleSubmit}>
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="username">Username</label>
+                        <div
+                            className={`${styles.inputGroup} ${errorStates.username ? styles.errorGroup : ''
+                                }`}
+                        >
+                            <label htmlFor="username">
+                                Username
+                                <p>{errors.username}</p>
+                            </label>
                             <input
                                 id="username"
                                 name="username"
                                 type="text"
-                                required
+                                value={formData.username}
+                                onChange={handleChange}
                             />
                         </div>
 
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="password">Password</label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                required
-                            />
+                        <div
+                            className={`${styles.inputGroup} ${errorStates.password ? styles.errorGroup : ''
+                                }`}
+                        >
+                            <label htmlFor="password">
+                                Password
+                                <p>{errors.password}</p>
+                            </label>
+                            <div className={styles.passwordInputWrapper}>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                />
+                                <button
+                                    type="button"
+                                    className={styles.toggleBtn}
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    aria-label="Toggle password visibility"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff size={18} />
+                                    ) : (
+                                        <Eye size={18} />
+                                    )}
+                                </button>
+                            </div>
                         </div>
 
                         <div className={styles.forgot}>
-                            <a href="#">Forgot password?</a>
+                            <Link to="/forgot-password">Forgot password?</Link>
                         </div>
 
                         <button type="submit" className={styles.primaryBtn}>
@@ -57,7 +168,7 @@ const Login = () => {
                         </button>
 
                         <div className={styles.signUP}>
-                            <Link to="/register">new here? sign up.</Link>
+                            <Link to="/register">New here? Sign up.</Link>
                         </div>
                     </form>
                 </div>

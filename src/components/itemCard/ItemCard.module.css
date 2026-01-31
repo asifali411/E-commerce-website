@@ -113,3 +113,13 @@
 .bidBtn:hover {
     opacity: 0.9;
 }
+
+.bidBtn:disabled{
+    background-color: var(--color-muted);
+    cursor: default;
+}
+
+.bidBtn:disabled:hover{
+    opacity: 1;
+    transform: translateY(0px);
+}

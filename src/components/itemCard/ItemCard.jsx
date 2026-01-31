@@ -1,5 +1,6 @@
 import styles from "./ItemCard.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../Context/AuthProvider";
 
 const ItemCard = ({
     title,
@@ -13,6 +14,14 @@ const ItemCard = ({
 
     const mainImage = images[0];
     const hoverImage = images[1] ?? images[0];
+
+    const { isAuthenticated } = useAuth();
+    const [bidBtnState, setBidBtnState] = useState(!isAuthenticated);
+
+    useEffect(() =>{
+        setBidBtnState(!isAuthenticated);
+    }    
+    ,[isAuthenticated])
 
     return (
         <div
@@ -50,7 +59,7 @@ const ItemCard = ({
                     </div>
                 </div>
 
-                <button className={styles.bidBtn}>Place Bid</button>
+                <button className={styles.bidBtn} disabled={bidBtnState}>Place Bid</button>
             </div>
         </div>
     );

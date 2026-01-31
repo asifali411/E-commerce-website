@@ -96,6 +96,8 @@
   --color-muted: rgba(15, 23, 42, 0.6);
   --color-muted-swatch: #E5E7EB;
 
+  --color-error: tomato;
+
   /* ===== Grey Scale ===== */
   --color-grey-50: #F9FAFB;
   --color-grey-100: #F3F4F6;
