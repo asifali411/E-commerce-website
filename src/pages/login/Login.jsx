@@ -1,11 +1,22 @@
 import { useState } from 'react';
 import styles from './Login.module.css';
 import { Link } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import mountain from '../../assets/mountain.jpg';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../Context/AuthProvider';
+import axios from 'axios';
 
 const Login = () => {
+
+    //regex
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+    
     const [showPassword, setShowPassword] = useState(false);
+    const [showLoginLoading, setShowLoginLoading] = useState(false);
+
+    const navigation = useNavigate();
+    const { confirmLogin } = useAuth();
 
     const [formData, setFormData] = useState({
         username: '',
@@ -88,13 +99,39 @@ const Login = () => {
         return !hasErrors;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!validateForm()) return;
 
-        // backend logic
-        console.log('Login data:', formData);
+        setShowLoginLoading(true);
+
+        try{
+            const formURL = new URLSearchParams();
+
+            formURL.append("username", formData.username);
+            formURL.append("password", formData.password);
+            formURL.append("grant_type", "password");
+            formURL.append("scope", "");
+            formURL.append("client_id", "");
+            formURL.append("client_secret", "");
+
+            const response = await axios.post("/api/login", formURL, {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            });
+
+            if(response.status === 200){
+                confirmLogin(formData.username);
+                navigation('/');
+            }
+
+        }catch(err){
+            console.log(err);
+        } finally {
+            setShowLoginLoading(false);
+        }
     };
 
     return (
@@ -164,6 +201,7 @@ const Login = () => {
                         </div>
 
                         <button type="submit" className={styles.primaryBtn}>
+                            { showLoginLoading && ( <LoaderCircle size={'1.5rem'} /> )}
                             Login
                         </button>
 

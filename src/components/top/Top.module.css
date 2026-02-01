@@ -24,6 +24,11 @@
 
 .profile, .register{
     margin-left: auto;
+    position: relative;
+}
+
+.profileInfo{
+    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,15 +36,16 @@
     gap: 0.5rem;
 }
 
-.profile{
-    cursor: pointer;
-}
-
 .profile svg{
     stroke-width: 1px;
 }
 
 /* ==================================== REGISTER ======================================*/
+
+.register{
+    display: flex;
+    gap: 0.5rem;
+}
 
 .primary, .secondary{
     padding: 0.4rem 1.5rem;

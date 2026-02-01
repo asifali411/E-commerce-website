@@ -1,0 +1,13 @@
+.container {
+    padding: 0.5rem;
+    border-radius: 5px;
+    background-color: var(--color-card);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.container:hover{
+    background-color: var(--color-muted-swatch);
+}

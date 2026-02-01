@@ -1,0 +1,27 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    border-radius: 7px;
+    border: 1px solid var(--color-card-border);
+    background-color: var(--color-card);
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 500;
+    min-width: 180px;
+    box-shadow: 0 0 10px var(--color-muted-swatch);
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: calc(10% - 5px);
+    height: 10px;
+    width: 10px;
+    transform: rotate(45deg);
+    background-color: var(--color-card);
+    border-top: 1px solid var(--color-card-border);
+    border-left: 1px solid var(--color-card-border);
+}
