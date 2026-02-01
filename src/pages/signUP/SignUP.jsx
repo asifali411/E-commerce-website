@@ -182,6 +182,18 @@ const SignUp = () => {
             newErrors.username = 'Username is required';
             newErrorStates.username = true;
             hasErrors = true;
+        } else if (formData.username.length <= 3) {
+            newErrors.username = 'Username must be atleast 3 characters long';
+            newErrorStates.username = true;
+            hasErrors = true;
+        } else if (formData.username.length > 20) {
+            newErrors.username = 'Username cannot be more than 20 characters long';
+            newErrorStates.username = true;
+            hasErrors = true;
+        } else if (formData.username.includes(" ")){
+            newErrors.username = 'Usename cannot contain spaces';
+            newErrorStates.username = true;
+            hasErrors = true;
         }
 
         if (!formData.contactNumber.trim()) {
@@ -235,11 +247,12 @@ const SignUp = () => {
             console.log('Headers:', err.response?.headers);
 
             if(err.status === 400){
-                setErrorStates({ ...errorStates, username: true, email: true });
+                setErrorStates({ ...errorStates, username: true, email: true, contactNumber: true });
                 setErrors({
                     ...errors,
-                    username: "Username or mail already in use.",
-                    email: "Username or mail already in use.",
+                    username: "Username, email or contact number already in use",
+                    email: "Username, email or contact number already in use",
+                    contactNumber: "Username, email or contact number already in use"
                 });
             }
         } finally {
