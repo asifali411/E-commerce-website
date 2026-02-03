@@ -23,6 +23,43 @@ const AuthProvider = ({ children }) => {
         return response.data.username;
     }
 
+    const fetchAllItems = async (skip = 0, limit = 10) => {
+        try{
+            const response = await axios.get("/api/items/feed", {
+                params: {
+                    skip: skip,
+                    limit: limit
+                }
+            });
+            return response.data;
+        } catch (err) {
+            return [];
+        }
+    }
+
+    const fetchUserItems = async (skip = 0, limit = 10) => {
+        try{
+            const response = await axios.get("/api/items/myitems", {
+                params: {
+                    skip: skip,
+                    limit: limit
+                }
+            });
+            return response.data;
+        } catch(err) {
+            return [];
+        }
+    }
+
+    const fetchItem = async (id) => {
+        try{
+            const response = await axios.get(`/api/items/${id}`);
+            return response.data;
+        } catch(err) {
+            return {};
+        }
+    }
+
     const refreshToken = async () => {
         console.log("refreshing...");
         await axios.post("/api/refresh", { withCredentials: true });
@@ -52,7 +89,10 @@ const AuthProvider = ({ children }) => {
         isAuthenticated: !!user,
         confirmLogin,
         logout,
-        refreshToken
+        refreshToken,
+        fetchAllItems,
+        fetchUserItems,
+        fetchItem
     };
 
     return (

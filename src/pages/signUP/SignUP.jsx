@@ -204,6 +204,10 @@ const SignUp = () => {
             newErrors.contactNumber = 'Enter a valid 10-digit number';
             newErrorStates.contactNumber = true;
             hasErrors = true;
+        } else if (String(+formData.contactNumber).length !== 10) {
+            newErrors.contactNumber = 'Enter a valid 10-digit number';
+            newErrorStates.contactNumber = true;
+            hasErrors = true;
         }
 
         setErrors((prev) => ({ ...prev, ...newErrors }));
@@ -222,7 +226,10 @@ const SignUp = () => {
         e.preventDefault();
         setSignUPLoading(true);
 
-        if (!validateStepTwo()) return;
+        if (!validateStepTwo()) {
+            setSignUPLoading(false);
+            return;
+        }
 
         const payload = {
             username: formData.username,

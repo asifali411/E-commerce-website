@@ -9,7 +9,7 @@
     display: grid;
     gap: 0.8rem;
     grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
-    justify-items: space-evenly;
     align-items: center;
+    justify-content: center;
     padding-bottom: 5rem;
 }

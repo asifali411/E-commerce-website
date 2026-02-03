@@ -7,15 +7,13 @@ const ItemCard = ({
     description,
     price,
     seller,
+    primary_image,
     images = [],
+    status,
     timeLeft
 }) => {
-    const [hovered, setHovered] = useState(false);
 
-    const mainImage = images[0];
-    const hoverImage = images[1] ?? images[0];
-
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, fetchAllItems } = useAuth();
     const [bidBtnState, setBidBtnState] = useState(!isAuthenticated);
 
     useEffect(() =>{
@@ -24,16 +22,10 @@ const ItemCard = ({
     ,[isAuthenticated])
 
     return (
-        <div
-            className={styles.card}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-        >
+        <div className={styles.card}>
             {/* Image */}
             <div className={styles.imageWrapper}>
-                <img
-                    src={hovered ? hoverImage : mainImage}
-                />
+                <img src={primary_image} />
 
                 <button className={styles.menuBtn}>
                     ⋮
@@ -59,7 +51,15 @@ const ItemCard = ({
                     </div>
                 </div>
 
-                <button className={styles.bidBtn} disabled={bidBtnState}>Place Bid</button>
+                <button 
+                className={styles.bidBtn} 
+                disabled={bidBtnState}
+                // for debugging
+                onClick={async () => {
+                    const response = await fetchAllItems();
+                    console.log(response);
+                }}
+                >Place Bid</button>
             </div>
         </div>
     );
