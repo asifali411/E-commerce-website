@@ -49,7 +49,9 @@ const MyListings = () => {
                 ))}
 
                 {!isLoadingItems && items.length === 0 &&
-                    <p>There are no items listed.</p>
+                    <div className={styles.noItemsContainer}>
+                        <p>No items found</p>
+                    </div>
                 }
 
             </main>

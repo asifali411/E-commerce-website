@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './NavBar.module.css';
-import { Search, House, Settings, Wallet, Bell } from 'lucide-react';
+import { Search, House, Settings, Tags, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const NavBar = () => {
@@ -57,7 +57,7 @@ const NavBar = () => {
         <div className={styles.container}>
             {navItem('home', 'Home', House, {}, "/")}
             {navItem('search', 'Search', Search, { marginLeft: '2em' })}
-            {navItem('listings', 'My Listings', Wallet, { marginLeft: '1em' }, "/MyListings")}
+            {navItem('listings', 'My Listings', Tags, { marginLeft: '1em' }, "/MyListings")}
             {navItem('notification', 'Notifications', Bell, {}, "/notification")}
             {navItem('settings', 'Settings', Settings, {}, "/settings")}
 

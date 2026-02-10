@@ -13,3 +13,17 @@
     justify-content: center;
     padding-bottom: 5rem;
 }
+
+.noItemsContainer{
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.refreshBtn{
+    padding: 0.4rem 1.5rem;
+    font-size: 0.8rem;
+    color: #fff;
+    background-color: var(--color-primary);
+}

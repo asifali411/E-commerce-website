@@ -11,8 +11,14 @@ const AuthProvider = ({ children }) => {
         setUser(username);
     };
 
-    const logout = () => {
-        setUser(null);
+    const logout = async () => {
+        try {
+            await axios.post("/api/logout", {}, {
+                withCredentials: true
+            });
+        } finally {
+            setUser(null);
+        }
     };
 
     const fetchUser = async () => {
@@ -62,7 +68,7 @@ const AuthProvider = ({ children }) => {
 
     const refreshToken = async () => {
         console.log("refreshing...");
-        await axios.post("/api/refresh", { withCredentials: true });
+        await axios.post("/api/refresh", {}, { withCredentials: true });
         return fetchUser();
     };
 

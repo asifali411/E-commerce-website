@@ -4,6 +4,7 @@ import Top from '../../components/top/Top';
 import ItemCard from '../../components/itemCard/ItemCard';
 import SkeletonLoader from '../../components/skeletonLoader/SkeletonLoader';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthProvider';
 
 const Home = () => {
@@ -11,6 +12,7 @@ const Home = () => {
     const [items, setItems] = useState([]);
     const [isLoadingItems, setIsLoadingItems] = useState(true);
     const { fetchAllItems } = useAuth();
+    const navigation = useNavigate();
 
     useEffect(() => {
         const loadItems = async () => {
@@ -51,7 +53,16 @@ const Home = () => {
                 ))}
 
                 {!isLoadingItems && items.length === 0 &&
-                    <p>There are no items listed.</p>
+                    <div className={styles.noItemsContainer}>
+                        <p>No items found</p>
+
+                        <div>
+                            <button 
+                            className={styles.refreshBtn}
+                            onClick={() => { navigation(0); }}
+                            >Reload</button>
+                        </div>
+                    </div>
                 }
 
             </main>
