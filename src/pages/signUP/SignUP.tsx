@@ -231,8 +231,31 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         const response = await axios.post("/api/register", payload);
 
         if (response.status === 200) {
-            confirmLogin(formData.username);
-            navigate("/");
+
+            const formURL = new URLSearchParams();
+            
+            formURL.append("username", formData.username);
+            formURL.append("password", formData.password);
+            formURL.append("grant_type", "password");
+            formURL.append("scope", "");
+            formURL.append("client_id", "");
+            formURL.append("client_secret", "");
+    
+            const response = await axios.post(
+                "/api/login",
+                formURL,
+                {
+                    headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                }
+            );
+
+            if(response.status === 200){
+                confirmLogin(formData.username);
+                navigate("/");
+            }
+
         }
 
     } catch (error) {
@@ -241,21 +264,21 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 
         if (err.response?.status === 400) {
 
-        const msg = "Username, email or contact number already in use";
+            const msg = "Username, email or contact number already in use";
 
-        setErrorStates(prev => ({
-            ...prev,
-            username: true,
-            email: true,
-            contactNumber: true,
-        }));
+            setErrorStates(prev => ({
+                ...prev,
+                username: true,
+                email: true,
+                contactNumber: true,
+            }));
 
-        setErrors(prev => ({
-            ...prev,
-            username: msg,
-            email: msg,
-            contactNumber: msg,
-        }));
+            setErrors(prev => ({
+                ...prev,
+                username: msg,
+                email: msg,
+                contactNumber: msg,
+            }));
         }
 
     } finally {

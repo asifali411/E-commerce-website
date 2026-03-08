@@ -5,6 +5,7 @@ import SignUP from '../pages/signUP/SignUP';
 
 import Home from '../pages/home/Home';
 import MyListings from '../pages/myListings/MyListings';
+import ItemDetails from '../pages/itemDetails/ItemDetails';
 
 const RouteManager = () => {
     return (
@@ -14,6 +15,14 @@ const RouteManager = () => {
                     element={
                         <>
                             <Home />
+                        </>
+                    }
+                />
+
+                <Route path="/items/:itemId"
+                    element = {
+                        <>
+                            <ItemDetails />
                         </>
                     }
                 />

@@ -14,7 +14,7 @@ import { useAuth } from "../../Context/AuthProvider";
 /* ---------------- Types ---------------- */
 
 type Item = {
-  id?: number;
+  id: number;
   title: string;
   description: string;
   price: number;
@@ -85,6 +85,7 @@ const Home = () => {
     .flat()
     .filter(item =>
       item &&
+      item.id &&
       item.title &&
       item.description &&
       item.primary_image
@@ -125,8 +126,10 @@ const Home = () => {
 
           if (isLast) {
             return (
-              <div ref={lastItemRef} key={item.id ?? index}>
+              <div ref={lastItemRef} key={item.id}>
                 <ItemCard
+                  id={item.id}
+                  key={item.id}
                   title={item.title}
                   description={item.description}
                   price={item.price}
@@ -142,7 +145,8 @@ const Home = () => {
 
           return (
             <ItemCard
-              key={item.id ?? index}
+              id={item.id}
+              key={item.id}
               title={item.title}
               description={item.description}
               price={item.price}

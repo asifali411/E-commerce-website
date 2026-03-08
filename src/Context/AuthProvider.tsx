@@ -45,73 +45,80 @@ const confirmLogin = (username: string | null) => {
 
 const logout = async () => {
     try {
-    await axios.post("/api/logout");
+        await axios.post("/api/logout", {}, {
+            withCredentials: true
+        });
     } finally {
-    setUser(null);
+        setUser(null);
     }
 };
 
 const fetchUser = async (): Promise<string | null> => {
-    const response = await axios.get("/api/username");
+    const response = await axios.get("/api/me", {
+        withCredentials: true
+    });
     return response.data.username ?? null;
 };
 
 const fetchAllItems = async (skip = 0, limit = 10): Promise<any[]> => {
     try {
-    const response = await axios.get("/api/items/feed", {
-        params: { skip, limit }
-    });
+        const response = await axios.get("/api/items/feed", {
+            params: { skip, limit }
+        });
 
-    return response.data;
+        return response.data;
     } catch {
-    return [];
+        return [];
     }
 };
 
 const fetchUserItems = async (skip = 0, limit = 10): Promise<any[]> => {
     try {
-    const response = await axios.get("/api/items/myitems", {
-        params: { skip, limit }
-    });
+        const response = await axios.get("/api/items/myitems", {
+            params: { skip, limit }
+        });
 
-    return response.data;
+        return response.data;
     } catch {
-    return [];
+        return [];
     }
 };
 
 const fetchItem = async (id: number): Promise<any> => {
     try {
-    const response = await axios.get(`/api/items/${id}`);
-    return response.data;
+        const response = await axios.get(`/api/items/${id}`);
+        return response.data;
     } catch {
-    return {};
+        return {};
     }
 };
 
 const refreshToken = async (): Promise<string | null> => {
-    console.log("Refreshing token...");
-    await axios.post("/api/refresh");
-    return fetchUser();
+    try {
+        await axios.post("/api/refresh", {}, { withCredentials: true });
+        return await fetchUser();
+    } catch {
+        return null;
+    }
 };
 
 /* ------------------ Init Auth ------------------ */
 
 useEffect(() => {
     const initAuth = async () => {
-    try {
-        const username = await fetchUser();
-        confirmLogin(username);
-    } catch {
         try {
-        const username = await refreshToken();
-        confirmLogin(username);
+            let username = await fetchUser();
+
+            if (!username) {
+                username = await refreshToken();
+            }
+
+            confirmLogin(username);
         } catch {
-        await logout();
+            confirmLogin(null);
+        } finally {
+            setLoading(false);
         }
-    } finally {
-        setLoading(false);
-    }
     };
 
     initAuth();

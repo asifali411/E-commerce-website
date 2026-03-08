@@ -57,7 +57,7 @@ const Top = () => {
 
     return (
         <div className={styles.container}>
-            <h1>Lorem ipsum.</h1>
+            <h1 onClick={() => navigate("/")}>Lorem ipsum.</h1>
 
             {isAuthenticated && (
                 <div className={styles.profile}>

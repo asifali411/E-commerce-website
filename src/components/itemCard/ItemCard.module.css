@@ -115,15 +115,27 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 250ms ease-in ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bidBtn svg{
+    height: 1.2rem;
+    transition: all 0.25s ease;
 }
 
 .bidBtn:hover {
     opacity: 0.9;
 }
 
+.bidBtn:hover svg{
+    transform: translateX(0.2rem);
+}
+
 .bidBtn:disabled{
     background-color: var(--color-muted);
-    cursor: default;
+    cursor: no-drop;
 }
 
 .bidBtn:disabled:hover{
