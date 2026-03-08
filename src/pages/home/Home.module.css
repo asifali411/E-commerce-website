@@ -26,4 +26,24 @@
     font-size: 0.8rem;
     color: #fff;
     background-color: var(--color-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.refreshBtn svg{
+    width: 1rem;
+    height: 1rem;
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    from{
+        transform: rotate(0deg);
+    }
+
+    to{
+        transform: rotate(360deg);
+    }
 }
