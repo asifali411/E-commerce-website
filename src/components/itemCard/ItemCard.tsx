@@ -1,7 +1,6 @@
 import styles from "./ItemCard.module.css";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 import { useAuth } from "../../Context/AuthProvider";
 
 interface ItemCardProps {
@@ -16,6 +15,9 @@ interface ItemCardProps {
   timeLeft: string;
 }
 
+const PLACEHOLDER =
+  "https://placehold.co/600x400/1a1a2e/818CF8?text=No+Image";
+
 const ItemCard: React.FC<ItemCardProps> = ({
   id,
   title,
@@ -23,58 +25,75 @@ const ItemCard: React.FC<ItemCardProps> = ({
   price,
   seller,
   primary_image,
-  images = [],
-  status,
+  status = "ACTIVE",
   timeLeft,
 }) => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const hasImages = images.length > 0;
-  hasImages;
-
-  if (!status) {
-    console.error("Status not found");
-  }
+  const isSold = status === "SOLD";
 
   return (
-    <div className={styles.card}>
-      {/* Image */}
-      <div className={styles.imageWrapper}>
-        <img src={primary_image} alt={title} />
+    <article className={`${styles.card} ${isSold ? styles.cardSold : ""}`}>
+      {/* ── Image ── */}
+      <div className={styles.imageWrap}>
+        <img
+          src={primary_image || PLACEHOLDER}
+          alt={title}
+          className={styles.image}
+          onError={(e) =>
+            ((e.target as HTMLImageElement).src = PLACEHOLDER)
+          }
+        />
 
-        <button className={styles.menuBtn}>⋮</button>
+        {/* Status badge */}
+        <span
+          className={`${styles.statusBadge} ${
+            isSold ? styles.sold : styles.active
+          }`}
+        >
+          {status}
+        </span>
+
+        {/* Seller pill — overlaps image bottom */}
+        <div className={styles.sellerPill}>@{seller}</div>
       </div>
 
-      {/* Content */}
-      <div className={styles.content}>
-        <div className={styles.seller}>@{seller}</div>
+      {/* ── Body ── */}
+      <div className={styles.body}>
+        <h3 className={styles.title}>{title}</h3>
+        <p className={styles.description}>{description}</p>
 
-        <div className={styles.title}>{title}</div>
-        <div className={styles.description}>{description}</div>
-
+        {/* Meta row */}
         <div className={styles.meta}>
-          <div>
-            <span className={styles.label}>Starting Price</span>
-            <div className={styles.price}>₹ {price}</div>
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>Starting price</span>
+            <span className={styles.metaValue}>
+              ₹{price.toLocaleString("en-IN")}
+            </span>
           </div>
 
-          <div>
-            <span className={styles.label}>Time Left</span>
-            <div className={styles.time}>{timeLeft}</div>
+          <div className={styles.metaDivider} />
+
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>Time left</span>
+            <span className={`${styles.metaValue} ${styles.timeValue}`}>
+              {timeLeft}
+            </span>
           </div>
         </div>
 
+        {/* CTA */}
         <button
           className={styles.bidBtn}
-          disabled={!isAuthenticated}
+          disabled={!isAuthenticated || isSold}
           onClick={() => navigate(`/items/${id}`)}
         >
-          See Details
-          <ArrowRight />
+          <span>{isSold ? "Sold" : "See Details"}</span>
+          {!isSold && <ArrowRight size={16} strokeWidth={2.5} />}
         </button>
       </div>
-    </div>
+    </article>
   );
 };
 
