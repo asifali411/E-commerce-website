@@ -16,9 +16,9 @@ import Ratings from "../pages/ratings/Ratings";
 import Notifications from "../pages/notifications/Notifications";
 import Login from "../pages/login/Login";
 import SignUp from "../pages/signup/SignUp";
+import ItemDetail from "../pages/itemDetail/ItemDetail";
 
 // Placeholder pages
-const ItemDetail = () => <div>Item detail page</div>;
 const CreateItem = () => <div>Create item page</div>;
 const Profile = () => <div>Profile page</div>;
 const NotFound = () => <div>404 — page not found</div>;
@@ -81,7 +81,7 @@ function AnimatedRoutes() {
             path="/items/:id"
             element={
               <PageWrapper>
-                <ItemDetail />
+                {/* <ItemDetail /> */}
               </PageWrapper>
             }
           />
