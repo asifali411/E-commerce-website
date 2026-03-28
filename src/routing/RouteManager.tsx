@@ -17,9 +17,9 @@ import Notifications from "../pages/notifications/Notifications";
 import Login from "../pages/login/Login";
 import SignUp from "../pages/signup/SignUp";
 import ItemDetail from "../pages/itemDetail/ItemDetail";
+import CreateItem from "../pages/createItem/CreateItem";
 
 // Placeholder pages
-const CreateItem = () => <div>Create item page</div>;
 const Profile = () => <div>Profile page</div>;
 const NotFound = () => <div>404 — page not found</div>;
 
