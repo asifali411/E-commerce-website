@@ -1,0 +1,176 @@
+/* ── Layout shell ─────────────────────────────────────────── */
+.shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--color-bg);
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+
+  width: 60px;
+  height: 100vh;
+  overflow: hidden;
+
+  background-color: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  border-radius: 10px;
+
+  padding: 16px 0;
+
+  transition: width 0.22s ease;
+
+  position: relative;
+  z-index: 100;
+}
+
+.sidebar.expanded {
+  width: 220px;
+}
+
+/* ── Logo ─────────────────────────────────────────────────── */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.logoMark {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 999px;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.04em;
+}
+
+.logoText {
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--color-text);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: nowrap;
+}
+
+.expanded .logoText {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── Nav list ─────────────────────────────────────────────── */
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0 8px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+/* ── Shared link / button base ────────────────────────────── */
+.navLink,
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 6px;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+
+  color: var(--color-text-grey);
+  font-size: 14px;
+  font-weight: 400;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.navLink:hover,
+.logoutBtn:hover {
+  background-color: var(--color-grey-50);
+  color: var(--color-text);
+  transform: none;
+}
+
+.navLink.active {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+/* ── Icon wrapper ─────────────────────────────────────────── */
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1rem;
+  flex-shrink: 0;
+}
+
+.iconWrap svg{
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+}
+
+/* ── Label fade-slide ─────────────────────────────────────── */
+.label {
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.expanded .label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── Bottom section ───────────────────────────────────────── */
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 8px 0;
+  border-top: 1px solid var(--color-card-border);
+  margin-top: auto;
+  overflow: hidden;
+}
+
+.logoutBtn:hover {
+  color: var(--color-error);
+}
+
+/* ── Main content area ────────────────────────────────────── */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+  background-color: var(--color-bg);
+}

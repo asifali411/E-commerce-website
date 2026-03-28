@@ -1,0 +1,7 @@
+.app {
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    padding: 0.3rem 0 0.3rem 0.3rem;
+}

@@ -1,0 +1,566 @@
+/* ── Page shell ───────────────────────────────────────────── */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 28px 32px 48px;
+  background-color: var(--color-bg);
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pageTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+/* ── Stat pills ───────────────────────────────────────────── */
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  border-radius: 20px;
+}
+
+.statValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--color-text-grey);
+}
+
+/* ── Role switcher ────────────────────────────────────────── */
+.roleSwitcher {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius);
+  padding: 3px;
+}
+
+.roleBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: calc(var(--border-radius) - 1px);
+  border: none;
+  background: none;
+  color: var(--color-text-grey);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.roleBtn:hover {
+  color: var(--color-text);
+}
+
+.roleBtnActive {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.roleBtnActive:hover {
+  color: #ffffff;
+  opacity: 0.92;
+}
+
+.roleBtnCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 20px;
+  background-color: var(--color-grey-100);
+  color: var(--color-text-grey);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.roleBtnActive .roleBtnCount {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* ── Filter tabs ──────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  color: var(--color-text-grey);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tab:hover {
+  color: var(--color-text);
+}
+
+.tabActive {
+  color: var(--color-primary);
+  font-weight: 500;
+  border-bottom-color: var(--color-primary);
+}
+
+.tabDotPending,
+.tabDotCompleted {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tabDotPending   { background-color: var(--color-warning); }
+.tabDotCompleted { background-color: var(--color-success); }
+
+.tabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 20px;
+  background-color: var(--color-grey-100);
+  color: var(--color-text-grey);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.tabActive .tabCount {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* ── List ─────────────────────────────────────────────────── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Transaction row ──────────────────────────────────────── */
+.row {
+  display: grid;
+  grid-template-columns: 64px 1fr 120px 130px 110px 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  border-radius: calc(var(--border-radius) * 2);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.row:hover {
+  border-color: var(--color-grey-300);
+  box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.07);
+}
+
+.rowPending {
+  border-left: 3px solid var(--color-cta);
+}
+
+/* Thumbnail */
+.rowThumb {
+  width: 64px;
+  height: 64px;
+  background-color: var(--color-grey-50);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rowThumbIcon {
+  color: var(--color-grey-300);
+}
+
+/* Main info */
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rowTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.rowTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Bought / Sold role chip */
+.roleChip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 20px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.roleChipBuyer {
+  background-color:color-mix(in srgb, var(--color-primary) 10%, var(--color-card)); 
+  color: var(--color-primary);
+}
+
+.roleChipSeller {
+  background-color:color-mix(in srgb, var(--color-success) 10%, var(--color-card)); 
+  color: var(--color-success);
+}
+
+.rowDesc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-grey-400);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowTags {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* Badges */
+.categoryTag,
+.conditionTag,
+.metaChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.categoryTag {
+  background-color: var(--color-grey-100);
+  color: var(--color-text-grey);
+}
+
+.conditionNew   { 
+  background-color:color-mix(in srgb, var(--color-success) 10%, var(--color-card)); 
+  color: var(--color-success);
+}
+.conditionLight { 
+  background-color: color-mix(in srgb, var(--color-warning) 10%, var(--color-card));
+  color: var(--color-warning);
+}
+.conditionHeavy { 
+  background-color: color-mix(in srgb, var(--color-error) 10%, var(--color-card));
+  color: var(--color-error); 
+}
+
+.metaChip {
+  background-color: transparent;
+  color: var(--color-grey-400);
+  font-weight: 400;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Counterparty column */
+.rowParty {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rowPartyLabel {
+  font-size: 11px;
+  color: var(--color-grey-400);
+}
+
+.rowPartyName {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.rowPartyIcon {
+  color: var(--color-grey-400);
+  flex-shrink: 0;
+}
+
+/* Price column */
+.rowPrice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.rowPriceLabel {
+  font-size: 11px;
+  color: var(--color-grey-400);
+}
+
+.rowPriceValue {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.rowPriceQty {
+  font-size: 11px;
+  color: var(--color-text-grey);
+}
+
+/* Status column */
+.rowStatus {
+  display: flex;
+  justify-content: center;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.statusPending {
+  background-color: color-mix(in srgb, var(--color-warning) 10%, var(--color-card));
+  color: var(--color-warning);
+}
+
+.statusCompleted {
+  background-color:color-mix(in srgb, var(--color-success) 10%, var(--color-card)); 
+  color: var(--color-success);
+}
+
+/* Actions column */
+.rowActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Mark complete button */
+.actionBtnComplete {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-success);
+  background-color: transparent;
+  color: var(--color-success);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.actionBtnComplete:hover {
+  background-color: var(--color-success);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Awaiting seller label */
+.awaitingLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--color-grey-400);
+  white-space: nowrap;
+}
+
+/* Secondary action button (empty state) */
+.btnSecondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.btnSecondary:hover {
+  background-color: var(--color-grey-100);
+  border-color: var(--color-grey-300);
+  transform: translateY(-1px);
+}
+
+/* ── Star rating picker ───────────────────────────────────── */
+.starPicker {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.starPickerLabel {
+  font-size: 12px;
+  color: var(--color-text-grey);
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+.starBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  color: var(--color-grey-300);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.1s ease, transform 0.1s ease;
+}
+
+.starBtn:hover,
+.starBtnActive {
+  color: var(--color-cta);
+  transform: scale(1.15);
+}
+
+/* Already rated label */
+.ratedLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--color-cta);
+  white-space: nowrap;
+}
+
+.noActions {
+  font-size: 14px;
+  color: var(--color-grey-300);
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 72px 0;
+  text-align: center;
+}
+
+.emptyIcon {
+  color: var(--color-grey-300);
+  margin-bottom: 4px;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.emptySubtitle {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--color-text-grey);
+  margin-bottom: 8px;
+}

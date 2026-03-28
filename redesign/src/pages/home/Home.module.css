@@ -1,0 +1,216 @@
+/* ── Page shell ───────────────────────────────────────────── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 100%;
+  padding: 28px 32px 48px;
+  background-color: var(--color-bg);
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Search ───────────────────────────────────────────────── */
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 11px;
+  color: var(--color-text-grey);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  height: 36px;
+  width: 260px;
+  padding: 0 12px 0 34px;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-card);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-grey);
+}
+
+.searchInput:focus {
+  border-color: var(--color-grey-400);
+  box-shadow: 0 0 0 3px var(--color-grey-200);
+}
+
+/* ── Auth buttons ─────────────────────────────────────────── */
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnLogin,
+.btnSignup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease, color 0.15s ease;
+}
+
+.btnLogin {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  color: var(--color-text);
+}
+
+.btnLogin:hover {
+  background-color: var(--color-grey-100);
+  border-color: var(--color-grey-300);
+  transform: translateY(-1px);
+}
+
+.btnSignup {
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: #ffffff;
+}
+
+.btnSignup:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* ── Category filter ──────────────────────────────────────── */
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filterChip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 13px;
+  border-radius: 20px;
+  border: 1px solid var(--color-card-border);
+  background-color: var(--color-card);
+  color: var(--color-text-grey);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.filterChip:hover {
+  background-color: var(--color-grey-50);
+  color: var(--color-text);
+  border-color: var(--color-grey-300);
+  transform: translateY(-1px);
+}
+
+.filterChipActive {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.filterChipActive:hover {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  opacity: 0.9;
+}
+
+/* ── Item grid ────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 0;
+  color: var(--color-text-grey);
+  font-size: 14px;
+}
+
+.emptyIcon {
+  color: var(--color-grey-300);
+}
+
+/* ── Load more ────────────────────────────────────────────── */
+.loadMoreRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.loadMoreBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 20px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-card-border);
+  background-color: var(--color-card);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.loadMoreBtn:hover {
+  background-color: var(--color-grey-100);
+  border-color: var(--color-grey-300);
+  transform: translateY(-1px);
+}
