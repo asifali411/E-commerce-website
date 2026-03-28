@@ -10,7 +10,7 @@ import type { Item } from "../components/itemCard/ItemCard";
 
 // --- Axios Instance -----------------------------------------
 const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "api",
   withCredentials: true,
 });
 
@@ -26,7 +26,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  isAuthenticated: boolean,
+  isAuthenticated: boolean;
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
   register: (data: {
@@ -137,7 +137,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     register,
     logout,
     refresh,
-    fetchAllItems
+    fetchAllItems,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
