@@ -81,7 +81,7 @@ function AnimatedRoutes() {
             path="/items/:id"
             element={
               <PageWrapper>
-                {/* <ItemDetail /> */}
+                <ItemDetail />
               </PageWrapper>
             }
           />

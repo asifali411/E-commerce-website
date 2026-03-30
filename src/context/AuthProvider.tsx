@@ -6,11 +6,11 @@ import {
   type ReactNode,
 } from "react";
 import axios from "axios";
-import type { Item } from "../components/itemCard/ItemCard";
+import type { Item, ItemResponse } from "../global/types";
 
 // --- Axios Instance -----------------------------------------
 const api = axios.create({
-  baseURL: "api",
+  baseURL: "/api",
   withCredentials: true,
 });
 
@@ -38,6 +38,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
   fetchAllItems: (skip?: number, limit?: number) => Promise<Item[]>;
+  fetchItem: (id: number) => Promise<ItemResponse | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -125,6 +126,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const fetchItem = async(id: number): Promise<ItemResponse | null> => {
+    try {
+      const response = await api.get(`items/${id}`);
+      const data = response.data;
+
+      return data;
+    } catch (error) {
+      console.error("fetch item failed: ", error);
+      return null;
+    }
+  }
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -138,6 +151,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     logout,
     refresh,
     fetchAllItems,
+    fetchItem
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

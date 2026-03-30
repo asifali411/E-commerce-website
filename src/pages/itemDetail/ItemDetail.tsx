@@ -1,44 +1,8 @@
 import { useState, useEffect } from "react";
 import styles from "./ItemDetail.module.css";
-
-// ── Types ──────────────────────────────────────────────
-
-type ItemStatus = "Active" | "Sold";
-type ItemCondition = "New" | "Lightly_Used" | "Heavily_Used";
-type ItemCategories = "Electronics" | "Stationary" | "Rent" | "Misseleneous";
-type BidStatus = "Accepted" | "Pending" | "Rejected";
-
-interface PublicUsersResponse {
-  username: string;
-  rating: number;
-}
-
-interface ItemImageResponse {
-  id: number;
-  image_path: string;
-}
-
-interface BidResponse {
-  id: number;
-  price: number;
-  quantity: number;
-  bider: PublicUsersResponse;
-  status: BidStatus;
-}
-
-interface UniqueItemResponse {
-  id: number;
-  seller: PublicUsersResponse;
-  title: string;
-  description: string;
-  min_price: number;
-  quantity: number;
-  status: ItemStatus;
-  categories: ItemCategories[];
-  condition: ItemCondition;
-  images: ItemImageResponse[];
-  bids: BidResponse[];
-}
+import { useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthProvider";
+import type { ItemCondition, BidStatus, ItemResponse } from "../../global/types";
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
@@ -82,18 +46,9 @@ function BidStatusChip({ status }: { status: BidStatus }) {
 
 // ── Main Component ─────────────────────────────────────────────────────────
 
-interface ItemDetailPageProps {
-  itemId: number;
-  apiBase?: string;
-  onBack?: () => void;
-}
+export default function ItemDetail() {
 
-export default function ItemDetail({
-  itemId,
-  apiBase = "",
-  onBack,
-}: ItemDetailPageProps) {
-  const [item, setItem] = useState<UniqueItemResponse | null>(null);
+  const [item, setItem] = useState<ItemResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
@@ -103,22 +58,22 @@ export default function ItemDetail({
   const [bidError, setBidError] = useState<string | null>(null);
   const [bidSuccess, setBidSuccess] = useState(false);
 
+  const { fetchItem } = useAuth();
+
+  const itemId = Number(useParams<{ id: string }>());
+  const apiBase = "/api";
+  let onBack;
+
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch(`${apiBase}/items/${itemId}`, { credentials: "include" })
-      .then((r) => {
-        if (!r.ok) throw new Error(`Error ${r.status}`);
-        return r.json();
-      })
-      .then((data: UniqueItemResponse) => {
-        setItem(data);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setError(e.message);
-        setLoading(false);
-      });
+
+    const handleItem = async () => {
+      const data = await fetchItem(itemId);
+      setItem(data);
+    }
+    handleItem();
+    
   }, [itemId, apiBase]);
 
   async function handleBid() {
@@ -144,7 +99,7 @@ export default function ItemDetail({
       setBidPrice("");
       setBidQty("1");
       // Refresh item to show new bid
-      const updated: UniqueItemResponse = await fetch(
+      const updated: ItemResponse = await fetch(
         `${apiBase}/items/${item.id}`,
         { credentials: "include" },
       ).then((r) => r.json());
@@ -351,7 +306,7 @@ export default function ItemDetail({
                     ₹{bid.price.toLocaleString()}
                   </span>
                   <span className={styles.bidQty}>
-                    × {bid.quantity} unit{bid.quantity > 1 ? "s" : ""}
+                    x {bid.quantity} unit{bid.quantity > 1 ? "s" : ""}
                   </span>
                 </div>
               </div>

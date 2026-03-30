@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import {
   User01,
   Star01,
@@ -7,55 +6,65 @@ import {
   Monitor01,
   PencilLine,
   Building07,
-  // Heart,
   Flag01,
 } from "@untitledui/icons";
 import styles from "./ItemCard.module.css";
+import { useNavigate } from "react-router-dom";
+import type { ItemCategory, ItemCondition, Item } from "../../global/types";
+import { useAuth } from "../../context/AuthProvider";
+import { useToast } from "../toast/Toast";
 
-// ── Types ──────────────────────────────────────────────────
-export type ItemCategory =
-  | "Electronics"
-  | "Stationary"
-  | "Rent"
-  | "Miscellaneous";
-export type ItemCondition = "New" | "Lightly Used" | "Heavily Used";
-
-export interface Item {
-  id: number;
-  title: string;
-  seller: string;
-  sellerRating: number;
-  minPrice: number;
-  categories: ItemCategory[];
-  condition: ItemCondition;
-  bids: number;
-  timeLeft?: string;
-}
+// ── Place holders ────────────────────────────────────────────────
+let timeLeft = `${Math.floor(Math.random() * 10 + 1)} days`;
+let bids = Math.floor(Math.random() * 10);
 
 // ── Helpers ────────────────────────────────────────────────
 const CONDITION_CLASS: Record<ItemCondition, string> = {
   New: styles.conditionNew,
-  "Lightly Used": styles.conditionLight,
-  "Heavily Used": styles.conditionHeavy,
+  "Lightly_Used": styles.conditionLight,
+  "Heavily_Used": styles.conditionHeavy,
 };
 
 const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
   Electronics: <Monitor01 size={11} />,
   Stationary: <PencilLine size={11} />,
   Rent: <Building07 size={11} />,
-  Miscellaneous: <Package size={11} />,
+  Misseleneous: <Package size={11} />,
 };
 
 // ── Component ──────────────────────────────────────────────
 export default function ItemCard({ item }: { item: Item }) {
-  // const [saved, setSaved] = useState(false);
 
+  const { addToast } = useToast();
+
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  const handleNavigation = () => {
+    if(isAuthenticated){
+      navigate(`items/${item.id}`);
+    }
+
+    addToast({
+      type: "warning",
+      title: "Authentication error",
+      message: "Log in to continue",
+      duration: 3000,
+    });
+  }
+ 
   return (
-    <article className={styles.card}>
-      {item.timeLeft && (
+    <article
+      className={styles.card}
+      onClick={() => {
+        handleNavigation();
+      }}
+    >
+      {/* TODO: fix this, currently using placeholders */}
+      {timeLeft && (
         <div className={styles.urgencyBadge}>
           <Clock size={12} />
-          {item.timeLeft}
+          {timeLeft}
         </div>
       )}
 
@@ -72,17 +81,6 @@ export default function ItemCard({ item }: { item: Item }) {
           >
             <Flag01 size={15} />
           </button>
-
-          {/* <button
-            className={`${styles.actionBtn} ${saved ? styles.actionBtnSaved : ""}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setSaved((s) => !s);
-            }}
-            title={saved ? "Remove from wishlist" : "Save to wishlist"}
-          >
-            <Heart size={15} />
-          </button> */}
         </div>
       </div>
 
@@ -108,17 +106,19 @@ export default function ItemCard({ item }: { item: Item }) {
 
         <div className={styles.cardSeller}>
           <User01 size={11} />
-          <span>{item.seller}</span>
+          <span>{item.seller.username}</span>
           <Star01 size={11} className={styles.starIcon} />
-          <span>{item.sellerRating.toFixed(1)}</span>
+          <span>{item.seller.rating.toFixed(1)}</span>
         </div>
 
         <div className={styles.cardFooter}>
           <span className={styles.cardPrice}>
-            ₹{item.minPrice.toLocaleString("en-IN")}
+            ₹{item.min_price.toLocaleString("en-IN")}
           </span>
+
+          {/* TODO: fix this, currently using placeholders */}
           <span className={styles.cardBids}>
-            {item.bids} {item.bids === 1 ? "bid" : "bids"}
+            {bids} {bids === 1 ? "bid" : "bids"}
           </span>
         </div>
       </div>
