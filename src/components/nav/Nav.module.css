@@ -167,6 +167,11 @@
   color: var(--color-error);
 }
 
+.logoutBtn:disabled{
+  color: var(--color-grey-500);
+  cursor: not-allowed;
+}
+
 /* ── Main content area ────────────────────────────────────── */
 .main {
   flex: 1;

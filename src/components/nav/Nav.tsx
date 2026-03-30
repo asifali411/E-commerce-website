@@ -1,5 +1,5 @@
 import { navExpanded, setNavExpanded } from "../../global/var";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import styles from "./Nav.module.css";
 
 import {
@@ -13,6 +13,7 @@ import {
     LogOut01,
 } from "@untitledui/icons";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthProvider";
 
 interface NavItem {
   to: string;
@@ -32,6 +33,8 @@ const navItems: NavItem[] = [
 export default function Nav() {
 
   const [expanded, setExpanded] = useState(navExpanded);
+  const navigate = useNavigate();
+  const {isAuthenticated, user, logout} = useAuth();
 
   const handleNavExpansion = (value: boolean): void => {
     setNavExpanded(value);
@@ -79,16 +82,16 @@ export default function Nav() {
             <span className={styles.iconWrap}>
               <User01 />
             </span>
-            <span className={styles.label}>Profile</span>
+            <span className={styles.label}>{ !isAuthenticated && "Profile"} {isAuthenticated && (user?.username ?? "Profile")}</span>
           </NavLink>
 
           <button
             className={styles.logoutBtn}
             onClick={() => {
-              fetch("/logout", { method: "POST" }).finally(() => {
-                window.location.href = "/login";
-              });
+              logout();
+              navigate("/");
             }}
+            disabled={!isAuthenticated}
           >
             <span className={styles.iconWrap}>
               <LogOut01 />

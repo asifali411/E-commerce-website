@@ -10,12 +10,14 @@ import {
 } from "@untitledui/icons";
 import styles from "./ItemCard.module.css";
 import { useNavigate } from "react-router-dom";
-import type { ItemCategory, ItemCondition, Item } from "../../global/types";
+import type { ItemCategory, ItemCondition } from "../../global/types";
+import type { ItemResponse } from "../../global/schema";
 import { useAuth } from "../../context/AuthProvider";
 import { useToast } from "../toast/Toast";
 
 // ── Place holders ────────────────────────────────────────────────
-let timeLeft = `${Math.floor(Math.random() * 10 + 1)} days`;
+// let timeLeft = `${Math.floor(Math.random() * 10 + 2)} days left`;
+let timeLeft;
 let bids = Math.floor(Math.random() * 10);
 
 // ── Helpers ────────────────────────────────────────────────
@@ -26,6 +28,7 @@ const CONDITION_CLASS: Record<ItemCondition, string> = {
 };
 
 const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
+  All: <Package size={11}/>,
   Electronics: <Monitor01 size={11} />,
   Stationary: <PencilLine size={11} />,
   Rent: <Building07 size={11} />,
@@ -33,7 +36,7 @@ const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
 };
 
 // ── Component ──────────────────────────────────────────────
-export default function ItemCard({ item }: { item: Item }) {
+export default function ItemCard({ item }: { item: ItemResponse }) {
 
   const { addToast } = useToast();
 
@@ -47,9 +50,9 @@ export default function ItemCard({ item }: { item: Item }) {
 
     addToast({
       type: "warning",
-      title: "Authentication error",
-      message: "Log in to continue",
-      duration: 3000,
+      title: "You are logged out",
+      message: "Please Log in to continue",
+      duration: 4000,
     });
   }
  

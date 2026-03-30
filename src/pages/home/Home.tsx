@@ -7,107 +7,15 @@ import {
   ArrowRight,
 } from "@untitledui/icons";
 import styles from "./Home.module.css";
-import ItemCard, { type Item } from "../../components/itemCard/ItemCard";
+import ItemCard from "../../components/itemCard/ItemCard";
+import type { ItemResponse } from "../../global/schema";
+import type { ItemCategory } from "../../global/types";
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 
-// ── Mock data ──────────────────────────────────────────────
 const CATEGORIES = [
-  "All",
-  "Electronics",
-  "Stationary",
-  "Rent",
-  "Miscellaneous",
-] as const;
-
-type Category = (typeof CATEGORIES)[number];
-
-// @ts-ignore
-const MOCK_ITEMS: Item[] = [
-  {
-    id: 1,
-    title: 'Dell monitor 24"',
-    seller: "arjun",
-    sellerRating: 4.5,
-    minPrice: 3500,
-    categories: ["Electronics", "Stationary"],
-    condition: "Lightly Used",
-    bids: 4,
-    timeLeft: "2h left",
-  },
-  {
-    id: 2,
-    title: "Engineering drawing set",
-    seller: "meera",
-    sellerRating: 4.0,
-    minPrice: 180,
-    categories: ["Stationary"],
-    condition: "New",
-    bids: 2,
-  },
-  {
-    id: 3,
-    title: "Single room (hostel)",
-    seller: "vikram",
-    sellerRating: 3.8,
-    minPrice: 800,
-    categories: ["Rent"],
-    condition: "New",
-    bids: 1,
-  },
-  {
-    id: 4,
-    title: "Cycle helmet",
-    seller: "priya",
-    sellerRating: 4.2,
-    minPrice: 420,
-    categories: ["Miscellaneous"],
-    condition: "Lightly Used",
-    bids: 0,
-  },
-  {
-    id: 5,
-    title: "HP laptop 8GB RAM",
-    seller: "rohit",
-    sellerRating: 4.8,
-    minPrice: 18000,
-    categories: ["Electronics"],
-    condition: "Lightly Used",
-    bids: 9,
-    timeLeft: "5h left",
-  },
-  {
-    id: 6,
-    title: "DS Cormen textbook",
-    seller: "ananya",
-    sellerRating: 4.3,
-    minPrice: 900,
-    categories: ["Stationary"],
-    condition: "Heavily Used",
-    bids: 6,
-  },
-  {
-    id: 7,
-    title: "Wildcraft backpack",
-    seller: "suresh gobi",
-    sellerRating: 4.7,
-    minPrice: 650,
-    categories: ["Miscellaneous"],
-    condition: "New",
-    bids: 3,
-  },
-  {
-    id: 8,
-    title: "Scientific calculator",
-    seller: "kavitha",
-    sellerRating: 3.9,
-    minPrice: 350,
-    categories: ["Electronics"],
-    condition: "Lightly Used",
-    bids: 2,
-    timeLeft: "12h left",
-  },
+  "All" , "Electronics" , "Stationary" , "Rent" , "Misseleneous"
 ];
 
 // ── Main page ──────────────────────────────────────────────
@@ -115,16 +23,16 @@ export default function Home() {
 
   const { user } = useAuth();
   const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState<Category>("All");
+  const [activeCategory, setActiveCategory] = useState<ItemCategory>("All");
   const navigate = useNavigate();
-  const [items, setItems] = useState<Item[]>([]);
-  const { fetchAllItems } = useAuth();
+  const [items, setItems] = useState<ItemResponse[]>([]);
+  const { fetchFeed } = useAuth();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
 
   const loadMore = async () => {
     const nextPage = page + 1;
-    const newItems = await fetchAllItems(nextPage, 10);
+    const newItems = await fetchFeed(nextPage, 10);
     setItems((prev) => [...prev, ...newItems]);
     setPage(nextPage);
   };
@@ -133,7 +41,7 @@ export default function Home() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const data = await fetchAllItems(0, 10);
+        const data = await fetchFeed(0, 10);
         setItems(data);
       } catch (error) {
         console.error(error);
@@ -143,7 +51,7 @@ export default function Home() {
     };
 
     fetchItems();
-  }, [fetchAllItems]);
+  }, [fetchFeed]);
 
   const filtered = items.filter((item) => {
     const matchesCategory =
@@ -153,7 +61,7 @@ export default function Home() {
     const matchesSearch =
       !search ||
       item.title.toLowerCase().includes(search.toLowerCase()) ||
-      item.seller.toLowerCase().includes(search.toLowerCase());
+      item.seller.username.toLowerCase().includes(search.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -204,7 +112,7 @@ export default function Home() {
 
       {/* ── Category filter ── */}
       <div className={styles.filterRow}>
-        {CATEGORIES.map((cat) => (
+        {CATEGORIES.map((cat: any) => (
           <button
             key={cat}
             className={`${styles.filterChip} ${activeCategory === cat ? styles.filterChipActive : ""}`}
