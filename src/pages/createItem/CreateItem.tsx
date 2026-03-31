@@ -7,6 +7,8 @@ import {
   Building07,
   Image01
 } from "@untitledui/icons";
+import { useAuth } from "../../context/AuthProvider";
+import { useToast } from "../../components/toast/Toast";
 
 // ── Types ──────────────────────────────────────────────
 
@@ -66,7 +68,6 @@ function FieldError({ msg }: { msg?: string }) {
 // ── Main Component ─────────────────────────────────────────────────────────
 
 export default function CreateItem({
-  apiBase = "",
   onSuccess,
   onCancel,
 }: CreateItemProps) {
@@ -83,11 +84,14 @@ export default function CreateItem({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [errors, setErrors] = useState<
-    Partial<Record<keyof ItemCreate | "global", string>>
+    Partial<Record<keyof ItemCreate, string>>
   >({});
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<"form" | "success">("form");
   const [createdItem, setCreatedItem] = useState<ItemResponse | null>(null);
+
+  const { createItem, uploadImage, isAuthenticated } = useAuth();
+  const { addToast } = useToast();
 
   // ── Validation ───────────────────────────────────────────────────────────
 
@@ -182,42 +186,47 @@ export default function CreateItem({
         categories,
       };
 
-      const res = await fetch(`${apiBase}/items/create`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const item: ItemResponse | null = await createItem(body);
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        const msg =
-          err?.detail?.[0]?.msg ?? err?.detail ?? `Error ${res.status}`;
-        setErrors({
-          global: typeof msg === "string" ? msg : JSON.stringify(msg),
+      if(!item){
+        
+        // setErrors({
+        //   global: "Failed to create Item",
+        // });
+        addToast({
+          type: "error",
+          title: isAuthenticated ? "Failed to create Item" : "You are logged out.",
+          message: isAuthenticated ? "" : "Please login to continue.",
+          duration: 4000,
         });
+        console.log(item);
         setLoading(false);
         return;
       }
 
-      const item: ItemResponse = await res.json();
-
       for (const file of imageFiles) {
-        const fd = new FormData();
-        fd.append("image", file);
-        await fetch(`${apiBase}/images/${item.id}`, {
-          method: "POST",
-          credentials: "include",
-          body: fd,
-        });
+        // const fd = new FormData();
+        // fd.append("image", file);
+        // // await fetch(`${apiBase}/images/${item.id}`, {
+        // //   method: "POST",
+        // //   credentials: "include",
+        // //   body: fd,
+        // // });
+        uploadImage(item.id, file);
       }
 
       setCreatedItem(item);
       setStep("success");
       onSuccess?.(item);
     } catch (e: unknown) {
-      setErrors({
-        global: e instanceof Error ? e.message : "Something went wrong.",
+      // setErrors({
+      //   global: e instanceof Error ? e.message : "Something went wrong.",
+      // });
+      addToast({
+        type: "error",
+        title: e instanceof Error ? e.message : "Something went wrong.",
+        message: "",
+        duration: 4000,
       });
     } finally {
       setLoading(false);
@@ -291,12 +300,12 @@ export default function CreateItem({
       </header>
 
       <div className={styles.formWrapper}>
-        {/* Global error */}
+        {/* Global error
         {errors.global && (
           <div className={styles.globalError}>
             <span>⚠</span> {errors.global}
           </div>
-        )}
+        )} */}
 
         <div className={styles.formGrid}>
           {/* ── LEFT COLUMN ── */}

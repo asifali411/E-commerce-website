@@ -68,6 +68,7 @@ export interface ItemResponse {
   description: string;
   min_price: number;
   quantity: number;
+  bid_count: number;
   status: ItemStatus;
   categories: ItemCategory[];
   condition: ItemCondition;

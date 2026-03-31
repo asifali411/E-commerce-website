@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import styles from "./ItemDetail.module.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
-import type { ItemCondition, BidStatus, ItemResponse } from "../../global/types";
+import type { ItemCondition, BidStatus } from "../../global/types";
+import type { ItemResponse } from "../../global/schema";
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
@@ -52,29 +53,36 @@ export default function ItemDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
-  const [bidPrice, setBidPrice] = useState("");
-  const [bidQty, setBidQty] = useState("1");
+  const [bidPrice, setBidPrice] = useState<number>();
+  const [bidQty, setBidQty] = useState<number>(1);
   const [bidLoading, setBidLoading] = useState(false);
   const [bidError, setBidError] = useState<string | null>(null);
   const [bidSuccess, setBidSuccess] = useState(false);
 
-  const { fetchItem } = useAuth();
+  const { fetchItem, createBid } = useAuth();
 
-  const itemId = Number(useParams<{ id: string }>());
-  const apiBase = "/api";
-  let onBack;
+  const itemId = Number(useParams<{ id: string }>().id);
+  const navigate = useNavigate();
+  const onBack = () => navigate(-1);
 
   useEffect(() => {
     setLoading(true);
     setError(null);
 
     const handleItem = async () => {
-      const data = await fetchItem(itemId);
-      setItem(data);
-    }
+      try {
+        const data = await fetchItem(itemId);
+        setItem(data);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Failed to fetch item");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     handleItem();
     
-  }, [itemId, apiBase]);
+  }, [itemId]);
 
   async function handleBid() {
     if (!item) return;
@@ -82,27 +90,15 @@ export default function ItemDetail() {
     setBidError(null);
     setBidSuccess(false);
     try {
-      const res = await fetch(`${apiBase}/bids/${item.id}`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          price: parseFloat(bidPrice),
-          quantity: parseInt(bidQty, 10),
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.detail?.[0]?.msg ?? `Error ${res.status}`);
-      }
+      //@ts-ignore
+      const res = await createBid(item.id, {price: bidPrice ?? 0, quantity: bidQty});
+      
       setBidSuccess(true);
-      setBidPrice("");
-      setBidQty("1");
+      setBidPrice(0);
+      setBidQty(1);
       // Refresh item to show new bid
-      const updated: ItemResponse = await fetch(
-        `${apiBase}/items/${item.id}`,
-        { credentials: "include" },
-      ).then((r) => r.json());
+      const updated: ItemResponse | null = await fetchItem(item.id);
+      if(updated === null) throw new Error("Failed to reload.");
       setItem(updated);
     } catch (e: unknown) {
       setBidError(e instanceof Error ? e.message : "Failed to place bid.");
@@ -165,7 +161,7 @@ export default function ItemDetail() {
           <div className={styles.mainImage}>
             {hasImages ? (
               <img
-                src={item.images[activeImage].image_path}
+                src={`/api/${item.images[activeImage].image_path}`}
                 alt={item.title}
                 className={styles.mainImg}
               />
@@ -186,7 +182,7 @@ export default function ItemDetail() {
                   className={`${styles.thumb} ${i === activeImage ? styles.thumbActive : ""}`}
                   onClick={() => setActiveImage(i)}
                 >
-                  <img src={img.image_path} alt={`view ${i + 1}`} />
+                  <img src={`/api/${img.image_path}`} alt={`view ${i + 1}`} />
                 </button>
               ))}
             </div>
@@ -246,7 +242,7 @@ export default function ItemDetail() {
                     min={item.min_price}
                     step="0.01"
                     value={bidPrice}
-                    onChange={(e) => setBidPrice(e.target.value)}
+                    onChange={(e) => setBidPrice(Number(e.target.value))}
                     placeholder={`≥ ${item.min_price}`}
                     className={styles.bidInput}
                   />
@@ -258,7 +254,7 @@ export default function ItemDetail() {
                     min={1}
                     max={item.quantity}
                     value={bidQty}
-                    onChange={(e) => setBidQty(e.target.value)}
+                    onChange={(e) => setBidQty(Number(e.target.value))}
                     className={styles.bidInput}
                   />
                 </label>

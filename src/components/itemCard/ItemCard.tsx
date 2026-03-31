@@ -18,7 +18,7 @@ import { useToast } from "../toast/Toast";
 // ── Place holders ────────────────────────────────────────────────
 // let timeLeft = `${Math.floor(Math.random() * 10 + 2)} days left`;
 let timeLeft;
-let bids = Math.floor(Math.random() * 10);
+// let bids = Math.floor(Math.random() * 10);
 
 // ── Helpers ────────────────────────────────────────────────
 const CONDITION_CLASS: Record<ItemCondition, string> = {
@@ -43,17 +43,20 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
+  console.log(item?.images[0]?.image_path);
+
   const handleNavigation = () => {
     if(isAuthenticated){
       navigate(`items/${item.id}`);
+    } else {
+      addToast({
+        type: "warning",
+        title: "You are logged out",
+        message: "Please Log in to continue",
+        duration: 4000,
+      });
     }
 
-    addToast({
-      type: "warning",
-      title: "You are logged out",
-      message: "Please Log in to continue",
-      duration: 4000,
-    });
   }
  
   return (
@@ -72,8 +75,14 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
       )}
 
       {/* Image area */}
+
       <div className={styles.cardImagePlaceholder}>
-        <Package size={32} className={styles.cardImageIcon} />
+        {item.images.length === 0 && (
+          <Package size={32} className={styles.cardImageIcon} />
+        )}
+        {item.images.length > 0 && (
+          <img src={`/api/${item.images[0].image_path}`} className={styles.cardImage}></img>
+        )}
 
         {/* Hover actions */}
         <div className={styles.cardActions}>
@@ -119,9 +128,8 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
             ₹{item.min_price.toLocaleString("en-IN")}
           </span>
 
-          {/* TODO: fix this, currently using placeholders */}
           <span className={styles.cardBids}>
-            {bids} {bids === 1 ? "bid" : "bids"}
+            {item.bid_count} {item.bid_count === 1 ? "bid" : "bids"}
           </span>
         </div>
       </div>

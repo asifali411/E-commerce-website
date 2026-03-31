@@ -43,6 +43,7 @@ export default function Home() {
         setLoading(true);
         const data = await fetchFeed(0, 10);
         setItems(data);
+        console.log(data);
       } catch (error) {
         console.error(error);
       } finally {

@@ -51,6 +51,18 @@
   color: var(--color-grey-300);
 }
 
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+  display: block
+}
+
+.card:hover .cardImage{
+  transform: scale(1.05);
+}
+
 /* ── Hover action buttons ─────────────────────────────────── */
 .cardActions {
   position: absolute;
