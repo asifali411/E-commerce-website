@@ -26,7 +26,7 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState<ItemCategory>("All");
   const navigate = useNavigate();
   const [items, setItems] = useState<ItemResponse[]>([]);
-  const { fetchFeed } = useAuth();
+  const { isAuthenticated, fetchFeed } = useAuth();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
 
@@ -41,11 +41,12 @@ export default function Home() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const data = await fetchFeed(0, 10);
-        setItems(data);
-        console.log(data);
+        if(isAuthenticated){
+          const data = await fetchFeed(0, 10);
+          setItems(data);
+        }
       } catch (error) {
-        console.error(error);
+        
       } finally {
         setLoading(false);
       }

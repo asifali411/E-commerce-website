@@ -1,0 +1,174 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background-color: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.panel {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.08),
+        0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    animation: slideUp 0.18s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(8px); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+}
+
+/* ── Variant left-border accents ── */
+/* .danger  { border-left: 3px solid var(--color-error);   }
+.warning { border-left: 3px solid var(--color-warning);  }
+.success { border-left: 3px solid var(--color-success);  } */
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 0.625rem;
+}
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    flex-shrink: 0;
+    padding: 0.5rem;
+}
+
+.icon_danger  { color: var(--color-error);   background-color: color-mix(in srgb, var(--color-error)   12%, transparent); }
+.icon_warning { color: var(--color-warning);  background-color: color-mix(in srgb, var(--color-warning) 12%, transparent); }
+.icon_success { color: var(--color-success);  background-color: color-mix(in srgb, var(--color-success) 12%, transparent); }
+
+.title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.4;
+}
+
+.description {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+}
+
+.body {
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.625rem;
+    margin-top: 1.25rem;
+}
+
+/* ── Base button styles ── */
+.cancelBtn,
+.confirmBtn {
+    padding: 0.5rem 1.125rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-card-border);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.cancelBtn {
+    background-color: var(--color-button);
+    color: var(--color-text);
+}
+
+.cancelBtn:hover:not(:disabled) {
+    background-color: var(--color-button-hover);
+    transform: translateY(-1px);
+}
+
+.confirmBtn {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border-color: transparent;
+}
+
+.confirmBtn:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-1px);
+}
+
+/* ── Confirm button ── */
+.confirm_danger {
+    background-color: var(--color-error);
+}
+
+.confirm_danger:hover:not(:disabled) {
+    filter: brightness(0.9);
+    background-color: var(--color-error);
+}
+
+.confirm_warning {
+    background-color: var(--color-warning);
+}
+
+.confirm_warning:hover:not(:disabled) {
+    filter: brightness(0.92);
+    background-color: var(--color-warning);
+}
+
+.confirm_success {
+    background-color: var(--color-success);
+}
+
+.confirm_success:hover:not(:disabled) {
+    filter: brightness(0.9);
+    background-color: var(--color-success);
+}
+
+/* ── Disabled state ── */
+.cancelBtn:disabled,
+.confirmBtn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── Loading spinner ── */
+.spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
