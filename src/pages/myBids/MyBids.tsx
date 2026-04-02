@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Package,
@@ -15,121 +15,70 @@ import {
   ShoppingBag01,
 } from "@untitledui/icons";
 import styles from "./MyBids.module.css";
-import type {
-  ItemCategory,
-  ItemCondition,
-} from "../../components/itemCard/ItemCard";
+import type { ItemCategory, ItemCondition, BidStatus } from "../../global/types";
+import type { BidHistoryResponse } from "../../global/schema";
+import { useAuth } from "../../context/AuthProvider";
+import Dialog from "../../components/dialog/Dialog";
 
 // ── Types ──────────────────────────────────────────────────
-type BidStatus = "Pending" | "Accepted" | "Rejected";
-
-interface MyBid {
-  bidId: number;
-  itemId: number;
-  title: string;
-  description: string;
-  category: ItemCategory;
-  condition: ItemCondition;
-  seller: string;
-  itemMinPrice: number;
-  myBidPrice: number;
-  myBidQuantity: number;
-  status: BidStatus;
-  placedAt: string;
-}
 
 type FilterTab = "All" | "Pending" | "Accepted" | "Rejected";
 
 // ── Mock data ──────────────────────────────────────────────
-const MOCK_BIDS: MyBid[] = [
+
+const MOCK_BIDS: BidHistoryResponse[] = [
   {
-    bidId: 101,
-    itemId: 1,
-    title: 'Dell Monitor 24"',
-    description: "Full HD IPS panel, barely used. Original box included.",
-    category: "Electronics",
-    condition: "Lightly Used",
-    seller: "arjun_k",
-    itemMinPrice: 3500,
-    myBidPrice: 3800,
-    myBidQuantity: 1,
-    status: "Pending",
-    placedAt: "2025-06-13",
+    "id": 0,
+    "price": 69,
+    "quantity": 1,
+    "bider": {
+      "username": "user",
+      "rating": 2.5
+    },
+    "status": "Accepted",
+    "item": {
+      "id": 0,
+      "title": "string",
+      "seller": {
+        "username": "string",
+        "rating": 2.5
+      },
+      "min_price": 470,
+      "categories": [
+        "Electronics"
+      ],
+      "condition": "New"
+    }
   },
+
   {
-    bidId: 102,
-    itemId: 2,
-    title: "DS Cormen Textbook",
-    description: "Introduction to Algorithms, 3rd edition. Some highlights.",
-    category: "Stationary",
-    condition: "Heavily Used",
-    seller: "ananya_t",
-    itemMinPrice: 900,
-    myBidPrice: 950,
-    myBidQuantity: 1,
-    status: "Accepted",
-    placedAt: "2025-06-10",
-  },
-  {
-    bidId: 103,
-    itemId: 3,
-    title: "HP Laptop 8GB RAM",
-    description: "HP Pavilion, Core i5, 256GB SSD. Charger included.",
-    category: "Electronics",
-    condition: "Lightly Used",
-    seller: "rohit_d",
-    itemMinPrice: 18000,
-    myBidPrice: 19500,
-    myBidQuantity: 1,
-    status: "Rejected",
-    placedAt: "2025-05-29",
-  },
-  {
-    bidId: 104,
-    itemId: 4,
-    title: "Single Room (Hostel)",
-    description: "Ground floor, attached bath, available from July.",
-    category: "Rent",
-    condition: "New",
-    seller: "vikram_s",
-    itemMinPrice: 800,
-    myBidPrice: 850,
-    myBidQuantity: 1,
-    status: "Pending",
-    placedAt: "2025-06-14",
-  },
-  {
-    bidId: 105,
-    itemId: 5,
-    title: "Scientific Calculator",
-    description: "Casio fx-991ES Plus, perfect for engineering exams.",
-    category: "Electronics",
-    condition: "Lightly Used",
-    seller: "kavitha_n",
-    itemMinPrice: 350,
-    myBidPrice: 370,
-    myBidQuantity: 2,
-    status: "Rejected",
-    placedAt: "2025-06-05",
-  },
-  {
-    bidId: 106,
-    itemId: 6,
-    title: "Wildcraft Backpack 45L",
-    description: "Barely used, ideal for trekking or daily college use.",
-    category: "Miscellaneous",
-    condition: "New",
-    seller: "suresh_m",
-    itemMinPrice: 650,
-    myBidPrice: 700,
-    myBidQuantity: 1,
-    status: "Accepted",
-    placedAt: "2025-06-02",
-  },
+    "id": 1,
+    "price": 69,
+    "quantity": 1,
+    "bider": {
+      "username": "test",
+      "rating": 2.5
+    },
+    "status": "Pending",
+    "item": {
+      "id": 0,
+      "title": "string",
+      "seller": {
+        "username": "string",
+        "rating": 2.5
+      },
+      "min_price": 470,
+      "categories": [
+        "Miscellaneous"
+      ],
+      "condition": "Heavily_Used"
+    }
+  }
 ];
 
 // ── Helpers ────────────────────────────────────────────────
 const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
+  All: <Package size={11} />,
   Electronics: <Monitor01 size={11} />,
   Stationary: <PencilLine size={11} />,
   Rent: <Building07 size={11} />,
@@ -138,8 +87,8 @@ const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
 
 const CONDITION_CLASS: Record<ItemCondition, string> = {
   New: styles.conditionNew,
-  "Lightly Used": styles.conditionLight,
-  "Heavily Used": styles.conditionHeavy,
+  Lightly_Used: styles.conditionLight,
+  Heavily_Used: styles.conditionHeavy,
 };
 
 // ── Sub-components ─────────────────────────────────────────
@@ -158,12 +107,12 @@ function BidRow({
   onWithdraw,
   onViewTransaction,
 }: {
-  bid: MyBid;
+  bid: BidHistoryResponse;
   onEdit: (bidId: number) => void;
   onWithdraw: (bidId: number) => void;
   onViewTransaction: (itemId: number) => void;
 }) {
-  const isPending = bid.status === "Pending";
+  const isPending  = bid.status === "Pending" ;
   const isAccepted = bid.status === "Accepted";
   const isRejected = bid.status === "Rejected";
 
@@ -179,21 +128,27 @@ function BidRow({
       {/* Main info */}
       <div className={styles.rowMain}>
         <div className={styles.rowTitleRow}>
-          <h3 className={styles.rowTitle}>{bid.title}</h3>
-          <span className={styles.sellerChip}>by {bid.seller}</span>
+          <h3 className={styles.rowTitle}>{bid.item.title}</h3>
+          <span className={styles.sellerChip}>by {bid.bider.username}</span>
         </div>
-        <p className={styles.rowDesc}>{bid.description}</p>
+        <p className={styles.rowDesc}>
+          {/* {bid.item.description} */}
+          </p>
         <div className={styles.rowTags}>
-          <span className={styles.categoryTag}>
-            {CATEGORY_ICON[bid.category]}
-            {bid.category}
-          </span>
+          {bid.item.categories.map((cat) => (
+            <span key={cat} className={styles.categoryTag}>
+              {CATEGORY_ICON[cat]}
+              {cat}
+            </span>
+          ))}
           <span
-            className={`${styles.conditionTag} ${CONDITION_CLASS[bid.condition]}`}
+            className={`${styles.conditionTag} ${CONDITION_CLASS[bid.item.condition]}`}
           >
-            {bid.condition}
+            {bid.item.condition}
           </span>
-          <span className={styles.metaChip}>Placed {bid.placedAt}</span>
+          <span className={styles.metaChip}>
+            {/* Placed {bid.placedAt} */}
+          </span>
         </div>
       </div>
 
@@ -201,10 +156,10 @@ function BidRow({
       <div className={styles.rowBidAmount}>
         <span className={styles.rowBidLabel}>Your bid</span>
         <span className={styles.rowBidValue}>
-          ₹{bid.myBidPrice.toLocaleString("en-IN")}
+          ₹{bid.price.toLocaleString("en-IN")}
         </span>
-        {bid.myBidQuantity > 1 && (
-          <span className={styles.rowBidQty}>× {bid.myBidQuantity}</span>
+        {bid.quantity > 1 && (
+          <span className={styles.rowBidQty}>x {bid.quantity}</span>
         )}
       </div>
 
@@ -212,7 +167,7 @@ function BidRow({
       <div className={styles.rowMinPrice}>
         <span className={styles.rowMinPriceLabel}>Min. price</span>
         <span className={styles.rowMinPriceValue}>
-          ₹{bid.itemMinPrice.toLocaleString("en-IN")}
+          ₹{bid.price.toLocaleString("en-IN")}
         </span>
       </div>
 
@@ -244,14 +199,14 @@ function BidRow({
           <>
             <button
               className={styles.actionBtn}
-              onClick={() => onEdit(bid.bidId)}
+              onClick={() => onEdit(bid.id)}
               title="Edit bid"
             >
               <Edit01 size={14} />
             </button>
             <button
               className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
-              onClick={() => onWithdraw(bid.bidId)}
+              onClick={() => onWithdraw(bid.id)}
               title="Withdraw bid"
             >
               <Trash01 size={14} />
@@ -261,7 +216,7 @@ function BidRow({
         {isAccepted && (
           <button
             className={styles.actionBtnTransaction}
-            onClick={() => onViewTransaction(bid.itemId)}
+            onClick={() => onViewTransaction(bid.item.id)}
             title="View transaction"
           >
             View transaction
@@ -271,7 +226,7 @@ function BidRow({
         {isRejected && (
           <button
             className={styles.actionBtnBidAgain}
-            onClick={() => onEdit(bid.bidId)}
+            onClick={() => onEdit(bid.id)}
             title="Place a new bid"
           >
             Bid again
@@ -287,22 +242,63 @@ function BidRow({
 export default function MyBids() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
+  const { isAuthenticated, createBid, updateBid, deleteBid, fetchBids } = useAuth();
+
+  const [loadingData, setLoadingData] = useState(true);
+
+  const [bidings, setBidings] = useState<BidHistoryResponse[]>([]);
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteBidId, setDeleteBidId] = useState<number | null>(null);
+
+  useEffect(() => {
+      async function load() {
+        setLoadingData(true);
+        try {
+          if (isAuthenticated) {
+            const items = await fetchBids(0, 50);
+            setBidings(items);
+          }
+        } finally {
+          setLoadingData(false);
+        }
+      }
+      load();
+    }, [isAuthenticated]);
 
   const countFor = (status: BidStatus) =>
-    MOCK_BIDS.filter((b) => b.status === status).length;
+    bidings.filter((b) => b.status === status).length;
 
-  const filtered = MOCK_BIDS.filter((b) =>
+  const filtered = bidings.filter((b) =>
     activeTab === "All" ? true : b.status === activeTab,
   );
+
+  function handleOpenDelete(id: number) {
+    setDeleteBidId(id);
+    setOpenDeleteDialog(true);
+  }
 
   function handleEdit(bidId: number) {
     // TODO: PATCH /bids/{bid_id}
     console.log("edit bid", bidId);
   }
 
-  function handleWithdraw(bidId: number) {
-    // TODO: DELETE /bids/{bid_id}
-    console.log("withdraw bid", bidId);
+  async function handleWithdraw() {
+    if(deleteBidId == null) return;
+
+    setDeleting(true);
+    try {
+      const ok = await deleteBid(deleteBidId);
+
+      if(ok){
+        setBidings((prev) => prev.filter((b) => b.id !== deleteBidId));
+      }
+    } finally {
+      setDeleting(false);
+      setDeleteBidId(null);
+      setOpenDeleteDialog(false);
+    }
   }
 
   function handleViewTransaction(itemId: number) {
@@ -312,6 +308,23 @@ export default function MyBids() {
 
   return (
     <div className={styles.page}>
+      {/* --- Dialog --- */}
+      <Dialog
+        open={openDeleteDialog}
+        title="Delete Bid"
+        description="This action cannot be reversed."
+        confirmLabel={deleting ? "Deleting..." : "Delete"}
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleWithdraw}
+        onCancel={() => {
+          if (!deleting) {
+            setOpenDeleteDialog(false);
+            setDeleteBidId(null);
+          }
+        }}
+      />
+
       {/* ── Header ── */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
@@ -343,7 +356,7 @@ export default function MyBids() {
               {tab === "Rejected" && <span className={styles.tabDotRejected} />}
               {tab}
               <span className={styles.tabCount}>
-                {tab === "All" ? MOCK_BIDS.length : countFor(tab as BidStatus)}
+                {tab === "All" ? bidings.length : countFor(tab as BidStatus)}
               </span>
             </button>
           ),
@@ -351,14 +364,18 @@ export default function MyBids() {
       </div>
 
       {/* ── Bid rows ── */}
-      {filtered.length > 0 ? (
+      {loadingData ? (
+        <div className={styles.empty}>
+          <p className={styles.emptySubtitle}>Loading your Bids…</p>
+        </div>
+      ) : filtered.length > 0 ? (
         <div className={styles.list}>
           {filtered.map((bid) => (
             <BidRow
-              key={bid.bidId}
+              key={bid.id}
               bid={bid}
               onEdit={handleEdit}
-              onWithdraw={handleWithdraw}
+              onWithdraw={handleOpenDelete}
               onViewTransaction={handleViewTransaction}
             />
           ))}

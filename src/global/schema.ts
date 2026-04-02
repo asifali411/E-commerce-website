@@ -7,7 +7,7 @@ import type {
   ReportCategory,
   TransactionStatus,
   RatingStatus,
-  NotificationType
+  NotificationType,
 } from "./types";
 
 export interface Item {
@@ -120,14 +120,6 @@ export interface SellerTransactionResponse {
   item: ItemResponse;
 }
 
-export interface BuyerTransactionResponse {
-  seller: ProtectedUserResponse;
-  price: number;
-  status: TransactionStatus;
-  quantity: number;
-  item: ItemResponse;
-}
-
 export interface RatingResponse {
   id: number;
   rated_user: PublicUsersResponse;
@@ -144,4 +136,44 @@ export interface NotificationResponse {
   is_read: boolean;
   payload: Record<string, unknown>;
   created_at: string;
+}
+
+export interface BidItemResponse {
+  id: number;
+  title: string;
+  seller: PublicUsersResponse;
+  min_price: number;
+  categories: ItemCategory[];
+  condition: ItemCondition;
+}
+
+export interface BidHistoryResponse {
+  id: number;
+  price: number;
+  quantity: number;
+  bider: PublicUsersResponse;
+  status: BidStatus;
+  item: BidItemResponse;
+}
+
+export interface SellerTransactionItemResponse {
+  id: number;
+  title: string;
+  categories: ItemCategory[];
+  condition: ItemCondition;
+}
+
+export interface BuyerTransactionItemResponse {
+  id: number;
+  title: string;
+  seller: ProtectedUserResponse;
+  categories: ItemCategory[];
+  condition: ItemCondition;
+}
+
+export interface BuyerTransactionResponse {
+  price: number;
+  status: TransactionStatus;
+  quantity: number;
+  item: BuyerTransactionItemResponse;
 }

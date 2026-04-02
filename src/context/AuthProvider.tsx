@@ -19,6 +19,7 @@ import type {
   NotificationResponse,
   AdminItemResponse,
   AdminUniqueItemResponse,
+  BidHistoryResponse,
 } from "../global/schema";
 import type { ItemCreate, ItemUpdate, BidCreate, BidUpdate, ReportCreate } from "../global/request";
 
@@ -55,7 +56,7 @@ interface AuthContextType {
     limit?: number;
   }) => Promise<ItemResponse[]>;
   fetchSelledItems: (skip?: number, limit?: number) => Promise<ItemResponse[]>;
-  fetchBidedItems: (skip?: number, limit?: number) => Promise<ItemResponse[]>;
+  fetchBids: (skip?: number, limit?: number) => Promise<BidHistoryResponse[]>;
   fetchItem: (id: number) => Promise<ItemResponse | null>;
   createItem: (data: ItemCreate) => Promise<ItemResponse | null>;
   updateItem: (id: number, data: ItemUpdate) => Promise<ItemResponse | null>;
@@ -216,12 +217,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const fetchBidedItems = async (
+  const fetchBids = async (
     skip = 0,
     limit = 10,
-  ): Promise<ItemResponse[]> => {
+  ): Promise<BidHistoryResponse[]> => {
     try {
-      const res = await api.get<ItemResponse[]>("/items/bided-items", {
+      const res = await api.get<BidHistoryResponse[]>("/items/bided-items", {
         params: { skip, limit },
       });
       return Array.isArray(res.data) ? res.data : [];
@@ -531,7 +532,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     fetchFeed,
     fetchSearchItems,
     fetchSelledItems,
-    fetchBidedItems,
+    fetchBids,
     fetchItem,
     createItem,
     updateItem,
