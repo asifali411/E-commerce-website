@@ -1,4 +1,4 @@
-export type ItemCategory = "All" | "Electronics" | "Stationary" | "Rent" | "Misseleneous";
+export type ItemCategory = "All" | "Electronics" | "Stationary" | "Rent" | "Miscellaneous";
 export type ItemCondition = "New" | "Lightly_Used" | "Heavily_Used";
 export type ItemStatus = "Active" | "Sold";
 export type BidStatus = "Accepted" | "Pending" | "Rejected";

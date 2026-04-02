@@ -89,14 +89,6 @@ export interface ItemResponse {
   images: ItemImageResponse[];
 }
 
-export interface BidResponse {
-  id: number;
-  price: number;
-  quantity: number;
-  bider: PublicUsersResponse;
-  status: BidStatus;
-}
-
 export interface AdminItemResponse {
   id: number;
   seller: ProtectedUserResponse;

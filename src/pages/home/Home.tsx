@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 
 const CATEGORIES = [
-  "All" , "Electronics" , "Stationary" , "Rent" , "Misseleneous"
+  "All" , "Electronics" , "Stationary" , "Rent" , "Miscellaneous"
 ];
 
 // ── Main page ──────────────────────────────────────────────

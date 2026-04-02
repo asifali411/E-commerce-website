@@ -28,11 +28,11 @@ const CONDITION_CLASS: Record<ItemCondition, string> = {
 };
 
 const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
-  All: <Package size={11}/>,
+  All: <Package size={11} />,
   Electronics: <Monitor01 size={11} />,
   Stationary: <PencilLine size={11} />,
   Rent: <Building07 size={11} />,
-  Misseleneous: <Package size={11} />,
+  Miscellaneous: <Package size={11} />,
 };
 
 // ── Component ──────────────────────────────────────────────
@@ -42,8 +42,6 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
 
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-
-  console.log(item?.images[0]?.image_path);
 
   const handleNavigation = () => {
     if(isAuthenticated){

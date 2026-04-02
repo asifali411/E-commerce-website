@@ -9,11 +9,10 @@ import {
 } from "@untitledui/icons";
 import { useAuth } from "../../context/AuthProvider";
 import { useToast } from "../../components/toast/Toast";
+import { useNavigate } from "react-router-dom";
+import type { ItemCategory, ItemCondition } from "../../global/types";
 
 // ── Types ──────────────────────────────────────────────
-
-type ItemCondition = "New" | "Lightly_Used" | "Heavily_Used";
-type ItemCategories = "Electronics" | "Stationary" | "Rent" | "Misseleneous";
 
 interface ItemCreate {
   title: string;
@@ -21,7 +20,7 @@ interface ItemCreate {
   min_price: number;
   quantity: number;
   condition: ItemCondition;
-  categories: ItemCategories[];
+  categories: ItemCategory[];
 }
 
 interface ItemResponse {
@@ -51,11 +50,11 @@ const CONDITIONS: { value: ItemCondition; label: string; desc: string }[] = [
   },
 ];
 
-const CATEGORIES: { value: ItemCategories; label: string; icon: any }[] = [
+const CATEGORIES: { value: ItemCategory; label: string; icon: any }[] = [
   { value: "Electronics", label: "Electronics", icon: <Monitor01 /> },
   { value: "Stationary", label: "Stationary", icon: <PencilLine /> },
   { value: "Rent", label: "Rent", icon: <Building07 /> },
-  { value: "Misseleneous", label: "Miscellaneous", icon: <Package /> },
+  { value: "Miscellaneous", label: "Miscellaneous", icon: <Package /> },
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -76,7 +75,7 @@ export default function CreateItem({
   const [minPrice, setMinPrice] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [condition, setCondition] = useState<ItemCondition | "">("");
-  const [categories, setCategories] = useState<ItemCategories[]>([]);
+  const [categories, setCategories] = useState<ItemCategory[]>([]);
 
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -92,6 +91,7 @@ export default function CreateItem({
 
   const { createItem, uploadImage, isAuthenticated } = useAuth();
   const { addToast } = useToast();
+  const navigate = useNavigate();
 
   // ── Validation ───────────────────────────────────────────────────────────
 
@@ -186,6 +186,7 @@ export default function CreateItem({
         categories,
       };
 
+      console.log(body);
       const item: ItemResponse | null = await createItem(body);
 
       if(!item){
@@ -199,7 +200,6 @@ export default function CreateItem({
           message: isAuthenticated ? "" : "Please login to continue.",
           duration: 4000,
         });
-        console.log(item);
         setLoading(false);
         return;
       }
@@ -233,7 +233,7 @@ export default function CreateItem({
     }
   }
 
-  function toggleCategory(cat: ItemCategories) {
+  function toggleCategory(cat: ItemCategory) {
     setCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
     );
@@ -252,7 +252,7 @@ export default function CreateItem({
         <div className={styles.successActions}>
           <button
             className={styles.btnPrimary}
-            onClick={() => onSuccess?.(createdItem)}
+            onClick={() => navigate(`/items/${createdItem.id}`)}
           >
             View Item
           </button>
