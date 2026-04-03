@@ -167,6 +167,7 @@
   border: 1px solid var(--color-card-border);
   border-radius: calc(var(--border-radius) * 2);
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  cursor: pointer;
 }
 
 .row:hover {

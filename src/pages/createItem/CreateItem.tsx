@@ -186,7 +186,6 @@ export default function CreateItem({
         categories,
       };
 
-      console.log(body);
       const item: ItemResponse | null = await createItem(body);
 
       if(!item){

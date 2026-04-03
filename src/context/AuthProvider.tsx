@@ -120,6 +120,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<PrivateUsersResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  let isRefreshing = false;
 
   const fetchUser = async () => {
     try {
@@ -486,24 +487,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // --- Effects ----------------------------------------------
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   useEffect(() => {
+    fetchUser();
+
     const interceptor = api.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
 
         if (error.response?.status === 401 && !originalRequest._retry) {
+          if (isRefreshing) {
+            return Promise.reject(error);
+          }
+
           originalRequest._retry = true;
+          isRefreshing = true;
 
           try {
             await api.post("/refresh");
-
+            isRefreshing = false;
             return api(originalRequest);
           } catch (refreshError) {
+            isRefreshing = false;
             setUser(null);
             return Promise.reject(refreshError);
           }

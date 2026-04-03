@@ -9,7 +9,7 @@ import type { ItemResponse } from "../../global/schema";
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <span className={styles.stars}>
+    <div className={styles.stars}>
       {[1, 2, 3, 4, 5].map((s) => (
         <span
           key={s}
@@ -21,7 +21,7 @@ function StarRating({ rating }: { rating: number }) {
         </span>
       ))}
       <span className={styles.ratingNum}>{rating.toFixed(1)}</span>
-    </span>
+    </div>
   );
 }
 
@@ -48,67 +48,98 @@ function BidStatusChip({ status }: { status: BidStatus }) {
 // ── Main Component ─────────────────────────────────────────────────────────
 
 export default function ItemDetail() {
+  const { fetchItem, createBid } = useAuth();
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const itemId = Number(id);
 
+  // --- State ---
   const [item, setItem] = useState<ItemResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
-  const [bidPrice, setBidPrice] = useState<number>();
+
+  // Input states initialized as strings to prevent "uncontrolled" warnings
+  const [bidPrice, setBidPrice] = useState<string>("");
   const [bidQty, setBidQty] = useState<number>(1);
+
   const [bidLoading, setBidLoading] = useState(false);
   const [bidError, setBidError] = useState<string | null>(null);
   const [bidSuccess, setBidSuccess] = useState(false);
 
-  const { fetchItem, createBid } = useAuth();
-
-  const itemId = Number(useParams<{ id: string }>().id);
-  const navigate = useNavigate();
-  const onBack = () => navigate(-1);
-
+  // --- Effects ---
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    let isMounted = true;
 
-    const handleItem = async () => {
+    async function loadItem() {
+      if (isNaN(itemId)) {
+        setError("Invalid Item ID");
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
       try {
         const data = await fetchItem(itemId);
-        setItem(data);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to fetch item");
+        if (isMounted) {
+          if (data) {
+            setItem(data);
+          } else {
+            setError("Item not found");
+          }
+        }
+      } catch (err) {
+        if (isMounted) setError("Failed to fetch item details.");
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
-    };
+    }
 
-    handleItem();
-    
-  }, [itemId]);
+    loadItem();
+    return () => {
+      isMounted = false;
+    };
+  }, [itemId, fetchItem]);
+
+  // --- Handlers ---
+  const onBack = () => navigate(-1);
 
   async function handleBid() {
-    if (!item) return;
+    if (!item || !bidPrice) return;
+
     setBidLoading(true);
     setBidError(null);
     setBidSuccess(false);
+
     try {
-      //@ts-ignore
-      const res = await createBid(item.id, {price: bidPrice ?? 0, quantity: bidQty});
-      
-      setBidSuccess(true);
-      setBidPrice(0);
-      setBidQty(1);
-      // Refresh item to show new bid
-      const updated: ItemResponse | null = await fetchItem(item.id);
-      if(updated === null) throw new Error("Failed to reload.");
-      setItem(updated);
-    } catch (e: unknown) {
-      setBidError(e instanceof Error ? e.message : "Failed to place bid.");
+      const priceNum = parseFloat(bidPrice);
+      if (priceNum < item.min_price) {
+        throw new Error(`Bid must be at least ₹${item.min_price}`);
+      }
+
+      const res = await createBid(item.id, {
+        price: priceNum,
+        quantity: bidQty,
+      });
+
+      if (res) {
+        setBidSuccess(true);
+        setBidPrice(""); // Clear input
+        setBidQty(1);
+
+        // Refresh item data to show the new bid in the list
+        const updated = await fetchItem(item.id);
+        if (updated) setItem(updated);
+      }
+    } catch (e: any) {
+      setBidError(e.message || "Failed to place bid.");
     } finally {
       setBidLoading(false);
     }
   }
 
-  // ── Loading / Error states ─────────────────────────────────────────────
-
+  // --- Render Helpers ---
   if (loading) {
     return (
       <div className={styles.stateWrapper}>
@@ -127,26 +158,21 @@ export default function ItemDetail() {
       <div className={styles.stateWrapper}>
         <div className={styles.errorIcon}>!</div>
         <p className={styles.stateLabel}>{error ?? "Item not found"}</p>
-        {onBack && (
-          <button className={styles.backBtn} onClick={onBack}>
-            ← Go back
-          </button>
-        )}
+        <button className={styles.backBtn} onClick={onBack}>
+          ← Go back
+        </button>
       </div>
     );
   }
 
-  const hasImages = item.images.length > 0;
+  const hasImages = item.images && item.images.length > 0;
 
   return (
     <div className={styles.page}>
-      {/* ── Top bar ── */}
       <header className={styles.topBar}>
-        {onBack && (
-          <button className={styles.backBtn} onClick={onBack}>
-            ← Back
-          </button>
-        )}
+        <button className={styles.backBtn} onClick={onBack}>
+          ← Back
+        </button>
         <span className={styles.itemId}>#{item.id}</span>
         <span
           className={`${styles.statusPill} ${item.status === "Sold" ? styles.statusSold : styles.statusActive}`}
@@ -156,7 +182,7 @@ export default function ItemDetail() {
       </header>
 
       <main className={styles.layout}>
-        {/* ── Left: images ── */}
+        {/* Left: Gallery */}
         <section className={styles.gallery}>
           <div className={styles.mainImage}>
             {hasImages ? (
@@ -182,16 +208,15 @@ export default function ItemDetail() {
                   className={`${styles.thumb} ${i === activeImage ? styles.thumbActive : ""}`}
                   onClick={() => setActiveImage(i)}
                 >
-                  <img src={`/api/${img.image_path}`} alt={`view ${i + 1}`} />
+                  <img src={`/api/${img.image_path}`} alt="thumbnail" />
                 </button>
               ))}
             </div>
           )}
         </section>
 
-        {/* ── Right: details ── */}
+        {/* Right: Details */}
         <section className={styles.details}>
-          {/* Categories */}
           <div className={styles.categoryRow}>
             {item.categories.map((c) => (
               <span key={c} className={styles.category}>
@@ -202,10 +227,8 @@ export default function ItemDetail() {
           </div>
 
           <h1 className={styles.title}>{item.title}</h1>
-
           <p className={styles.description}>{item.description}</p>
 
-          {/* Price + Qty */}
           <div className={styles.priceRow}>
             <div className={styles.priceBlock}>
               <span className={styles.priceLabel}>Min Price</span>
@@ -219,7 +242,6 @@ export default function ItemDetail() {
             </div>
           </div>
 
-          {/* Seller */}
           <div className={styles.sellerCard}>
             <div className={styles.avatar}>
               {item.seller.username.slice(0, 2).toUpperCase()}
@@ -230,7 +252,6 @@ export default function ItemDetail() {
             </div>
           </div>
 
-          {/* Bid form */}
           {item.status === "Active" && (
             <div className={styles.bidForm}>
               <h3 className={styles.bidHeading}>Place a Bid</h3>
@@ -240,10 +261,9 @@ export default function ItemDetail() {
                   <input
                     type="number"
                     min={item.min_price}
-                    step="0.01"
                     value={bidPrice}
-                    onChange={(e) => setBidPrice(Number(e.target.value))}
-                    placeholder={`≥ ${item.min_price}`}
+                    onChange={(e) => setBidPrice(e.target.value)}
+                    placeholder={`Min. ${item.min_price}`}
                     className={styles.bidInput}
                   />
                 </label>
@@ -275,11 +295,10 @@ export default function ItemDetail() {
         </section>
       </main>
 
-      {/* ── Bids section ── */}
+      {/* Bids Table/Grid */}
       <section className={styles.bidsSection}>
         <h2 className={styles.bidsHeading}>
-          Bids
-          <span className={styles.bidCount}>{item.bids.length}</span>
+          Bids <span className={styles.bidCount}>{item.bids.length}</span>
         </h2>
         {item.bids.length === 0 ? (
           <p className={styles.noBids}>No bids yet. Be the first!</p>

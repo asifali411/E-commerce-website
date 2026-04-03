@@ -1,0 +1,647 @@
+/* ── Overlay ──────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Dialog ───────────────────────────────────────────────── */
+.dialog {
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: 14px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 880px;
+  max-height: 88vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 0 0 1px var(--color-card-border),
+    0 8px 24px -4px rgba(15, 23, 42, 0.14),
+    0 32px 64px -12px rgba(15, 23, 42, 0.18);
+  animation: slideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ── Close button ─────────────────────────────────────────── */
+.closeBtn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-grey-100);
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-card-border);
+}
+.closeBtn:hover {
+  background: var(--color-grey-200);
+  color: var(--color-text);
+  transform: rotate(90deg) scale(1.05);
+}
+
+/* ── Loading / error states ───────────────────────────────── */
+.stateCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 72px 32px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.errorIcon  { color: var(--color-error); }
+.errorText  { color: var(--color-error); font-size: 0.875rem; margin: 0; }
+
+.btnRetry {
+  padding: 7px 18px;
+  background: var(--color-button);
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--border-radius);
+  border: 1px solid transparent;
+}
+.btnRetry:hover {
+  background: var(--color-button-hover);
+  transform: translateY(-1px);
+}
+
+/* ── Spinners ─────────────────────────────────────────────── */
+.spinner,
+.spinnerLg {
+  display: inline-block;
+  border-radius: 50%;
+  border: 2px solid var(--color-card-border);
+  border-top-color: var(--color-primary);
+  animation: spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+.spinner   { width: 13px; height: 13px; }
+.spinnerLg { width: 30px; height: 30px; border-width: 3px; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Content layout ───────────────────────────────────────── */
+.content {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Left panel ───────────────────────────────────────────── */
+.left {
+  /* border-right: 1px solid var(--color-card-border); */
+  border: 1px solid var(--color-card-border);
+  border-radius: calc(var(--border-radius) - 2px);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: var(--color-grey-50);
+}
+
+/* ── Image carousel ───────────────────────────────────────── */
+.carousel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--color-grey-100);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.carouselImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--color-grey-100);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--color-grey-400);
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+.imagePlaceholderIcon { opacity: 0.35; }
+
+.carouselBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+  opacity: 0.9;
+}
+.carouselBtn:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.08);
+}
+.carouselBtnPrev { left: 8px; }
+.carouselBtnNext { right: 8px; }
+
+.carouselDots {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+.carouselDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  padding: 0;
+  border: none;
+  transition: background 0.15s, transform 0.15s;
+}
+.carouselDot:hover { background: rgba(255, 255, 255, 0.75); transform: scale(1.3); }
+.carouselDotActive { background: white; transform: scale(1.15); }
+
+/* ── Meta section ─────────────────────────────────────────── */
+.meta {
+  padding: 16px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.metaLabel {
+  font-size: 0.72rem;
+  color: var(--color-grey-500);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.metaValue {
+  font-size: 0.83rem;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.metaPrice {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}
+
+/* ── Status badges ────────────────────────────────────────── */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+.statusActive {
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+  border-color: color-mix(in srgb, var(--color-success) 25%, transparent);
+}
+.statusSold {
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 25%, transparent);
+}
+
+/* ── Condition badges ─────────────────────────────────────── */
+.conditionBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+.conditionNew {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+  border-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+.conditionLight {
+  background: color-mix(in srgb, var(--color-warning) 14%, transparent);
+  color: var(--color-warning);
+  border-color: color-mix(in srgb, var(--color-warning) 28%, transparent);
+}
+.conditionHeavy {
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 25%, transparent);
+}
+
+/* ── Categories ───────────────────────────────────────────── */
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.categoryChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  background: var(--color-button);
+  color: var(--color-text);
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border: 1px solid var(--color-grey-200);
+}
+
+/* ── Right panel ──────────────────────────────────────────── */
+.right {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+  background: var(--color-surface);
+}
+
+/* ── Title section ────────────────────────────────────────── */
+.titleSection {
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.itemTitle {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.3;
+  padding-right: 36px;
+  letter-spacing: -0.02em;
+}
+
+.itemDesc {
+  margin: 0;
+  font-size: 0.845rem;
+  color: var(--color-grey-400);
+  line-height: 1.65;
+}
+
+/* ── Success banner ───────────────────────────────────────── */
+.successBanner {
+  margin: 14px 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--color-success) 10%, transparent);
+  color: var(--color-success);
+  border-radius: var(--border-radius);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--color-success) 22%, transparent);
+}
+
+/* ── Bids section ─────────────────────────────────────────── */
+.bidsSection {
+  padding: 18px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.bidsSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bidsTitle {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  letter-spacing: -0.01em;
+}
+
+.bidCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.soldNotice {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  color: var(--color-grey-500);
+  background: var(--color-grey-100);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--color-card-border);
+}
+
+.bidsGroupLabel {
+  margin: 6px 0 2px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--color-grey-400);
+}
+
+.bidsList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.noBids {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 36px 16px;
+  color: var(--color-grey-400);
+  font-size: 0.845rem;
+  background: var(--color-grey-50);
+  border-radius: var(--border-radius);
+  border: 1px dashed var(--color-grey-300);
+}
+.noBids p { margin: 0; }
+.noBidsIcon { opacity: 0.45; }
+
+/* ── Bid card ─────────────────────────────────────────────── */
+.bidCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  background: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.bidCard:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+.bidCardAccepted {
+  border-color: color-mix(in srgb, var(--color-success) 35%, transparent);
+  background: color-mix(in srgb, var(--color-success) 5%, var(--color-card));
+}
+.bidCardAccepted:hover {
+  border-color: color-mix(in srgb, var(--color-success) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success) 10%, transparent);
+}
+.bidCardRejected {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.bidCardLeft  { flex: 0 0 auto; }
+.bidCardMid   { flex: 1; display: flex; gap: 20px; align-items: center; }
+.bidCardRight { flex: 0 0 auto; }
+
+.bidderRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bidderAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-button);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--color-grey-200);
+}
+
+.bidderName {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.bidderRating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.68rem;
+  color: var(--color-warning);
+  font-weight: 600;
+  margin-top: 1px;
+}
+
+.bidStat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.bidStatIcon { color: var(--color-grey-400); flex-shrink: 0; }
+
+.bidPrice {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.bidQty {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* ── Bid actions ──────────────────────────────────────────── */
+.bidActions {
+  display: flex;
+  gap: 6px;
+}
+
+.btnAccept,
+.btnReject {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--border-radius);
+  font-size: 0.76rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  letter-spacing: 0.01em;
+}
+.btnAccept:disabled,
+.btnReject:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+  pointer-events: none;
+}
+
+.btnAccept {
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+  border-color: color-mix(in srgb, var(--color-success) 25%, transparent);
+}
+.btnAccept:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-success) 20%, transparent);
+}
+
+.btnReject {
+  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 22%, transparent);
+}
+.btnReject:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-error) 18%, transparent);
+}
+
+/* ── Bid status badges ────────────────────────────────────── */
+.bidStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid transparent;
+}
+.bidStatusAccepted {
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+  border-color: color-mix(in srgb, var(--color-success) 25%, transparent);
+}
+.bidStatusRejected {
+  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 22%, transparent);
+}
+.bidStatusPending {
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  color: var(--color-warning);
+  border-color: color-mix(in srgb, var(--color-warning) 25%, transparent);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .left {
+    border-right: none;
+    border-bottom: 1px solid var(--color-card-border);
+  }
+
+  .carousel,
+  .imagePlaceholder {
+    aspect-ratio: 16 / 9;
+  }
+
+  .dialog {
+    max-height: 94vh;
+    border-radius: 12px;
+  }
+
+  .bidCardMid {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+
+  .bidActions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btnAccept,
+  .btnReject {
+    justify-content: center;
+    width: 100%;
+  }
+}

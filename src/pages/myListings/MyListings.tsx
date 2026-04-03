@@ -16,6 +16,7 @@ import styles from "./MyListings.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import type { ItemResponse } from "../../global/schema";
 import Dialog from "../../components/dialog/Dialog";
+import ItemDialog from "../../components/itemDialog/ItemDialog";
 
 // ── Types ──────────────────────────────────────────────────
 type FilterTab = "All" | "Active" | "Sold";
@@ -48,16 +49,21 @@ function ListingRow({
   listing,
   onEdit,
   onDelete,
+  onClick
 }: {
   listing: ItemResponse;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  onClick: () => void;
 }) {
   const isSold = listing.status === "Sold";
   const firstImage = listing.images?.[0]?.image_path ?? null;
 
   return (
-    <article className={`${styles.row} ${isSold ? styles.rowSold : ""}`}>
+    <article
+      className={`${styles.row} ${isSold ? styles.rowSold : ""}`}
+      onClick={() => onClick()}
+    >
       {/* Thumbnail */}
       <div className={styles.rowThumb}>
         {firstImage ? (
@@ -165,6 +171,8 @@ export default function MyListings() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -288,6 +296,7 @@ export default function MyListings() {
               listing={listing}
               onEdit={handleEdit}
               onDelete={handleOpenDelete}
+              onClick={() => setSelectedItemId(listing.id)}
             />
           ))}
         </div>
@@ -311,6 +320,14 @@ export default function MyListings() {
           )}
         </div>
       )}
+
+      <ItemDialog
+        itemId={selectedItemId}
+        onClose={() => setSelectedItemId(null)}
+        onBidAccepted={() => {
+          /* refresh your listings list */
+        }}
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Package,
@@ -14,119 +14,24 @@ import {
   Tag01,
 } from "@untitledui/icons";
 import styles from "./Transactions.module.css";
+import { useAuth } from "../../context/AuthProvider";
+import type {
+  SellerTransactionResponse,
+  BuyerTransactionResponse,
+} from "../../global/schema";
 import type {
   ItemCategory,
   ItemCondition,
-} from "../../components/itemCard/ItemCard";
+  TransactionStatus,
+} from "../../global/types";
 
 // ── Types ──────────────────────────────────────────────────
-type TransactionStatus = "Pending" | "Completed";
-type RatingStatus = "Pending" | "Completed" | "N/A";
 type Role = "Buyer" | "Seller";
 type FilterTab = "All" | "Pending" | "Completed";
 
-interface Transaction {
-  id: number;
-  itemId: number;
-  title: string;
-  description: string;
-  category: ItemCategory;
-  condition: ItemCondition;
-  agreedPrice: number;
-  quantity: number;
-  counterparty: string; // seller name (as buyer) or buyer name (as seller)
-  role: Role;
-  status: TransactionStatus;
-  ratingStatus: RatingStatus;
-  ratingId?: number;
-  createdAt: string;
-}
-
-// ── Mock data ──────────────────────────────────────────────
-const MOCK_TRANSACTIONS: Transaction[] = [
-  // ── As Buyer ──
-  {
-    id: 1,
-    itemId: 2,
-    title: "DS Cormen Textbook",
-    description: "Introduction to Algorithms, 3rd edition. Some highlights.",
-    category: "Stationary",
-    condition: "Heavily Used",
-    agreedPrice: 950,
-    quantity: 1,
-    counterparty: "ananya_t",
-    role: "Buyer",
-    status: "Completed",
-    ratingStatus: "Pending",
-    ratingId: 201,
-    createdAt: "2025-06-11",
-  },
-  {
-    id: 2,
-    itemId: 6,
-    title: "Wildcraft Backpack 45L",
-    description: "Barely used, ideal for trekking or daily college use.",
-    category: "Miscellaneous",
-    condition: "New",
-    agreedPrice: 700,
-    quantity: 1,
-    counterparty: "suresh_m",
-    role: "Buyer",
-    status: "Pending",
-    ratingStatus: "N/A",
-    createdAt: "2025-06-03",
-  },
-  // ── As Seller ──
-  {
-    id: 3,
-    itemId: 1,
-    title: 'Dell Monitor 24"',
-    description: "Full HD IPS panel, barely used. Original box included.",
-    category: "Electronics",
-    condition: "Lightly Used",
-    agreedPrice: 3800,
-    quantity: 1,
-    counterparty: "meera_p",
-    role: "Seller",
-    status: "Completed",
-    ratingStatus: "Completed",
-    createdAt: "2025-06-09",
-  },
-  {
-    id: 4,
-    itemId: 4,
-    title: "Single Room (Hostel)",
-    description: "Ground floor, attached bath, available from July.",
-    category: "Rent",
-    condition: "New",
-    agreedPrice: 850,
-    quantity: 1,
-    counterparty: "priya_r",
-    role: "Seller",
-    status: "Pending",
-    ratingStatus: "N/A",
-    createdAt: "2025-06-15",
-  },
-  {
-    id: 5,
-    itemId: 7,
-    title: "HP Laptop 8GB RAM",
-    description: "HP Pavilion, Core i5, 256GB SSD. Charger included.",
-    category: "Electronics",
-    condition: "Lightly Used",
-    agreedPrice: 19500,
-    quantity: 1,
-    counterparty: "rohit_d",
-    role: "Seller",
-    status: "Completed",
-    ratingStatus: "Pending",
-    ratingId: 202,
-    createdAt: "2025-05-30",
-  },
-];
-
 // ── Helpers ────────────────────────────────────────────────
 const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
+  All: <Package size={11} />,
   Electronics: <Monitor01 size={11} />,
   Stationary: <PencilLine size={11} />,
   Rent: <Building07 size={11} />,
@@ -135,8 +40,8 @@ const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
 
 const CONDITION_CLASS: Record<ItemCondition, string> = {
   New: styles.conditionNew,
-  "Lightly Used": styles.conditionLight,
-  "Heavily Used": styles.conditionHeavy,
+  Lightly_Used: styles.conditionLight,
+  Heavily_Used: styles.conditionHeavy,
 };
 
 // ── Star rating picker ─────────────────────────────────────
@@ -171,21 +76,16 @@ function StatPill({ label, value }: { label: string; value: number }) {
   );
 }
 
-// ── Transaction row ────────────────────────────────────────
-function TransactionRow({
+// ── Buyer Transaction Row ──────────────────────────────────
+function BuyerTransactionRow({
   tx,
-  onMarkComplete,
   onRate,
 }: {
-  tx: Transaction;
-  onMarkComplete: (id: number) => void;
+  tx: BuyerTransactionResponse;
   onRate: (ratingId: number, score: number) => void;
 }) {
   const isPending = tx.status === "Pending";
   const isCompleted = tx.status === "Completed";
-  const needsRating =
-    isCompleted && tx.ratingStatus === "Pending" && tx.ratingId != null;
-  const ratedDone = isCompleted && tx.ratingStatus === "Completed";
 
   return (
     <article className={`${styles.row} ${isPending ? styles.rowPending : ""}`}>
@@ -197,36 +97,32 @@ function TransactionRow({
       {/* Main info */}
       <div className={styles.rowMain}>
         <div className={styles.rowTitleRow}>
-          <h3 className={styles.rowTitle}>{tx.title}</h3>
-          <span
-            className={`${styles.roleChip} ${tx.role === "Buyer" ? styles.roleChipBuyer : styles.roleChipSeller}`}
-          >
-            {tx.role === "Buyer" ? "Bought" : "Sold"}
+          <h3 className={styles.rowTitle}>{tx.item.title}</h3>
+          <span className={`${styles.roleChip} ${styles.roleChipBuyer}`}>
+            Bought
           </span>
         </div>
-        <p className={styles.rowDesc}>{tx.description}</p>
         <div className={styles.rowTags}>
-          <span className={styles.categoryTag}>
-            {CATEGORY_ICON[tx.category]}
-            {tx.category}
-          </span>
+          {tx.item.categories.map((cat) => (
+            <span key={cat} className={styles.categoryTag}>
+              {CATEGORY_ICON[cat]}
+              {cat}
+            </span>
+          ))}
           <span
-            className={`${styles.conditionTag} ${CONDITION_CLASS[tx.condition]}`}
+            className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition]}`}
           >
-            {tx.condition}
+            {tx.item.condition}
           </span>
-          <span className={styles.metaChip}>{tx.createdAt}</span>
         </div>
       </div>
 
       {/* Counterparty */}
       <div className={styles.rowParty}>
-        <span className={styles.rowPartyLabel}>
-          {tx.role === "Buyer" ? "Seller" : "Buyer"}
-        </span>
+        <span className={styles.rowPartyLabel}>Seller</span>
         <div className={styles.rowPartyName}>
           <User01 size={12} className={styles.rowPartyIcon} />
-          {tx.counterparty}
+          {tx.item.seller.username}
         </div>
       </div>
 
@@ -234,7 +130,7 @@ function TransactionRow({
       <div className={styles.rowPrice}>
         <span className={styles.rowPriceLabel}>Agreed price</span>
         <span className={styles.rowPriceValue}>
-          ₹{tx.agreedPrice.toLocaleString("en-IN")}
+          ₹{tx.price.toLocaleString("en-IN")}
         </span>
         {tx.quantity > 1 && (
           <span className={styles.rowPriceQty}>× {tx.quantity}</span>
@@ -258,38 +154,102 @@ function TransactionRow({
 
       {/* Actions */}
       <div className={styles.rowActions}>
-        {/* Seller can mark pending transactions as complete */}
-        {isPending && tx.role === "Seller" && (
-          <button
-            className={styles.actionBtnComplete}
-            onClick={() => onMarkComplete(tx.id)}
-            title="Mark as completed"
-          >
-            <CheckCircle size={13} />
-            Mark complete
-          </button>
-        )}
-
-        {isPending && tx.role === "Buyer" && (
+        {isPending && (
           <span className={styles.awaitingLabel}>
             <Clock size={12} />
             Awaiting seller
           </span>
         )}
+        {isCompleted && <span className={styles.noActions}>—</span>}
+      </div>
+    </article>
+  );
+}
 
-        {needsRating && (
-          <StarPicker onRate={(score) => onRate(tx.ratingId!, score)} />
+// ── Seller Transaction Row ─────────────────────────────────
+function SellerTransactionRow({
+  tx,
+  onRate,
+}: {
+  tx: SellerTransactionResponse;
+  onRate: (ratingId: number, score: number) => void;
+}) {
+  const isPending = tx.status === "Pending";
+  const isCompleted = tx.status === "Completed";
+
+  return (
+    <article className={`${styles.row} ${isPending ? styles.rowPending : ""}`}>
+      {/* Thumbnail */}
+      <div className={styles.rowThumb}>
+        <Package size={20} className={styles.rowThumbIcon} />
+      </div>
+
+      {/* Main info */}
+      <div className={styles.rowMain}>
+        <div className={styles.rowTitleRow}>
+          <h3 className={styles.rowTitle}>{tx.item.title}</h3>
+          <span className={`${styles.roleChip} ${styles.roleChipSeller}`}>
+            Sold
+          </span>
+        </div>
+        <div className={styles.rowTags}>
+          {tx.item.categories.map((cat) => (
+            <span key={cat} className={styles.categoryTag}>
+              {CATEGORY_ICON[cat]}
+              {cat}
+            </span>
+          ))}
+          <span
+            className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition]}`}
+          >
+            {tx.item.condition}
+          </span>
+        </div>
+      </div>
+
+      {/* Counterparty */}
+      <div className={styles.rowParty}>
+        <span className={styles.rowPartyLabel}>Buyer</span>
+        <div className={styles.rowPartyName}>
+          <User01 size={12} className={styles.rowPartyIcon} />
+          {tx.buyer.username}
+        </div>
+      </div>
+
+      {/* Agreed price */}
+      <div className={styles.rowPrice}>
+        <span className={styles.rowPriceLabel}>Agreed price</span>
+        <span className={styles.rowPriceValue}>
+          ₹{tx.price.toLocaleString("en-IN")}
+        </span>
+        {tx.quantity > 1 && (
+          <span className={styles.rowPriceQty}>× {tx.quantity}</span>
         )}
+      </div>
 
-        {ratedDone && (
-          <span className={styles.ratedLabel}>
-            <Star01 size={12} />
-            Rated
+      {/* Status */}
+      <div className={styles.rowStatus}>
+        {isPending ? (
+          <span className={`${styles.statusBadge} ${styles.statusPending}`}>
+            <Clock size={11} />
+            Pending
+          </span>
+        ) : (
+          <span className={`${styles.statusBadge} ${styles.statusCompleted}`}>
+            <CheckCircle size={11} />
+            Completed
           </span>
         )}
+      </div>
 
-        {isCompleted && tx.ratingStatus === "N/A" && (
-          <span className={styles.noActions}>—</span>
+      {/* Actions */}
+      <div className={styles.rowActions}>
+        {isCompleted && <span className={styles.noActions}>—</span>}
+        {isPending && (
+          <span className={styles.awaitingLabel}>
+            <Clock size={12} />
+            Awaiting completion
+          </span>
         )}
       </div>
     </article>
@@ -299,30 +259,50 @@ function TransactionRow({
 // ── Main page ──────────────────────────────────────────────
 export default function Transactions() {
   const navigate = useNavigate();
+  const { fetchSellerTransactions, fetchBuyerTransactions, updateRating } =
+    useAuth();
+
   const [roleView, setRoleView] = useState<Role>("Buyer");
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
 
-  const roleFiltered = MOCK_TRANSACTIONS.filter((t) => t.role === roleView);
-  const countFor = (status: TransactionStatus) =>
-    roleFiltered.filter((t) => t.status === status).length;
+  const [buyerTxs, setBuyerTxs] = useState<BuyerTransactionResponse[]>([]);
+  const [sellerTxs, setSellerTxs] = useState<SellerTransactionResponse[]>([]);
+  const [loadingBuyer, setLoadingBuyer] = useState(true);
+  const [loadingSeller, setLoadingSeller] = useState(true);
 
-  const filtered = roleFiltered.filter((t) =>
+  useEffect(() => {
+    fetchBuyerTransactions().then((data) => {
+      setBuyerTxs(data);
+      setLoadingBuyer(false);
+    });
+    fetchSellerTransactions().then((data) => {
+      setSellerTxs(data);
+      setLoadingSeller(false);
+    });
+  }, []);
+
+  const loading = roleView === "Buyer" ? loadingBuyer : loadingSeller;
+
+  const buyerFiltered = buyerTxs.filter((t) =>
+    activeTab === "All" ? true : t.status === activeTab,
+  );
+  const sellerFiltered = sellerTxs.filter((t) =>
     activeTab === "All" ? true : t.status === activeTab,
   );
 
-  const buyerCount = MOCK_TRANSACTIONS.filter((t) => t.role === "Buyer").length;
-  const sellerCount = MOCK_TRANSACTIONS.filter(
-    (t) => t.role === "Seller",
-  ).length;
+  const countFor = (status: TransactionStatus) =>
+    roleView === "Buyer"
+      ? buyerTxs.filter((t) => t.status === status).length
+      : sellerTxs.filter((t) => t.status === status).length;
 
-  function handleMarkComplete(id: number) {
-    // TODO: POST /transactions/{item_id}/{bid_id}
-    console.log("mark complete", id);
-  }
+  const totalForRole =
+    roleView === "Buyer" ? buyerTxs.length : sellerTxs.length;
 
-  function handleRate(ratingId: number, score: number) {
-    // TODO GET /ratings/{rating_id}/{score}
-    console.log("rate", ratingId, score);
+  async function handleRate(ratingId: number, score: number) {
+    await updateRating(ratingId, score);
+    // Refresh both after rating
+    fetchBuyerTransactions().then(setBuyerTxs);
+    fetchSellerTransactions().then(setSellerTxs);
   }
 
   return (
@@ -332,7 +312,7 @@ export default function Transactions() {
         <div className={styles.headerLeft}>
           <h1 className={styles.pageTitle}>Transactions</h1>
           <div className={styles.stats}>
-            <StatPill label="Total" value={roleFiltered.length} />
+            <StatPill label="Total" value={totalForRole} />
             <StatPill label="Pending" value={countFor("Pending")} />
             <StatPill label="Completed" value={countFor("Completed")} />
           </div>
@@ -349,7 +329,7 @@ export default function Transactions() {
           >
             <ShoppingBag01 size={14} />
             As Buyer
-            <span className={styles.roleBtnCount}>{buyerCount}</span>
+            <span className={styles.roleBtnCount}>{buyerTxs.length}</span>
           </button>
           <button
             className={`${styles.roleBtn} ${roleView === "Seller" ? styles.roleBtnActive : ""}`}
@@ -360,7 +340,7 @@ export default function Transactions() {
           >
             <Tag01 size={14} />
             As Seller
-            <span className={styles.roleBtnCount}>{sellerCount}</span>
+            <span className={styles.roleBtnCount}>{sellerTxs.length}</span>
           </button>
         </div>
       </header>
@@ -378,7 +358,7 @@ export default function Transactions() {
             {tab}
             <span className={styles.tabCount}>
               {tab === "All"
-                ? roleFiltered.length
+                ? totalForRole
                 : countFor(tab as TransactionStatus)}
             </span>
           </button>
@@ -386,27 +366,24 @@ export default function Transactions() {
       </div>
 
       {/* ── Transaction rows ── */}
-      {filtered.length > 0 ? (
-        <div className={styles.list}>
-          {filtered.map((tx) => (
-            <TransactionRow
-              key={tx.id}
-              tx={tx}
-              onMarkComplete={handleMarkComplete}
-              onRate={handleRate}
-            />
-          ))}
-        </div>
-      ) : (
+      {loading ? (
         <div className={styles.empty}>
-          <ArrowRight size={36} className={styles.emptyIcon} />
-          <p className={styles.emptyTitle}>No transactions here</p>
-          <p className={styles.emptySubtitle}>
-            {roleView === "Buyer"
-              ? "Transactions appear here when a seller accepts your bid."
-              : "Transactions appear here when you accept a buyer's bid."}
-          </p>
-          {roleView === "Buyer" && (
+          <p className={styles.emptyTitle}>Loading transactions…</p>
+        </div>
+      ) : roleView === "Buyer" ? (
+        buyerFiltered.length > 0 ? (
+          <div className={styles.list}>
+            {buyerFiltered.map((tx, i) => (
+              <BuyerTransactionRow key={i} tx={tx} onRate={handleRate} />
+            ))}
+          </div>
+        ) : (
+          <div className={styles.empty}>
+            <ArrowRight size={36} className={styles.emptyIcon} />
+            <p className={styles.emptyTitle}>No transactions here</p>
+            <p className={styles.emptySubtitle}>
+              Transactions appear here when a seller accepts your bid.
+            </p>
             <button
               className={styles.btnSecondary}
               onClick={() => navigate("/")}
@@ -414,16 +391,28 @@ export default function Transactions() {
               <ShoppingBag01 size={15} />
               Browse listings
             </button>
-          )}
-          {roleView === "Seller" && (
-            <button
-              className={styles.btnSecondary}
-              onClick={() => navigate("/me/listings")}
-            >
-              <Tag01 size={15} />
-              View my listings
-            </button>
-          )}
+          </div>
+        )
+      ) : sellerFiltered.length > 0 ? (
+        <div className={styles.list}>
+          {sellerFiltered.map((tx, i) => (
+            <SellerTransactionRow key={i} tx={tx} onRate={handleRate} />
+          ))}
+        </div>
+      ) : (
+        <div className={styles.empty}>
+          <ArrowRight size={36} className={styles.emptyIcon} />
+          <p className={styles.emptyTitle}>No transactions here</p>
+          <p className={styles.emptySubtitle}>
+            Transactions appear here when you accept a buyer's bid.
+          </p>
+          <button
+            className={styles.btnSecondary}
+            onClick={() => navigate("/me/listings")}
+          >
+            <Tag01 size={15} />
+            View my listings
+          </button>
         </div>
       )}
     </div>
