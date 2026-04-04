@@ -289,7 +289,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } },
       );
-      return res.data;
+
+      switch (res.status) {
+        case 200:
+          return res.data;
+        default:
+          console.error("uploadImage failed", res);
+          return null;
+      }
     } catch (error) {
       console.error("uploadImage failed:", error);
       return null;
@@ -313,7 +320,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<BidResponse | null> => {
     try {
       const res = await api.post<BidResponse>(`/bids/${itemId}`, data);
-      return res.data;
+      
+      switch (res.status) {
+        case 200:
+          return res.data;
+        default:
+          console.error("createBid failed", res);
+          return null;
+      }
     } catch (error) {
       console.error("createBid failed:", error);
       return null;
@@ -380,7 +394,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.post<SellerTransactionResponse>(
         `/transactions/${itemId}/${bidId}`,
       );
-      return res.data;
+      switch (res.status) {
+        case 200:
+          return res.data;
+        default:
+          console.error("uploadImage failed", res);
+          return null;
+      }
     } catch (error) {
       console.error("createTransaction failed:", error);
       return null;

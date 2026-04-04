@@ -18,6 +18,7 @@ interface DialogProps {
   loading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
+  customIcon?: React.ReactNode;
   children?: React.ReactNode;
 }
 
@@ -31,6 +32,7 @@ export default function Dialog({
   loading = false,
   onConfirm,
   onCancel,
+  customIcon,
   children,
 }: DialogProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
@@ -69,9 +71,15 @@ export default function Dialog({
               className={`${styles.icon} ${styles[`icon_${variant}`]}`}
               aria-hidden="true"
             >
-              {variant === "danger" &&  <Trash01 size={16}/>}
-              {variant === "warning" && <AlertTriangle size={16} />}
-              {variant === "success" && <CheckCircleBroken size={16} />}
+              {customIcon ? (
+                customIcon
+              ) : (
+                <>
+                  {variant === "danger" && <Trash01 size={16} />}
+                  {variant === "warning" && <AlertTriangle size={16} />}
+                  {variant === "success" && <CheckCircleBroken size={16} />}
+                </>
+              )}
             </span>
           )}
           <h2 id="dialog-title" className={styles.title}>

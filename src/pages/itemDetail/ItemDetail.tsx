@@ -59,7 +59,6 @@ export default function ItemDetail() {
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
 
-  // Input states initialized as strings to prevent "uncontrolled" warnings
   const [bidPrice, setBidPrice] = useState<string>("");
   const [bidQty, setBidQty] = useState<number>(1);
 
@@ -125,10 +124,9 @@ export default function ItemDetail() {
 
       if (res) {
         setBidSuccess(true);
-        setBidPrice(""); // Clear input
+        setBidPrice("");
         setBidQty(1);
 
-        // Refresh item data to show the new bid in the list
         const updated = await fetchItem(item.id);
         if (updated) setItem(updated);
       }

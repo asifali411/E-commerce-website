@@ -190,9 +190,6 @@ export default function CreateItem({
 
       if(!item){
         
-        // setErrors({
-        //   global: "Failed to create Item",
-        // });
         addToast({
           type: "error",
           title: isAuthenticated ? "Failed to create Item" : "You are logged out.",
@@ -204,13 +201,6 @@ export default function CreateItem({
       }
 
       for (const file of imageFiles) {
-        // const fd = new FormData();
-        // fd.append("image", file);
-        // // await fetch(`${apiBase}/images/${item.id}`, {
-        // //   method: "POST",
-        // //   credentials: "include",
-        // //   body: fd,
-        // // });
         uploadImage(item.id, file);
       }
 
@@ -218,9 +208,6 @@ export default function CreateItem({
       setStep("success");
       onSuccess?.(item);
     } catch (e: unknown) {
-      // setErrors({
-      //   global: e instanceof Error ? e.message : "Something went wrong.",
-      // });
       addToast({
         type: "error",
         title: e instanceof Error ? e.message : "Something went wrong.",
@@ -299,12 +286,6 @@ export default function CreateItem({
       </header>
 
       <div className={styles.formWrapper}>
-        {/* Global error
-        {errors.global && (
-          <div className={styles.globalError}>
-            <span>⚠</span> {errors.global}
-          </div>
-        )} */}
 
         <div className={styles.formGrid}>
           {/* ── LEFT COLUMN ── */}

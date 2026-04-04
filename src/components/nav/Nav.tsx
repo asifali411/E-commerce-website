@@ -14,6 +14,7 @@ import {
 } from "@untitledui/icons";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
+import Dialog from "../dialog/Dialog";
 
 interface NavItem {
   to: string;
@@ -35,12 +36,19 @@ export default function Nav() {
   const [expanded, setExpanded] = useState(navExpanded);
   const navigate = useNavigate();
   const {isAuthenticated, user, logout} = useAuth();
+  const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 
   const handleNavExpansion = (value: boolean): void => {
     setNavExpanded(value);
     setExpanded(value);
   }
 
+  const handleLogout = (): void => {
+    logout();
+    setOpenLogoutDialog(false);
+    navigate("/");
+  }
+ 
   return (
     <div className={styles.shell}>
       <nav
@@ -80,16 +88,23 @@ export default function Nav() {
             }
           >
             <span className={styles.iconWrap}>
-              <User01 />
+              {isAuthenticated && (
+                <div className={styles.avatar}>
+                  {user?.username.slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              {!isAuthenticated && <User01 />}
             </span>
-            <span className={styles.label}>{ !isAuthenticated && "Profile"} {isAuthenticated && (user?.username ?? "Profile")}</span>
+            <span className={styles.label}>
+              {!isAuthenticated && "Profile"}{" "}
+              {isAuthenticated && (user?.username ?? "Profile")}
+            </span>
           </NavLink>
 
           <button
             className={styles.logoutBtn}
             onClick={() => {
-              logout();
-              navigate("/");
+              setOpenLogoutDialog(true);
             }}
             disabled={!isAuthenticated}
           >
@@ -104,6 +119,21 @@ export default function Nav() {
       <main className={styles.main}>
         <Outlet />
       </main>
+
+      {/* ── Dialog ── */}
+      <Dialog
+        open={openLogoutDialog}
+        title="Log out"
+        description="Are you sure you want to log out?"
+        confirmLabel={"Log out"}
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleLogout}
+        onCancel={() => {
+          setOpenLogoutDialog(false);
+        }}
+        customIcon={<LogOut01 size={16} />}
+      />
     </div>
   );
 }
