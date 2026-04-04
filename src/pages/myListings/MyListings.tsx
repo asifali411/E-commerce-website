@@ -17,6 +17,7 @@ import { useAuth } from "../../context/AuthProvider";
 import type { ItemResponse } from "../../global/schema";
 import Dialog from "../../components/dialog/Dialog";
 import ItemDialog from "../../components/itemDialog/ItemDialog";
+import Spinner from "../../components/spinner/Spinner";
 
 // ── Types ──────────────────────────────────────────────────
 type FilterTab = "All" | "Active" | "Sold";
@@ -286,6 +287,7 @@ export default function MyListings() {
       {/* ── Listing rows ── */}
       {loadingData ? (
         <div className={styles.empty}>
+          <Spinner />
           <p className={styles.emptySubtitle}>Loading your listings…</p>
         </div>
       ) : filtered.length > 0 ? (

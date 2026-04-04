@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 import type { ItemCondition, BidStatus } from "../../global/types";
 import type { ItemResponse } from "../../global/schema";
+import Spinner from "../../components/spinner/Spinner";
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
@@ -141,11 +142,7 @@ export default function ItemDetail() {
   if (loading) {
     return (
       <div className={styles.stateWrapper}>
-        <div className={styles.loader}>
-          <span />
-          <span />
-          <span />
-        </div>
+        <Spinner />
         <p className={styles.stateLabel}>Fetching item…</p>
       </div>
     );

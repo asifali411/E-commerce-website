@@ -62,7 +62,8 @@
 .closeBtn:hover {
   background: var(--color-grey-200);
   color: var(--color-text);
-  transform: rotate(90deg) scale(1.05);
+  transform: translateY(0);
+  /* transform: rotate(90deg) scale(1.05); */
 }
 
 /* ── Loading / error states ───────────────────────────────── */

@@ -19,6 +19,7 @@ import type { ItemCategory, ItemCondition, BidStatus } from "../../global/types"
 import type { BidHistoryResponse } from "../../global/schema";
 import { useAuth } from "../../context/AuthProvider";
 import Dialog from "../../components/dialog/Dialog";
+import Spinner from "../../components/spinner/Spinner";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -366,6 +367,7 @@ export default function MyBids() {
       {/* ── Bid rows ── */}
       {loadingData ? (
         <div className={styles.empty}>
+          <Spinner/>
           <p className={styles.emptySubtitle}>Loading your Bids…</p>
         </div>
       ) : filtered.length > 0 ? (

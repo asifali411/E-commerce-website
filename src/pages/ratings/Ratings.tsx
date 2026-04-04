@@ -15,6 +15,7 @@ import styles from "./Ratings.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import type { RatingResponse } from "../../global/schema";
 import type { ItemCategory } from "../../global/types";
+import Spinner from "../../components/spinner/Spinner";
 
 // ── Types ──────────────────────────────────────────────────
 type RatingView = "Given";
@@ -284,6 +285,7 @@ export default function Ratings() {
       {/* ── Content ── */}
       {loading ? (
         <div className={styles.empty}>
+          <Spinner />
           <p className={styles.emptySubtitle}>Loading ratings…</p>
         </div>
       ) : filtered.length > 0 ? (

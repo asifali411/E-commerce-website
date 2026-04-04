@@ -24,6 +24,7 @@ import type {
   ItemCondition,
   TransactionStatus,
 } from "../../global/types";
+import Spinner from "../../components/spinner/Spinner";
 
 // ── Types ──────────────────────────────────────────────────
 type Role = "Buyer" | "Seller";
@@ -368,6 +369,7 @@ export default function Transactions() {
       {/* ── Transaction rows ── */}
       {loading ? (
         <div className={styles.empty}>
+          <Spinner />
           <p className={styles.emptyTitle}>Loading transactions…</p>
         </div>
       ) : roleView === "Buyer" ? (

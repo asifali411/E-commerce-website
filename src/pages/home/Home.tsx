@@ -13,6 +13,7 @@ import type { ItemCategory } from "../../global/types";
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
+import Spinner from "../../components/spinner/Spinner";
 
 const CATEGORIES = [
   "All" , "Electronics" , "Stationary" , "Rent" , "Miscellaneous"
@@ -126,6 +127,7 @@ export default function Home() {
       {/* ── Grid ── */}
       {loading ? (
         <div className={styles.empty}>
+          <Spinner />
           <p>Loading...</p>
         </div>
       ) : filtered.length > 0 ? (
