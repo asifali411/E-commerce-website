@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Bell01,
@@ -13,34 +13,17 @@ import {
   Tag01,
 } from "@untitledui/icons";
 import styles from "./Notifications.module.css";
+import { useAuth } from "../../context/AuthProvider";
+import type { NotificationResponse } from "../../global/schema";
+import type { NotificationType } from "../../global/types";
+import Spinner from "../../components/spinner/Spinner";
 
 // ── Types ──────────────────────────────────────────────────
-type NotificationType =
-  | "Item_Created"
-  | "Item_Updated"
-  | "Item_Deleted"
-  | "Bid_Created"
-  | "Bid_Updated"
-  | "Bid_Accepted"
-  | "Bid_Rejected"
-  | "Bid_Deleted"
-  | "Rating_Pending"
-  | "Rating_Received";
 
 type FilterChip = "All" | "Unread" | "Bids" | "Items" | "Ratings";
 
-interface Notification {
-  id: number;
-  type: NotificationType;
-  title: string;
-  message: string;
-  is_read: boolean;
-  payload?: Record<string, unknown>;
-  created_at: string; // ISO string
-}
-
 // ── Mock data ──────────────────────────────────────────────
-const MOCK_NOTIFICATIONS: Notification[] = [
+const MOCK_NOTIFICATIONS: NotificationResponse[] = [
   {
     id: 1,
     type: "Bid_Accepted",
@@ -119,7 +102,7 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     id: 9,
     type: "Bid_Deleted",
     title: "A bid was withdrawn",
-    message: 'suresh_m withdrew their bid on "Dell Monitor 24"".',
+    message: 'suresh_m withdrew their bid on "Dell Monitor 24".',
     is_read: true,
     payload: { item_id: 1 },
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 96).toISOString(), // 4 days ago
@@ -132,7 +115,7 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     is_read: true,
     payload: {},
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 120).toISOString(), // 5 days ago
-  },
+  }
 ];
 
 // ── Helpers ────────────────────────────────────────────────
@@ -185,11 +168,13 @@ function getTypeMeta(type: NotificationType): TypeMeta {
       return { icon: <Star01 size={16} />, colorClass: styles.iconAmber };
     case "Rating_Received":
       return { icon: <Star01 size={16} />, colorClass: styles.iconAmber };
+    default:
+      return { icon: <Bell01 size={16} />, colorClass: styles.iconBlue };
   }
 }
 
 // Route to navigate to on click
-function routeFor(n: Notification): string {
+function routeFor(n: NotificationResponse): string {
   const cat = categoryOf(n.type);
   if (cat === "Bids") return "/me/bids";
   if (cat === "Ratings") return "/me/ratings";
@@ -203,8 +188,8 @@ function NotificationRow({
   notification,
   onClick,
 }: {
-  notification: Notification;
-  onClick: (n: Notification) => void;
+  notification: NotificationResponse;
+  onClick: (n: NotificationResponse) => void;
 }) {
   const { icon, colorClass } = getTypeMeta(notification.type);
   const isUnread = !notification.is_read;
@@ -241,7 +226,10 @@ function NotificationRow({
 export default function Notifications() {
   const navigate = useNavigate();
 
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [loadingData, setLoadingData] = useState(true);
+  const { isAuthenticated, fetchNotifications, readAllNotifications} = useAuth();
+
+  const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [activeChip, setActiveChip] = useState<FilterChip>("All");
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
@@ -252,16 +240,101 @@ export default function Notifications() {
     return categoryOf(n.type) === activeChip;
   });
 
+  useEffect(() => {
+    async function load() {
+      setLoadingData(true);
+
+      
+
+      try {
+        if (isAuthenticated) {
+          const notifs = await fetchNotifications();
+          setNotifications(notifs);
+        }
+      } finally {
+        setLoadingData(false);
+      }
+    }
+
+    load();
+  }, [isAuthenticated, fetchNotifications]);
+
   function handleMarkAllRead() {
-    // TODO: GET /notifications/read_all
-    setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    readAllNotifications().then(() => {
+      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    });
   }
 
-  function handleClick(n: Notification) {
+  function handleClick(n: NotificationResponse) {
     setNotifications((prev) =>
       prev.map((x) => (x.id === n.id ? { ...x, is_read: true } : x)),
     );
     navigate(routeFor(n));
+  }
+
+  function handleNotificationFeed() {
+    if(loadingData){
+      return (
+        <div className={styles.empty}>
+          <Spinner />
+          <p className={styles.emptySubtitle}>Loading your Notifications…</p>
+        </div>
+      );
+    } else if (filtered.length > 0){
+      return (
+        <div className={styles.feed}>
+          {filtered.map((n, i) => {
+            const currDay = new Date(n.created_at).toDateString();
+            const prevDay =
+              i > 0
+                ? new Date(filtered[i - 1].created_at).toDateString()
+                : null;
+            const showSeparator = i === 0 || currDay !== prevDay;
+            const separatorLabel = (() => {
+              const diff = Math.floor(
+                (Date.now() - new Date(n.created_at).getTime()) / 86400000,
+              );
+              if (diff === 0) return "Today";
+              if (diff === 1) return "Yesterday";
+              return new Date(n.created_at).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              });
+            })();
+
+            return (
+              <div key={n.id}>
+                {showSeparator && (
+                  <div className={styles.dateSeparator}>
+                    <span className={styles.dateSeparatorLabel}>
+                      {separatorLabel}
+                    </span>
+                  </div>
+                )}
+                <NotificationRow notification={n} onClick={handleClick} />
+              </div>
+            );
+          })}
+        </div>
+      );
+    } else {
+      return (
+        <div className={styles.empty}>
+          <Bell01 size={36} className={styles.emptyIcon} />
+          <p className={styles.emptyTitle}>
+            {activeChip === "Unread"
+              ? "All caught up!"
+              : "No notifications here"}
+          </p>
+          <p className={styles.emptySubtitle}>
+            {activeChip === "Unread"
+              ? "You have no unread notifications."
+              : "Activity from bids, listings, and ratings will show up here."}
+          </p>
+        </div>
+      );
+    }
   }
 
   const chips: FilterChip[] = ["All", "Unread", "Bids", "Items", "Ratings"];
@@ -308,58 +381,8 @@ export default function Notifications() {
       </div>
 
       {/* ── Notification feed ── */}
-      {filtered.length > 0 ? (
-        <div className={styles.feed}>
-          {filtered.map((n, i) => {
-            // Date separator logic
-            const currDay = new Date(n.created_at).toDateString();
-            const prevDay =
-              i > 0
-                ? new Date(filtered[i - 1].created_at).toDateString()
-                : null;
-            const showSeparator = i === 0 || currDay !== prevDay;
-            const separatorLabel = (() => {
-              const diff = Math.floor(
-                (Date.now() - new Date(n.created_at).getTime()) / 86400000,
-              );
-              if (diff === 0) return "Today";
-              if (diff === 1) return "Yesterday";
-              return new Date(n.created_at).toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              });
-            })();
+      {handleNotificationFeed()}
 
-            return (
-              <div key={n.id}>
-                {showSeparator && (
-                  <div className={styles.dateSeparator}>
-                    <span className={styles.dateSeparatorLabel}>
-                      {separatorLabel}
-                    </span>
-                  </div>
-                )}
-                <NotificationRow notification={n} onClick={handleClick} />
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className={styles.empty}>
-          <Bell01 size={36} className={styles.emptyIcon} />
-          <p className={styles.emptyTitle}>
-            {activeChip === "Unread"
-              ? "All caught up!"
-              : "No notifications here"}
-          </p>
-          <p className={styles.emptySubtitle}>
-            {activeChip === "Unread"
-              ? "You have no unread notifications."
-              : "Activity from bids, listings, and ratings will show up here."}
-          </p>
-        </div>
-      )}
     </div>
   );
 }

@@ -243,7 +243,7 @@ function BidRow({
 export default function MyBids() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
-  const { isAuthenticated, createBid, updateBid, deleteBid, fetchBids } = useAuth();
+  const { isAuthenticated, deleteBid, fetchBids } = useAuth();
 
   const [loadingData, setLoadingData] = useState(true);
 
@@ -302,8 +302,7 @@ export default function MyBids() {
     }
   }
 
-  function handleViewTransaction(itemId: number) {
-    // TODO: Handle transactions
+  function handleViewTransaction() {
     navigate("/me/transactions");
   }
 

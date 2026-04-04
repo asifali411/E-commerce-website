@@ -365,7 +365,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.get<SellerTransactionResponse[]>(
         "/transactions/my-selled-transactions",
       );
-      return Array.isArray(res.data) ? res.data : [];
+      switch(res.status){
+        case 200:
+          return Array.isArray(res.data) ? res.data : [];
+        case 404:
+          break;
+        default:
+          console.error("fetchSellerTransactions failed:", res);
+        }
+        return [];
     } catch (error) {
       console.error("fetchSellerTransactions failed:", error);
       return [];
@@ -379,7 +387,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.get<BuyerTransactionResponse[]>(
         "/transactions/my-buyed-transactions",
       );
-      return Array.isArray(res.data) ? res.data : [];
+      switch (res.status) {
+        case 200:
+          return Array.isArray(res.data) ? res.data : [];
+        case 404:
+          break;
+        default:
+          console.error("fetchBuyerTransactions failed:", res);
+      }
+      return [];
     } catch (error) {
       console.error("fetchBuyerTransactions failed:", error);
       return [];
@@ -423,7 +439,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     score: number,
   ): Promise<RatingResponse | null> => {
     try {
-      const res = await api.get<RatingResponse>(
+      const res = await api.patch<RatingResponse>(
         `/ratings/${ratingId}/${score}`,
       );
       return res.data;
