@@ -17,8 +17,7 @@ import { useToast } from "../toast/Toast";
 
 // ── Place holders ────────────────────────────────────────────────
 // let timeLeft = `${Math.floor(Math.random() * 10 + 2)} days left`;
-let timeLeft;
-// let bids = Math.floor(Math.random() * 10);
+let timeLeft; 
 
 // ── Helpers ────────────────────────────────────────────────
 const CONDITION_CLASS: Record<ItemCondition, string> = {

@@ -248,6 +248,7 @@ export default function ItemDialog({
   async function handleReject(bidId: number) {
     setAccepting(bidId);
     setSuccessMsg(null);
+    //@ts-ignore
     const result = await updateBid(bidId, { price: null, quantity: null });
     
     await loadItem();

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Star01,
@@ -12,114 +12,17 @@ import {
   Clock,
 } from "@untitledui/icons";
 import styles from "./Ratings.module.css";
-import type { ItemCategory } from "../../components/itemCard/ItemCard";
+import { useAuth } from "../../context/AuthProvider";
+import type { RatingResponse } from "../../global/schema";
+import type { ItemCategory } from "../../global/types";
 
 // ── Types ──────────────────────────────────────────────────
-type RatingStatus = "Pending" | "Completed";
-type RatingView = "Received" | "Given";
+type RatingView = "Given";
 type FilterTab = "All" | "Pending" | "Completed";
-
-interface Rating {
-  id: number;
-  score: number | null; // null = not yet submitted
-  status: RatingStatus;
-  rater: string; // who gave the rating
-  ratee: string; // who received it -> i can see myself forgetting this often
-  itemTitle: string;
-  itemCategory: ItemCategory;
-  createdAt: string;
-}
-
-// ── Mock data ──────────────────────────────────────────────
-const ME = "rohit_d"; // TODO: changes to actual username
-
-const MOCK_RATINGS: Rating[] = [
-  // ── Received ──
-  {
-    id: 1,
-    score: 5,
-    status: "Completed",
-    rater: "meera_p",
-    ratee: ME,
-    itemTitle: 'Dell Monitor 24"',
-    itemCategory: "Electronics",
-    createdAt: "2025-06-10",
-  },
-  {
-    id: 2,
-    score: 4,
-    status: "Completed",
-    rater: "ananya_t",
-    ratee: ME,
-    itemTitle: "DS Cormen Textbook",
-    itemCategory: "Stationary",
-    createdAt: "2025-06-08",
-  },
-  {
-    id: 3,
-    score: 3,
-    status: "Completed",
-    rater: "priya_r",
-    ratee: ME,
-    itemTitle: "Single Room (Hostel)",
-    itemCategory: "Rent",
-    createdAt: "2025-05-22",
-  },
-  {
-    id: 4,
-    score: 5,
-    status: "Completed",
-    rater: "vikram_s",
-    ratee: ME,
-    itemTitle: "Scientific Calculator",
-    itemCategory: "Electronics",
-    createdAt: "2025-05-15",
-  },
-  {
-    id: 5,
-    score: null,
-    status: "Pending",
-    rater: "suresh_m",
-    ratee: ME,
-    itemTitle: "Wildcraft Backpack 45L",
-    itemCategory: "Miscellaneous",
-    createdAt: "2025-06-03",
-  },
-  // ── Given ──
-  {
-    id: 6,
-    score: 5,
-    status: "Completed",
-    rater: ME,
-    ratee: "arjun_k",
-    itemTitle: 'Dell Monitor 24"',
-    itemCategory: "Electronics",
-    createdAt: "2025-06-10",
-  },
-  {
-    id: 7,
-    score: 4,
-    status: "Completed",
-    rater: ME,
-    ratee: "kavitha_n",
-    itemTitle: "DS Cormen Textbook",
-    itemCategory: "Stationary",
-    createdAt: "2025-06-08",
-  },
-  {
-    id: 8,
-    score: null,
-    status: "Pending",
-    rater: ME,
-    ratee: "ananya_t",
-    itemTitle: "HP Laptop 8GB RAM",
-    itemCategory: "Electronics",
-    createdAt: "2025-06-12",
-  },
-];
 
 // ── Helpers ────────────────────────────────────────────────
 const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
+  All: <Package size={11} />,
   Electronics: <Monitor01 size={11} />,
   Stationary: <PencilLine size={11} />,
   Rent: <Building07 size={11} />,
@@ -155,67 +58,26 @@ function StarDisplay({
   );
 }
 
-// ── Score summary card ─────────────────────────────────────
-function ScoreSummary({ received }: { received: Rating[] }) {
-  const completed = received.filter((r) => r.score !== null);
-  const scores = completed.map((r) => r.score as number);
-  const avg = average(scores);
-
-  // Star distribution
-  const dist = [5, 4, 3, 2, 1].map((star) => ({
-    star,
-    count: scores.filter((s) => s === star).length,
-    pct: scores.length
-      ? (scores.filter((s) => s === star).length / scores.length) * 100
-      : 0,
-  }));
-
+// ── Stat pill ──────────────────────────────────────────────
+function StatPill({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className={styles.summaryCard}>
-      {/* Big score */}
-      <div className={styles.summaryScore}>
-        <span className={styles.summaryScoreValue}>
-          {scores.length ? avg.toFixed(1) : "—"}
-        </span>
-        <div className={styles.summaryStars}>
-          <StarDisplay
-            score={scores.length ? Math.round(avg) : null}
-            size={16}
-          />
-        </div>
-        <span className={styles.summaryScoreCount}>
-          {completed.length} {completed.length === 1 ? "rating" : "ratings"}
-        </span>
-      </div>
-
-      {/* Divider */}
-      <div className={styles.summaryDivider} />
-
-      {/* Distribution bars */}
-      <div className={styles.summaryDist}>
-        {dist.map(({ star, count, pct }) => (
-          <div key={star} className={styles.distRow}>
-            <span className={styles.distLabel}>{star}</span>
-            <Star01 size={11} className={styles.distStar} />
-            <div className={styles.distBar}>
-              <div
-                className={styles.distBarFill}
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <span className={styles.distCount}>{count}</span>
-          </div>
-        ))}
-      </div>
+    <div className={styles.statPill}>
+      <span className={styles.statValue}>{value}</span>
+      <span className={styles.statLabel}>{label}</span>
     </div>
   );
 }
 
 // ── Rating row ─────────────────────────────────────────────
-function RatingRow({ rating, view }: { rating: Rating; view: RatingView }) {
+function RatingRow({
+  rating,
+  onRateNow,
+}: {
+  rating: RatingResponse;
+  onRateNow: (id: number) => void;
+}) {
   const isPending = rating.status === "Pending";
   const isCompleted = rating.status === "Completed";
-  const counterparty = view === "Received" ? rating.rater : rating.ratee;
 
   return (
     <article className={`${styles.row} ${isPending ? styles.rowPending : ""}`}>
@@ -224,28 +86,24 @@ function RatingRow({ rating, view }: { rating: Rating; view: RatingView }) {
         <User01 size={18} className={styles.rowAvatarIcon} />
       </div>
 
-      {/* User + item info */}
+      {/* User info */}
       <div className={styles.rowMain}>
         <div className={styles.rowTitleRow}>
-          <span className={styles.rowUsername}>{counterparty}</span>
-          <span
-            className={`${styles.viewChip} ${view === "Received" ? styles.viewChipReceived : styles.viewChipGiven}`}
-          >
-            {view === "Received" ? "Rated you" : "You rated"}
+          <span className={styles.rowUsername}>
+            {rating.rated_user.username}
+          </span>
+          <span className={`${styles.viewChip} ${styles.viewChipGiven}`}>
+            You rated
           </span>
         </div>
-        <div className={styles.rowItem}>
-          <span className={styles.rowItemIcon}>
-            {CATEGORY_ICON[rating.itemCategory]}
-          </span>
-          <span className={styles.rowItemTitle}>{rating.itemTitle}</span>
-        </div>
-        <span className={styles.rowDate}>{rating.createdAt}</span>
+        <span className={styles.rowDate}>
+          {new Date(rating.created_at).toLocaleDateString()}
+        </span>
       </div>
 
       {/* Score */}
       <div className={styles.rowScore}>
-        <StarDisplay score={rating.score} size={14} />
+        <StarDisplay score={rating.score ?? null} size={14} />
       </div>
 
       {/* Status */}
@@ -265,23 +123,15 @@ function RatingRow({ rating, view }: { rating: Rating; view: RatingView }) {
 
       {/* Action */}
       <div className={styles.rowAction}>
-        {isPending && view === "Given" && (
+        {isPending && (
           <button
             className={styles.actionBtnRate}
-            onClick={() => {
-              /* navigate to transactions to rate */
-            }}
-            title="Go to transactions to submit rating"
+            onClick={() => onRateNow(rating.id)}
+            title="Submit your rating"
           >
             Rate now
             <ArrowRight size={13} />
           </button>
-        )}
-        {isPending && view === "Received" && (
-          <span className={styles.awaitingLabel}>
-            <Clock size={12} />
-            Awaiting
-          </span>
         )}
         {isCompleted && <span className={styles.noAction}>—</span>}
       </div>
@@ -289,12 +139,64 @@ function RatingRow({ rating, view }: { rating: Rating; view: RatingView }) {
   );
 }
 
-// ── Stat pill ──────────────────────────────────────────────
-function StatPill({ label, value }: { label: string; value: number | string }) {
+// ── Rate modal ─────────────────────────────────────────────
+function RateModal({
+  ratingId,
+  username,
+  onSubmit,
+  onClose,
+}: {
+  ratingId: number;
+  username: string;
+  onSubmit: (ratingId: number, score: number) => Promise<void>;
+  onClose: () => void;
+}) {
+  const [hovered, setHovered] = useState(0);
+  const [selected, setSelected] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!selected) return;
+    setSubmitting(true);
+    await onSubmit(ratingId, selected);
+    setSubmitting(false);
+    onClose();
+  };
+
   return (
-    <div className={styles.statPill}>
-      <span className={styles.statValue}>{value}</span>
-      <span className={styles.statLabel}>{label}</span>
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        <h2 className={styles.modalTitle}>Rate {username}</h2>
+        <p className={styles.modalSubtitle}>How was your experience?</p>
+        <div className={styles.modalStars}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <button
+              key={n}
+              className={`${styles.modalStar} ${n <= (hovered || selected) ? styles.modalStarActive : ""}`}
+              onMouseEnter={() => setHovered(n)}
+              onMouseLeave={() => setHovered(0)}
+              onClick={() => setSelected(n)}
+            >
+              <Star01 size={28} />
+            </button>
+          ))}
+        </div>
+        {selected > 0 && (
+          <p className={styles.modalScoreLabel}>{selected} / 5</p>
+        )}
+        <div className={styles.modalActions}>
+          <button className={styles.btnSecondary} onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            className={styles.actionBtnRate}
+            onClick={handleSubmit}
+            disabled={!selected || submitting}
+          >
+            {submitting ? "Submitting…" : "Submit"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -302,24 +204,41 @@ function StatPill({ label, value }: { label: string; value: number | string }) {
 // ── Main page ──────────────────────────────────────────────
 export default function Ratings() {
   const navigate = useNavigate();
-  const [view, setView] = useState<RatingView>("Received");
+  const { user, fetchMyRatings, updateRating } = useAuth();
+
+  const [ratings, setRatings] = useState<RatingResponse[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
+  const [modalRating, setModalRating] = useState<RatingResponse | null>(null);
 
-  const received = MOCK_RATINGS.filter((r) => r.ratee === ME);
-  const given = MOCK_RATINGS.filter((r) => r.rater === ME);
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const data = await fetchMyRatings();
+      setRatings(data);
+      setLoading(false);
+    })();
+  }, []);
 
-  const viewData = view === "Received" ? received : given;
-  const countFor = (status: RatingStatus) =>
-    viewData.filter((r) => r.status === status).length;
+  const pending = ratings.filter((r) => r.status === "Pending");
+  const completed = ratings.filter((r) => r.status === "Completed");
 
-  const filtered = viewData.filter((r) =>
-    activeTab === "All" ? true : r.status === activeTab,
-  );
+  const filtered = ratings.filter((r) => {
+    if (activeTab === "All") return true;
+    return r.status === activeTab;
+  });
 
-  const completedReceived = received.filter((r) => r.score !== null);
-  const avgScore = completedReceived.length
-    ? average(completedReceived.map((r) => r.score as number))
-    : null;
+  const completedScores = completed
+    .map((r) => r.score)
+    .filter((s): s is number => s !== null && s !== undefined);
+  const avgScore = completedScores.length ? average(completedScores) : null;
+
+  const handleSubmitRating = async (ratingId: number, score: number) => {
+    const updated = await updateRating(ratingId, score);
+    if (updated) {
+      setRatings((prev) => prev.map((r) => (r.id === ratingId ? updated : r)));
+    }
+  };
 
   return (
     <div className={styles.page}>
@@ -330,42 +249,15 @@ export default function Ratings() {
           <div className={styles.stats}>
             <StatPill
               label="Your score"
-              value={avgScore !== null ? `★ ${avgScore.toFixed(1)}` : "—"}
+              value={
+                user?.rating !== undefined ? `★ ${user.rating.toFixed(1)}` : "—"
+              }
             />
-            <StatPill label="Received" value={received.length} />
-            <StatPill label="Given" value={given.length} />
+            <StatPill label="Given" value={ratings.length} />
+            <StatPill label="Pending" value={pending.length} />
           </div>
         </div>
-
-        {/* View switcher */}
-        <div className={styles.viewSwitcher}>
-          <button
-            className={`${styles.viewBtn} ${view === "Received" ? styles.viewBtnActive : ""}`}
-            onClick={() => {
-              setView("Received");
-              setActiveTab("All");
-            }}
-          >
-            <Star01 size={14} />
-            Received
-            <span className={styles.viewBtnCount}>{received.length}</span>
-          </button>
-          <button
-            className={`${styles.viewBtn} ${view === "Given" ? styles.viewBtnActive : ""}`}
-            onClick={() => {
-              setView("Given");
-              setActiveTab("All");
-            }}
-          >
-            <User01 size={14} />
-            Given
-            <span className={styles.viewBtnCount}>{given.length}</span>
-          </button>
-        </div>
       </header>
-
-      {/* ── Score summary (only in Received view) ── */}
-      {view === "Received" && <ScoreSummary received={received} />}
 
       {/* ── Filter tabs ── */}
       <div className={styles.tabs}>
@@ -379,17 +271,31 @@ export default function Ratings() {
             {tab === "Completed" && <span className={styles.tabDotCompleted} />}
             {tab}
             <span className={styles.tabCount}>
-              {tab === "All" ? viewData.length : countFor(tab as RatingStatus)}
+              {tab === "All"
+                ? ratings.length
+                : tab === "Pending"
+                  ? pending.length
+                  : completed.length}
             </span>
           </button>
         ))}
       </div>
 
-      {/* ── Rating rows ── */}
-      {filtered.length > 0 ? (
+      {/* ── Content ── */}
+      {loading ? (
+        <div className={styles.empty}>
+          <p className={styles.emptySubtitle}>Loading ratings…</p>
+        </div>
+      ) : filtered.length > 0 ? (
         <div className={styles.list}>
           {filtered.map((rating) => (
-            <RatingRow key={rating.id} rating={rating} view={view} />
+            <RatingRow
+              key={rating.id}
+              rating={rating}
+              onRateNow={(id) =>
+                setModalRating(ratings.find((r) => r.id === id) ?? null)
+              }
+            />
           ))}
         </div>
       ) : (
@@ -397,20 +303,26 @@ export default function Ratings() {
           <Star01 size={36} className={styles.emptyIcon} />
           <p className={styles.emptyTitle}>No ratings here</p>
           <p className={styles.emptySubtitle}>
-            {view === "Received"
-              ? "Ratings appear here after completed transactions."
-              : "Rate your counterparts from the Transactions page."}
+            Rate your counterparts from the Transactions page.
           </p>
-          {view === "Given" && (
-            <button
-              className={styles.btnSecondary}
-              onClick={() => navigate("/me/transactions")}
-            >
-              <ArrowRight size={15} />
-              Go to Transactions
-            </button>
-          )}
+          <button
+            className={styles.btnSecondary}
+            onClick={() => navigate("/me/transactions")}
+          >
+            <ArrowRight size={15} />
+            Go to Transactions
+          </button>
         </div>
+      )}
+
+      {/* ── Rate modal ── */}
+      {modalRating && (
+        <RateModal
+          ratingId={modalRating.id}
+          username={modalRating.rated_user.username}
+          onSubmit={handleSubmitRating}
+          onClose={() => setModalRating(null)}
+        />
       )}
     </div>
   );

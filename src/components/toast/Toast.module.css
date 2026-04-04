@@ -28,7 +28,7 @@
   padding: 14px 14px 14px 16px;
   border-radius: var(--toast-radius);
   box-shadow: var(--toast-shadow);
-  font-family: inherit; /* inherits Manrope / Inter from :root */
+  font-family: inherit;
   pointer-events: all;
   overflow: hidden;
   cursor: default;
@@ -36,7 +36,6 @@
   background-color: var(--color-card);
   color: var(--color-text);
 
-  /* Enter/leave animation */
   transform: translateX(calc(100% + 32px));
   opacity: 0;
   transition:
@@ -98,7 +97,7 @@
   background-color: var(--color-warning);
 }
 
-/* Info — uses project primary color */
+/* Info */
 .info {
   background-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-card));
   border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-card-border));
@@ -175,7 +174,7 @@
 .close:hover {
   opacity: 1;
   background-color: var(--color-button-hover);
-  transform: translateY(0); /* cancel global button hover lift */
+  transform: translateY(0);
 }
 
 .close svg {
