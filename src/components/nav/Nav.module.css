@@ -122,6 +122,10 @@
   font-weight: 500;
 }
 
+.navLink{
+  position: relative;
+}
+
 /* ── Icon wrapper ─────────────────────────────────────────── */
 .iconWrap {
   display: flex;
@@ -147,6 +151,22 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.indicator{
+  border-radius: 999px;
+  background-color: var(--color-error);
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  font-size: 0.5rem;
+  height: 0.8rem;
+  width: 0.8rem;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
 }
 
 /* ── Label fade-slide ─────────────────────────────────────── */

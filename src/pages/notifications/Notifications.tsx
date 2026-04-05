@@ -17,110 +17,14 @@ import { useAuth } from "../../context/AuthProvider";
 import type { NotificationResponse } from "../../global/schema";
 import type { NotificationType } from "../../global/types";
 import Spinner from "../../components/spinner/Spinner";
+import { useNotifications } from "../../context/NotificationProvides";
 
 // ── Types ──────────────────────────────────────────────────
 
 type FilterChip = "All" | "Unread" | "Bids" | "Items" | "Ratings";
 
-// ── Mock data ──────────────────────────────────────────────
-const MOCK_NOTIFICATIONS: NotificationResponse[] = [
-  {
-    id: 1,
-    type: "Bid_Accepted",
-    title: "Your bid was accepted!",
-    message: 'arjun_k accepted your bid of ₹3,800 on "Dell Monitor 24"".',
-    is_read: false,
-    payload: { item_id: 1 },
-    created_at: new Date(Date.now() - 1000 * 60 * 8).toISOString(), // 8 min ago
-  },
-  {
-    id: 2,
-    type: "Bid_Created",
-    title: "New bid on your listing",
-    message: 'meera_p placed a bid of ₹900 on "DS Cormen Textbook".',
-    is_read: false,
-    payload: { item_id: 2 },
-    created_at: new Date(Date.now() - 1000 * 60 * 45).toISOString(), // 45 min ago
-  },
-  {
-    id: 3,
-    type: "Rating_Pending",
-    title: "Rate your recent transaction",
-    message: "You completed a transaction with suresh_m. Leave a rating now.",
-    is_read: false,
-    payload: { rating_id: 201 },
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hr ago
-  },
-  {
-    id: 4,
-    type: "Bid_Rejected",
-    title: "Your bid was rejected",
-    message: 'rohit_d rejected your bid on "HP Laptop 8GB RAM".',
-    is_read: true,
-    payload: { item_id: 3 },
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), // 5 hr ago
-  },
-  {
-    id: 5,
-    type: "Item_Updated",
-    title: "A listing you bid on was updated",
-    message:
-      'vikram_s updated "Single Room (Hostel)" — min price changed to ₹750.',
-    is_read: true,
-    payload: { item_id: 4 },
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 22).toISOString(), // 22 hr ago
-  },
-  {
-    id: 6,
-    type: "Rating_Received",
-    title: "You received a new rating",
-    message:
-      'priya_r gave you ★ 4 after your transaction on "Single Room (Hostel)".',
-    is_read: true,
-    payload: { rating_id: 3 },
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(), // yesterday
-  },
-  {
-    id: 7,
-    type: "Bid_Updated",
-    title: "A bid on your listing was updated",
-    message: 'kavitha_n updated their bid on "Scientific Calculator" to ₹400.',
-    is_read: true,
-    payload: { item_id: 8 },
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
-  },
-  {
-    id: 8,
-    type: "Item_Created",
-    title: "Your listing is live",
-    message: '"Wildcraft Backpack 45L" is now active and visible to buyers.',
-    is_read: true,
-    payload: { item_id: 7 },
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(), // 3 days ago
-  },
-  {
-    id: 9,
-    type: "Bid_Deleted",
-    title: "A bid was withdrawn",
-    message: 'suresh_m withdrew their bid on "Dell Monitor 24".',
-    is_read: true,
-    payload: { item_id: 1 },
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 96).toISOString(), // 4 days ago
-  },
-  {
-    id: 10,
-    type: "Item_Deleted",
-    title: "A listing you bid on was removed",
-    message: 'ananya_t removed "Engineering Drawing Set" from the marketplace.',
-    is_read: true,
-    payload: {},
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 120).toISOString(), // 5 days ago
-  }
-];
-
 // ── Helpers ────────────────────────────────────────────────
 
-// Relative time
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
@@ -133,14 +37,12 @@ function timeAgo(iso: string): string {
   return `${days}d ago`;
 }
 
-// Category of notification
 function categoryOf(type: NotificationType): "Bids" | "Items" | "Ratings" {
   if (type.startsWith("Bid_")) return "Bids";
   if (type.startsWith("Item_")) return "Items";
   return "Ratings";
 }
 
-// Per-type icon + colour class
 interface TypeMeta {
   icon: React.ReactNode;
   colorClass: string;
@@ -173,7 +75,6 @@ function getTypeMeta(type: NotificationType): TypeMeta {
   }
 }
 
-// Route to navigate to on click
 function routeFor(n: NotificationResponse): string {
   const cat = categoryOf(n.type);
   if (cat === "Bids") return "/me/bids";
@@ -226,13 +127,13 @@ function NotificationRow({
 export default function Notifications() {
   const navigate = useNavigate();
 
-  const [loadingData, setLoadingData] = useState(true);
-  const { isAuthenticated, fetchNotifications, readAllNotifications} = useAuth();
+  const { isAuthenticated } = useAuth();
+  let loadingData = false;
 
-  const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
+  const { notifications, fetchNotifications, markAllRead } = useNotifications();
   const [activeChip, setActiveChip] = useState<FilterChip>("All");
 
-  const unreadCount = notifications.filter((n) => !n.is_read).length;
+  let unreadCount = notifications.filter((n) => !n.is_read).length;
 
   const filtered = notifications.filter((n) => {
     if (activeChip === "All") return true;
@@ -241,34 +142,17 @@ export default function Notifications() {
   });
 
   useEffect(() => {
-    async function load() {
-      setLoadingData(true);
-
-      
-
-      try {
-        if (isAuthenticated) {
-          const notifs = await fetchNotifications();
-          setNotifications(notifs);
-        }
-      } finally {
-        setLoadingData(false);
-      }
+    if (isAuthenticated) {
+      fetchNotifications();
     }
-
-    load();
-  }, [isAuthenticated, fetchNotifications]);
+  }, [isAuthenticated]);
 
   function handleMarkAllRead() {
-    readAllNotifications().then(() => {
-      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
-    });
+    markAllRead();
   }
 
   function handleClick(n: NotificationResponse) {
-    setNotifications((prev) =>
-      prev.map((x) => (x.id === n.id ? { ...x, is_read: true } : x)),
-    );
+    
     navigate(routeFor(n));
   }
 
@@ -345,7 +229,7 @@ export default function Notifications() {
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <h1 className={styles.pageTitle}>Notifications</h1>
-          {unreadCount > 0 && (
+          {isAuthenticated && unreadCount > 0 && (
             <span className={styles.unreadBadge}>{unreadCount} unread</span>
           )}
         </div>

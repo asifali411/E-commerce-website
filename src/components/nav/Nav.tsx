@@ -15,11 +15,13 @@ import {
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import Dialog from "../dialog/Dialog";
+import { useNotifications } from "../../context/NotificationProvides";
 
 interface NavItem {
   to: string;
   label: string;
   icon: React.ReactNode;
+  isNotification?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -28,7 +30,7 @@ const navItems: NavItem[] = [
   { to: "/me/bids",          label: "My bids",       icon: <Wallet03 />         },
   { to: "/me/transactions",  label: "Transactions",  icon: <SwitchVertical01 /> },
   { to: "/me/ratings",       label: "Ratings",       icon: <Star01 />           },
-  { to: "/me/notifications", label: "Notifications", icon: <Bell01 />           },
+  { to: "/me/notifications", label: "Notifications", icon: <Bell01 />           , isNotification: true },
 ];
 
 export default function Nav() {
@@ -37,6 +39,7 @@ export default function Nav() {
   const navigate = useNavigate();
   const {isAuthenticated, user, logout} = useAuth();
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
+  const { unreadCount } = useNotifications();
 
   const handleNavExpansion = (value: boolean): void => {
     setNavExpanded(value);
@@ -75,6 +78,9 @@ export default function Nav() {
               >
                 <span className={styles.iconWrap}>{item.icon}</span>
                 <span className={styles.label}>{item.label}</span>
+                {isAuthenticated && item.isNotification && unreadCount > 0 && 
+                  <span className={styles.indicator}>{unreadCount > 9 ? "9+" : unreadCount}</span>
+                }
               </NavLink>
             </li>
           ))}

@@ -16,12 +16,12 @@ import type {
   SellerTransactionResponse,
   BuyerTransactionResponse,
   RatingResponse,
-  NotificationResponse,
   AdminItemResponse,
   AdminUniqueItemResponse,
   BidHistoryResponse,
 } from "../global/schema";
 import type { ItemCreate, ItemUpdate, BidCreate, BidUpdate, ReportCreate } from "../global/request";
+import { useNotifications } from "./NotificationProvides";
 
 // --- Axios Instance -----------------------------------------
 const api = axios.create({
@@ -89,10 +89,6 @@ interface AuthContextType {
     score: number,
   ) => Promise<RatingResponse | null>;
 
-  // Notifications
-  fetchNotifications: () => Promise<NotificationResponse[]>;
-  readAllNotifications: () => Promise<boolean>;
-
   // Reports
   reportItem: (itemId: number, data: ReportCreate) => Promise<boolean>;
 
@@ -120,6 +116,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<PrivateUsersResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const {fetchNotifications} = useNotifications();
   let isRefreshing = false;
 
   const fetchUser = async () => {
@@ -130,6 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
     } finally {
       setLoading(false);
+      fetchNotifications();
     }
   };
 
@@ -157,6 +155,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     await api.post("/logout");
     setUser(null);
+    await fetchNotifications();
   };
 
   const refresh = async () => {
@@ -246,6 +245,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const createItem = async (data: ItemCreate): Promise<ItemResponse | null> => {
     try {
       const res = await api.post<ItemResponse>("/items/create", data);
+      await fetchNotifications();
       return res.data;
     } catch (error) {
       console.error("createItem failed:", error);
@@ -259,6 +259,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<ItemResponse | null> => {
     try {
       const res = await api.patch<ItemResponse>(`/items/${id}`, data);
+      await fetchNotifications();
       return res.data;
     } catch (error) {
       console.error("updateItem failed:", error);
@@ -269,6 +270,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const deleteItem = async (id: number): Promise<boolean> => {
     try {
       await api.delete(`/items/${id}`);
+      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("deleteItem failed:", error);
@@ -292,6 +294,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       switch (res.status) {
         case 200:
+          await fetchNotifications();
           return res.data;
         default:
           console.error("uploadImage failed", res);
@@ -306,6 +309,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const deleteImage = async (imageId: number): Promise<boolean> => {
     try {
       await api.delete(`/images/${imageId}`);
+      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("deleteImage failed:", error);
@@ -323,6 +327,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       switch (res.status) {
         case 200:
+          await fetchNotifications();
           return res.data;
         default:
           console.error("createBid failed", res);
@@ -340,6 +345,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<BidResponse | null> => {
     try {
       const res = await api.patch<BidResponse>(`/bids/${bidId}`, data);
+      await fetchNotifications();
       return res.data;
     } catch (error) {
       console.error("updateBid failed:", error);
@@ -350,6 +356,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const deleteBid = async (bidId: number): Promise<boolean> => {
     try {
       await api.delete(`/bids/${bidId}`);
+      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("deleteBid failed:", error);
@@ -412,6 +419,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       );
       switch (res.status) {
         case 200:
+          await fetchNotifications();
           return res.data;
         default:
           console.error("uploadImage failed", res);
@@ -442,31 +450,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.patch<RatingResponse>(
         `/ratings/${ratingId}/${score}`,
       );
+      await fetchNotifications();
       return res.data;
     } catch (error) {
       console.error("updateRating failed:", error);
       return null;
-    }
-  };
-
-  // --- Notifications ----------------------------------------
-  const fetchNotifications = async (): Promise<NotificationResponse[]> => {
-    try {
-      const res = await api.get<NotificationResponse[]>("/notifications/");
-      return Array.isArray(res.data) ? res.data : [];
-    } catch (error) {
-      console.error("fetchNotifications failed:", error);
-      return [];
-    }
-  };
-
-  const readAllNotifications = async (): Promise<boolean> => {
-    try {
-      await api.get("/notifications/read_all");
-      return true;
-    } catch (error) {
-      console.error("readAllNotifications failed:", error);
-      return false;
     }
   };
 
@@ -477,6 +465,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<boolean> => {
     try {
       await api.post(`/reports/${itemId}`, data);
+      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("reportItem failed:", error);
@@ -593,9 +582,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     fetchMyRatings,
     updateRating,
-
-    fetchNotifications,
-    readAllNotifications,
 
     reportItem,
 
