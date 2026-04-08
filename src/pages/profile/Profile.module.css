@@ -1,0 +1,686 @@
+/* ─── Loading ──────────────────────────────────────────────────────────────── */
+.loadingScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-card-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Page & Container ────────────────────────────────────────────────────── */
+.page {
+  min-height: 100%;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ─── Status Banners ──────────────────────────────────────────────────────── */
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 20px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  border-bottom: 1px solid transparent;
+}
+
+.bannerLocked {
+  background-color: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-warning) 30%, transparent);
+  color: var(--color-warning);
+}
+
+.bannerDisabled {
+  background-color: color-mix(in srgb, var(--color-error) 10%, transparent);
+  border-color: color-mix(in srgb, var(--color-error) 28%, transparent);
+  color: var(--color-error);
+}
+
+.bannerIcon {
+  margin-top: 2px;
+  flex-shrink: 0;
+  display: flex;
+}
+
+.bannerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bannerText strong {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.bannerText span {
+  opacity: 0.9;
+}
+
+/* ─── Hero ────────────────────────────────────────────────────────────────── */
+.hero {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: calc(var(--border-radius) + 4px);
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.heroLeft {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Avatar */
+.avatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-card-border);
+}
+
+.avatarFallback {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--color-grey-100);
+  border: 3px solid var(--color-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+
+.statusDot {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2.5px solid var(--color-surface);
+}
+
+.dotActive   { background: var(--color-success); }
+.dotLocked   { background: var(--color-warning); }
+.dotDisabled { background: var(--color-error); }
+
+/* Hero info */
+.heroInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.heroNameRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.username {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--color-text);
+}
+
+/* .username {
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+} */
+
+.bio {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+  max-width: 480px;
+  line-height: 1.55;
+}
+
+/* Status pill */
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.pillLocked {
+  background: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
+}
+
+.pillDisabled {
+  background: color-mix(in srgb, var(--color-error) 13%, transparent);
+  color: var(--color-error);
+}
+
+/* Star rating */
+.starRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.starWrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-grey-300);
+}
+
+.starBg {
+  /* color: var(--color-grey-300); */
+  color: transparent;
+}
+
+.starFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  color: var(--color-cta);
+  display: inline-flex;
+}
+
+.starFill svg{
+    fill: var(--color-cta);
+}
+
+.ratingValue {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.ratingCount {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* Hero buttons */
+.heroActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--border-radius);
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s;
+}
+
+.btnPrimary:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--border-radius);
+  background: var(--color-button);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-card-border);
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s;
+}
+
+.btnGhost:hover {
+  background: var(--color-button-hover);
+  transform: translateY(-1px);
+}
+
+/* ─── Info Grid ───────────────────────────────────────────────────────────── */
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--color-card-border);
+  border: 1px solid var(--color-card-border);
+  border-radius: calc(var(--border-radius) + 4px);
+  overflow: hidden;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--color-surface);
+}
+
+.infoIcon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.infoLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  display: block;
+  line-height: 1;
+}
+
+.infoValue {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-text);
+  display: block;
+  line-height: 1.3;
+  margin-top: 3px;
+  word-break: break-all;
+}
+
+/* ─── Quick Stats ─────────────────────────────────────────────────────────── */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.statCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: calc(var(--border-radius) + 4px);
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: box-shadow 0.18s;
+}
+
+.statCard:hover {
+  box-shadow: 0 4px 16px -4px rgba(0,0,0,0.1);
+}
+
+.statIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius);
+  background: var(--color-button);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.statBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.statLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.statSub {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+
+/* ─── Charts ──────────────────────────────────────────────────────────────── */
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.chartCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: calc(var(--border-radius) + 4px);
+  padding: 22px 20px 16px;
+}
+
+.chartWide {
+  grid-column: 1 / -1;
+}
+
+.chartHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chartTitle {
+  margin: 0 0 3px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.chartSub {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* Recharts tooltip */
+.tooltip {
+  background: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--color-text);
+  box-shadow: 0 4px 20px -4px rgba(0,0,0,0.15);
+}
+
+.tooltipLabel {
+  margin: 0 0 6px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.tooltipItem {
+  margin: 2px 0;
+}
+
+/* Radial chart */
+.radialWrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.categoryLegend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.catRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.catDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.catName {
+  flex: 1;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.catVal {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* ─── Delta Cards ─────────────────────────────────────────────────────────── */
+.deltaRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.deltaCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: calc(var(--border-radius) + 4px);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.deltaMonth {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+}
+
+.deltaAmount {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.3px;
+}
+
+.deltaBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 2px 8px;
+  width: fit-content;
+}
+
+.deltaPos {
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+}
+
+.deltaNeg {
+  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+  color: var(--color-error);
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .chartWide {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 16px 14px 40px;
+    gap: 14px;
+  }
+
+  .hero {
+    padding: 20px;
+    flex-direction: column;
+  }
+
+  .heroLeft {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .heroNameRow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .avatar,
+  .avatarFallback {
+    width: 72px;
+    height: 72px;
+  }
+
+  .username {
+    font-size: 19px;
+  }
+
+  .heroActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .btnPrimary {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .statsRow {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .statValue {
+    font-size: 17px;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .radialWrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .deltaRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .banner {
+    padding: 12px 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .deltaRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

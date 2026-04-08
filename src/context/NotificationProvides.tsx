@@ -54,7 +54,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
       interval = setInterval(async () => {
         await fetchNotifications();
-      }, 60000);
+      }, 2 * 60000);
     }
 
     startPolling();

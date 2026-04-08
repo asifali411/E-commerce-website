@@ -28,13 +28,16 @@ export default function Home() {
   const [items, setItems] = useState<ItemResponse[]>([]);
   const { user, fetchFeed } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [loadmoreLoading, setLoadmoreLoading] = useState(false);
   const [page, setPage] = useState(0);
 
   const loadMore = async () => {
+    setLoadmoreLoading(true);
     const nextPage = page + 1;
-    const newItems = await fetchFeed(nextPage, 10);
+    const newItems = await fetchFeed(nextPage * 10, 10);
     setItems((prev) => [...prev, ...newItems]);
     setPage(nextPage);
+    setLoadmoreLoading(false);
   };
 
   useEffect(() => {
@@ -42,7 +45,15 @@ export default function Home() {
       try {
         setLoading(true);
         const data = await fetchFeed(0, 10);
-        setItems(data);
+
+        const map = new Map();
+        data.forEach((item) => {
+          if (!map.has(item.id)) {
+            map.set(item.id, item);
+          }
+        });
+
+        setItems(Array.from(map.values()));
       } catch (error) {
         
       } finally {
@@ -147,8 +158,8 @@ export default function Home() {
       {filtered.length > 0 && (
         <div className={styles.loadMoreRow}>
           <button className={styles.loadMoreBtn} onClick={loadMore}>
-            Load more
-            <ArrowRight size={15} />
+            {loadmoreLoading ? "Loading..." : "Load more"}
+            {loadmoreLoading ? <Spinner size={16}/> : <ArrowRight size={15} />}
           </button>
         </div>
       )}
