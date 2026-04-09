@@ -180,23 +180,30 @@ export default function ItemDetail() {
         {/* Left: Gallery */}
         <section className={styles.gallery}>
           <div className={styles.mainImage}>
-            {hasImages ? (
+            {hasImages && item.images[activeImage]?.status === "Completed" && (
               <img
                 src={`/api/${item.images[activeImage].image_path}`}
                 alt={item.title}
                 className={styles.mainImg}
               />
-            ) : (
+            )}
+
+            {hasImages && item.images[activeImage]?.status === "Pending" && (
+              <div className={styles.processingOverlay}>
+                Image is being processed
+                <br />
+                This may take a while
+              </div>
+            )}
+
+            {!hasImages && (
               <div className={styles.noImage}>
                 <span>No Image</span>
               </div>
             )}
+
             {item.status === "Sold" && (
               <div className={styles.soldOverlay}>SOLD</div>
-            )}
-            {
-              item.images[activeImage].status === "Pending" && (
-              <div className={styles.processingOverlay}>Image is being processed<br />This may take a while</div>
             )}
           </div>
           {hasImages && item.images.length > 1 && (

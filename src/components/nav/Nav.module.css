@@ -13,7 +13,7 @@
   flex-shrink: 0;
 
   width: 60px;
-  height: 100vh;
+  height: 98vh;
   overflow: hidden;
 
   background-color: var(--color-card);
@@ -26,6 +26,7 @@
 
   position: relative;
   z-index: 100;
+  margin-block: auto;
 }
 
 .sidebar.expanded {
@@ -126,19 +127,23 @@
   position: relative;
 }
 
+.navLink:disabled {
+  color: var(--color-grey-400);
+  cursor: not-allowed;
+}
+
 /* ── Icon wrapper ─────────────────────────────────────────── */
 .iconWrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* padding: 0.1rem; */
   flex-shrink: 0;
 }
 
 .iconWrap svg{
-    width: 16px;
-    height: 16px;
-    margin-left: 5px;
+  width: 16px;
+  height: 16px;
+  margin-left: 5px;
 }
 
 .avatar{
@@ -189,7 +194,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 8px 8px 0;
+  padding: 12px 8px 0;
   border-top: 1px solid var(--color-card-border);
   margin-top: auto;
   overflow: hidden;
@@ -202,6 +207,70 @@
 .logoutBtn:disabled{
   color: var(--color-grey-500);
   cursor: not-allowed;
+}
+
+/* ── Auth buttons ─────────────────────────────────────────── */
+.authButtons {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.authButtons svg{
+  width: 16px;
+  height: 16px;
+}
+
+.btnLogin,
+.btnSignup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  font-family: inherit;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.15 ease;
+}
+
+.sidebar.expanded .btnLogin,
+.sidebar.expanded .btnSignup {
+  gap: 6px;
+}
+
+.authButtons span{
+  font-size: 0;
+  opacity: 0;
+  transition: all 0.25s ease;
+}
+
+.sidebar.expanded .authButtons span {
+  opacity: 1;
+  font-size: 0.8125rem;
+}
+
+.btnLogin {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  color: var(--color-text);
+}
+
+.btnLogin:hover {
+  background-color: var(--color-grey-100);
+  border-color: var(--color-grey-300);
+  transform: translateY(-1px);
+}
+
+.btnSignup {
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: #ffffff;
+}
+
+.btnSignup:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
 }
 
 /* ── Main content area ────────────────────────────────────── */

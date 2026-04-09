@@ -19,6 +19,7 @@ import SignUp from "../pages/signup/SignUp";
 import ItemDetail from "../pages/itemDetail/ItemDetail";
 import CreateItem from "../pages/createItem/CreateItem";
 import Profile from "../pages/profile/Profile";
+import ProtectedRoute from "./ProtectedRoute";
 
 // Placeholder pages
 const NotFound = () => <div>404 — page not found</div>;
@@ -41,110 +42,27 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* Auth */}
-        <Route
-          path="/login"
-          element={
-            <PageWrapper>
-              <Login />
-            </PageWrapper>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <PageWrapper>
-              <SignUp />
-            </PageWrapper>
-          }
-        />
 
-        {/* Main app */}
+        <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+        <Route path="/register" element={<PageWrapper><SignUp /></PageWrapper>} />
+
         <Route element={<Nav />}>
-          <Route
-            path="/"
-            element={
-              <PageWrapper>
-                <Home />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="/items/create"
-            element={
-              <PageWrapper>
-                <CreateItem />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="/items/:id"
-            element={
-              <PageWrapper>
-                <ItemDetail />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="/me/listings"
-            element={
-              <PageWrapper>
-                <MyListings />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="/me/bids"
-            element={
-              <PageWrapper>
-                <MyBids />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="/me/transactions"
-            element={
-              <PageWrapper>
-                <Transactions />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="/me/ratings"
-            element={
-              <PageWrapper>
-                <Ratings />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="/me/notifications"
-            element={
-              <PageWrapper>
-                <Notifications />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="/me/profile"
-            element={
-              <PageWrapper>
-                <Profile />
-              </PageWrapper>
-            }
-          />
+          <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+          <Route path="/items/:id" element={<PageWrapper><ItemDetail /></PageWrapper>} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/items/create" element={<PageWrapper><CreateItem /></PageWrapper>} />
+            <Route path="/me/listings" element={<PageWrapper><MyListings /></PageWrapper>} />
+            <Route path="/me/bids" element={<PageWrapper><MyBids /></PageWrapper>} />
+            <Route path="/me/transactions" element={<PageWrapper><Transactions /></PageWrapper>} />
+            <Route path="/me/ratings" element={<PageWrapper><Ratings /></PageWrapper>} />
+            <Route path="/me/notifications" element={<PageWrapper><Notifications /></PageWrapper>} />
+            <Route path="/me/profile" element={<PageWrapper><Profile /></PageWrapper>} />
+          </Route>
         </Route>
 
-        {/* Fallback */}
         <Route path="/index.html" element={<Navigate to="/" replace />} />
-        <Route
-          path="*"
-          element={
-            <PageWrapper>
-              <NotFound />
-            </PageWrapper>
-          }
-        />
+        <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );

@@ -9,8 +9,9 @@ import {
     SwitchVertical01,
     Star01,
     Bell01,
-    User01,
+    LogIn01,
     LogOut01,
+    User01,
 } from "@untitledui/icons";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
@@ -22,10 +23,11 @@ interface NavItem {
   label: string;
   icon: React.ReactNode;
   isNotification?: boolean;
+  isHome?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { to: "/",                 label: "Home",          icon: <Home01 />           },
+  { to: "/",                 label: "Home",          icon: <Home01 />           , isHome: true },
   { to: "/me/listings",      label: "My listings",   icon: <Grid01 />           },
   { to: "/me/bids",          label: "My bids",       icon: <Wallet03 />         },
   { to: "/me/transactions",  label: "Transactions",  icon: <SwitchVertical01 /> },
@@ -40,6 +42,7 @@ export default function Nav() {
   const {isAuthenticated, user, logout} = useAuth();
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
   const { unreadCount } = useNotifications();
+  const [activePath, setActivePath] = useState("/");
 
   const handleNavExpansion = (value: boolean): void => {
     setNavExpanded(value);
@@ -69,57 +72,84 @@ export default function Nav() {
         <ul className={styles.navList}>
           {navItems.map((item) => (
             <li key={item.to}>
-              <NavLink
-                to={item.to}
-                end={item.to === "/"}
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.active : ""}`
-                }
+              <button
+                onClick={() => {
+                  if (!isAuthenticated) return;
+                  setActivePath(item.to);
+                  navigate(item.to);
+                }}
+                className={`${styles.navLink} ${activePath == item.to ? styles.active : ""}`}
+                disabled={!isAuthenticated && !item.isHome}
               >
                 <span className={styles.iconWrap}>{item.icon}</span>
                 <span className={styles.label}>{item.label}</span>
-                {isAuthenticated && item.isNotification && unreadCount > 0 && 
-                  <span className={styles.indicator}>{unreadCount > 9 ? "9+" : unreadCount}</span>
-                }
-              </NavLink>
+                {isAuthenticated && item.isNotification && unreadCount > 0 && (
+                  <span className={styles.indicator}>
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+              </button>
             </li>
           ))}
         </ul>
 
-        <div className={styles.bottom}>
-          <NavLink
-            to="/me/profile"
-            className={({ isActive }) =>
-              `${styles.navLink} ${isActive ? styles.active : ""}`
-            }
-          >
-            <span className={styles.iconWrap}>
-              {isAuthenticated && (
+        {isAuthenticated && (
+          <div className={styles.bottom}>
+            <NavLink
+              to="/me/profile"
+              className={({ isActive }) =>
+                `${styles.navLink} ${isActive ? styles.active : ""}`
+              }
+            >
+              <span className={styles.iconWrap}>
                 <div className={styles.avatar}>
                   {user?.username.slice(0, 2).toUpperCase()}
                 </div>
-              )}
-              {!isAuthenticated && <User01 />}
-            </span>
-            <span className={styles.label}>
-              {!isAuthenticated && "Profile"}{" "}
-              {isAuthenticated && (user?.username ?? "Profile")}
-            </span>
-          </NavLink>
+              </span>
+              <span className={styles.label}>{user?.username}</span>
+            </NavLink>
 
-          <button
-            className={styles.logoutBtn}
-            onClick={() => {
-              setOpenLogoutDialog(true);
-            }}
-            disabled={!isAuthenticated}
-          >
-            <span className={styles.iconWrap}>
-              <LogOut01 />
-            </span>
-            <span className={styles.label}>Log out</span>
-          </button>
-        </div>
+            <button
+              className={styles.logoutBtn}
+              onClick={() => {
+                setOpenLogoutDialog(true);
+              }}
+            >
+              <span className={styles.iconWrap}>
+                <LogOut01 />
+              </span>
+              <span className={styles.label}>Log out</span>
+            </button>
+          </div>
+        )}
+
+        {!isAuthenticated && (
+          <div className={styles.bottom}>
+            <div className={styles.authButtons}>
+              <button
+                className={styles.btnSignup}
+                onClick={() => {
+                  navigate("/register");
+                }}
+              >
+                <User01 size={15} />
+                <span>
+                  Sign up
+                </span>
+              </button>
+
+              <button
+                className={styles.btnLogin}
+                onClick={() => {
+                  navigate("/login");
+                }}
+              >
+                <LogIn01 size={15} />
+                <span>Log in</span>
+              </button>
+            </div>
+          </div>
+        )}
       </nav>
 
       <main className={styles.main}>
