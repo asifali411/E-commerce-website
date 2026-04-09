@@ -8,6 +8,7 @@ import type {
   TransactionStatus,
   RatingStatus,
   NotificationType,
+  ImageStatus,
 } from "./types";
 
 export interface Item {
@@ -51,6 +52,7 @@ export interface PrivateUsersResponse {
 export interface ItemImageResponse {
   id: number;
   image_path: string;
+  status: ImageStatus;
 }
 
 export interface BidResponse {

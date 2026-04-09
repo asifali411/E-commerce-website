@@ -194,6 +194,10 @@ export default function ItemDetail() {
             {item.status === "Sold" && (
               <div className={styles.soldOverlay}>SOLD</div>
             )}
+            {
+              item.images[activeImage].status === "Pending" && (
+              <div className={styles.processingOverlay}>Image is being processed<br />This may take a while</div>
+            )}
           </div>
           {hasImages && item.images.length > 1 && (
             <div className={styles.thumbRow}>

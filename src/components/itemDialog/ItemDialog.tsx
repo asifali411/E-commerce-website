@@ -15,7 +15,7 @@ import {
 } from "@untitledui/icons";
 import styles from "./ItemDialog.module.css";
 import { useAuth } from "../../context/AuthProvider";
-import type { ItemResponse, BidResponse } from "../../global/schema";
+import type { ItemResponse, BidResponse, ItemImageResponse } from "../../global/schema";
 import type { ItemCondition } from "../../global/types";
 
 // ── Types ──────────────────────────────────────────────────
@@ -139,7 +139,7 @@ function BidCard({
 function ImageCarousel({
   images,
 }: {
-  images: { id: number; image_path: string }[];
+  images: ItemImageResponse[];
 }) {
   const [idx, setIdx] = useState(0);
 
@@ -159,6 +159,16 @@ function ImageCarousel({
         alt={`Image ${idx + 1}`}
         className={styles.carouselImg}
       />
+
+      {
+        images[idx].status === "Pending" &&
+        <div className={styles.processingOverlay}>
+          Image is being processed
+          <br />
+          This may take a while
+        </div>
+      }
+
       {images.length > 1 && (
         <>
           <button
