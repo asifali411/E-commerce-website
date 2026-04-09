@@ -365,6 +365,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
+.bidForm.disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+  user-select: none;
+}
+
 .bidHeading {
   font-size: 1rem;
   font-weight: 700;

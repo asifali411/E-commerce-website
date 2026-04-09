@@ -87,8 +87,6 @@ export default function CreateItem({
     Partial<Record<keyof ItemCreate, string>>
   >({});
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<"form" | "success">("form");
-  const [createdItem, setCreatedItem] = useState<ItemResponse | null>(null);
 
   const { isAuthenticated } = useAuth();
   const { createItem, uploadImage} = useAction();
@@ -206,9 +204,13 @@ export default function CreateItem({
         uploadImage(item.id, file);
       }
 
-      setCreatedItem(item);
-      setStep("success");
       onSuccess?.(item);
+      addToast({
+        type: "success",
+        title: `${body.title} is now live and accepting bids.`,
+        message: "",
+        duration: 4000,
+      });
     } catch (e: unknown) {
       addToast({
         type: "error",
@@ -218,51 +220,13 @@ export default function CreateItem({
       });
     } finally {
       setLoading(false);
+      navigate("/me/listings");
     }
   }
 
   function toggleCategory(cat: ItemCategory) {
     setCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
-    );
-  }
-
-  // ── Success screen ───────────────────────────────────────────────────────
-
-  if (step === "success" && createdItem) {
-    return (
-      <div className={styles.successWrapper}>
-        <div className={styles.successIcon}>✓</div>
-        <h2 className={styles.successTitle}>Item Listed!</h2>
-        <p className={styles.successSub}>
-          <strong>{createdItem.title}</strong> is now live and accepting bids.
-        </p>
-        <div className={styles.successActions}>
-          <button
-            className={styles.btnPrimary}
-            onClick={() => navigate(`/items/${createdItem.id}`)}
-          >
-            View Item
-          </button>
-          <button
-            className={styles.btnSecondary}
-            onClick={() => {
-              setTitle("");
-              setDescription("");
-              setMinPrice("");
-              setQuantity("1");
-              setCondition("");
-              setCategories([]);
-              setImageFiles([]);
-              setImagePreviews([]);
-              setStep("form");
-              setCreatedItem(null);
-            }}
-          >
-            List Another
-          </button>
-        </div>
-      </div>
     );
   }
 

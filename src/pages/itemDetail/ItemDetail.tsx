@@ -5,6 +5,7 @@ import type { ItemCondition, BidStatus } from "../../global/types";
 import type { ItemResponse } from "../../global/schema";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
+import { useAuth } from "../../context/AuthProvider";
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
@@ -53,6 +54,7 @@ export default function ItemDetail() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const itemId = Number(id);
+  const { user } = useAuth();
 
   // --- State ---
   const [item, setItem] = useState<ItemResponse | null>(null);
@@ -106,7 +108,7 @@ export default function ItemDetail() {
   const onBack = () => navigate(-1);
 
   async function handleBid() {
-    if (!item || !bidPrice) return;
+    if (!item || !bidPrice || user?.username === item.seller.username) return;
 
     setBidLoading(true);
     setBidError(null);
@@ -259,7 +261,9 @@ export default function ItemDetail() {
           </div>
 
           {item.status === "Active" && (
-            <div className={styles.bidForm}>
+            <div
+              className={`${styles.bidForm} ${user?.username === item.seller.username ? styles.disabled : ""}`}
+            >
               <h3 className={styles.bidHeading}>Place a Bid</h3>
               <div className={styles.bidInputRow}>
                 <label className={styles.bidLabel}>
@@ -271,6 +275,7 @@ export default function ItemDetail() {
                     onChange={(e) => setBidPrice(e.target.value)}
                     placeholder={`Min. ${item.min_price}`}
                     className={styles.bidInput}
+                    disabled={user?.username === item.seller.username}
                   />
                 </label>
                 <label className={styles.bidLabel}>
@@ -282,6 +287,7 @@ export default function ItemDetail() {
                     value={bidQty}
                     onChange={(e) => setBidQty(Number(e.target.value))}
                     className={styles.bidInput}
+                    disabled={user?.username === item.seller.username}
                   />
                 </label>
               </div>
@@ -292,7 +298,11 @@ export default function ItemDetail() {
               <button
                 className={styles.bidSubmit}
                 onClick={handleBid}
-                disabled={bidLoading || !bidPrice}
+                disabled={
+                  bidLoading ||
+                  !bidPrice ||
+                  user?.username === item.seller.username
+                }
               >
                 {bidLoading ? "Placing…" : "Submit Bid"}
               </button>
@@ -307,7 +317,10 @@ export default function ItemDetail() {
           Bids <span className={styles.bidCount}>{item.bids.length}</span>
         </h2>
         {item.bids.length === 0 ? (
-          <p className={styles.noBids}>No bids yet. Be the first!</p>
+          <p className={styles.noBids}>
+            No bids yet.
+            {user?.username === item.seller.username ? "" : " Be the first!"}
+          </p>
         ) : (
           <div className={styles.bidsGrid}>
             {item.bids.map((bid) => (
