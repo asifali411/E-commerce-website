@@ -16,6 +16,7 @@ import { useAuth } from "../../context/AuthProvider";
 import type { RatingResponse } from "../../global/schema";
 import type { ItemCategory } from "../../global/types";
 import Spinner from "../../components/spinner/Spinner";
+import { useAction } from "../../context/ActionProvider";
 
 // ── Types ──────────────────────────────────────────────────
 type RatingView = "Given";
@@ -205,7 +206,8 @@ function RateModal({
 // ── Main page ──────────────────────────────────────────────
 export default function Ratings() {
   const navigate = useNavigate();
-  const { user, fetchMyRatings, updateRating } = useAuth();
+  const { user } = useAuth();
+  const { fetchMyRatings, updateRating } = useAction();
 
   const [ratings, setRatings] = useState<RatingResponse[]>([]);
   const [loading, setLoading] = useState(true);

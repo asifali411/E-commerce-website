@@ -11,6 +11,7 @@ import { useAuth } from "../../context/AuthProvider";
 import { useToast } from "../../components/toast/Toast";
 import { useNavigate } from "react-router-dom";
 import type { ItemCategory, ItemCondition } from "../../global/types";
+import { useAction } from "../../context/ActionProvider";
 
 // ── Types ──────────────────────────────────────────────
 
@@ -89,7 +90,8 @@ export default function CreateItem({
   const [step, setStep] = useState<"form" | "success">("form");
   const [createdItem, setCreatedItem] = useState<ItemResponse | null>(null);
 
-  const { createItem, uploadImage, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { createItem, uploadImage} = useAction();
   const { addToast } = useToast();
   const navigate = useNavigate();
 

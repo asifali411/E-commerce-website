@@ -14,6 +14,7 @@ import type { ItemCategory } from "../../global/types";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 import Spinner from "../../components/spinner/Spinner";
+import { useAction } from "../../context/ActionProvider";
 
 const CATEGORIES = [
   "All" , "Electronics" , "Stationary" , "Rent" , "Miscellaneous"
@@ -26,7 +27,8 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState<ItemCategory>("All");
   const navigate = useNavigate();
   const [items, setItems] = useState<ItemResponse[]>([]);
-  const { user, fetchFeed } = useAuth();
+  const { user } = useAuth();
+  const { fetchFeed } = useAction();
   const [loading, setLoading] = useState(true);
   const [loadmoreLoading, setLoadmoreLoading] = useState(false);
   const [page, setPage] = useState(0);

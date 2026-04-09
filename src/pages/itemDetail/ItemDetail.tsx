@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import styles from "./ItemDetail.module.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthProvider";
 import type { ItemCondition, BidStatus } from "../../global/types";
 import type { ItemResponse } from "../../global/schema";
 import Spinner from "../../components/spinner/Spinner";
+import { useAction } from "../../context/ActionProvider";
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
@@ -49,7 +49,7 @@ function BidStatusChip({ status }: { status: BidStatus }) {
 // ── Main Component ─────────────────────────────────────────────────────────
 
 export default function ItemDetail() {
-  const { fetchItem, createBid } = useAuth();
+  const { fetchItem, createBid } = useAction();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const itemId = Number(id);

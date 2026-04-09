@@ -20,6 +20,7 @@ import type { BidHistoryResponse } from "../../global/schema";
 import { useAuth } from "../../context/AuthProvider";
 import Dialog from "../../components/dialog/Dialog";
 import Spinner from "../../components/spinner/Spinner";
+import { useAction } from "../../context/ActionProvider";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -243,7 +244,8 @@ function BidRow({
 export default function MyBids() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
-  const { isAuthenticated, deleteBid, fetchBids } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { deleteBid, fetchBids } = useAction();
 
   const [loadingData, setLoadingData] = useState(true);
 

@@ -14,7 +14,6 @@ import {
   Tag01,
 } from "@untitledui/icons";
 import styles from "./Transactions.module.css";
-import { useAuth } from "../../context/AuthProvider";
 import type {
   SellerTransactionResponse,
   BuyerTransactionResponse,
@@ -25,6 +24,7 @@ import type {
   TransactionStatus,
 } from "../../global/types";
 import Spinner from "../../components/spinner/Spinner";
+import { useAction } from "../../context/ActionProvider";
 
 // ── Types ──────────────────────────────────────────────────
 type Role = "Buyer" | "Seller";
@@ -261,7 +261,7 @@ function SellerTransactionRow({
 export default function Transactions() {
   const navigate = useNavigate();
   const { fetchSellerTransactions, fetchBuyerTransactions, updateRating } =
-    useAuth();
+    useAction();
 
   const [roleView, setRoleView] = useState<Role>("Buyer");
   const [activeTab, setActiveTab] = useState<FilterTab>("All");

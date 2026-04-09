@@ -14,9 +14,9 @@ import {
   AlertCircle,
 } from "@untitledui/icons";
 import styles from "./ItemDialog.module.css";
-import { useAuth } from "../../context/AuthProvider";
 import type { ItemResponse, BidResponse, ItemImageResponse } from "../../global/schema";
 import type { ItemCondition } from "../../global/types";
+import { useAction } from "../../context/ActionProvider";
 
 // ── Types ──────────────────────────────────────────────────
 interface ItemDialogProps {
@@ -206,7 +206,7 @@ export default function ItemDialog({
   onClose,
   onBidAccepted,
 }: ItemDialogProps) {
-  const { fetchItem, createTransaction, updateBid } = useAuth();
+  const { fetchItem, createTransaction, updateBid } = useAction();
 
   const [item, setItem] = useState<ItemResponse | null>(null);
   const [loading, setLoading] = useState(false);

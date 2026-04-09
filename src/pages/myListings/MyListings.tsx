@@ -18,6 +18,7 @@ import type { ItemResponse } from "../../global/schema";
 import Dialog from "../../components/dialog/Dialog";
 import ItemDialog from "../../components/itemDialog/ItemDialog";
 import Spinner from "../../components/spinner/Spinner";
+import { useAction } from "../../context/ActionProvider";
 
 // ── Types ──────────────────────────────────────────────────
 type FilterTab = "All" | "Active" | "Sold";
@@ -163,7 +164,8 @@ function ListingRow({
 // ── Main page ──────────────────────────────────────────────
 export default function MyListings() {
   const navigate = useNavigate();
-  const { isAuthenticated, fetchSelledItems, deleteItem } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { fetchSelledItems, deleteItem } = useAction();
 
   const [listings, setListings] = useState<ItemResponse[]>([]);
   const [loadingData, setLoadingData] = useState(true);
