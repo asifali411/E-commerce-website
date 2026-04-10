@@ -410,7 +410,7 @@ export default function Transactions() {
           </p>
           <button
             className={styles.btnSecondary}
-            onClick={() => navigate("/me/listings")}
+            onClick={() => navigate("/listings")}
           >
             <Tag01 size={15} />
             View my listings

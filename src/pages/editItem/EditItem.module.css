@@ -516,6 +516,22 @@
   to { transform: rotate(360deg); }
 }
 
+/* ── State wrappers ─────────────────────────────────── */
+
+.stateWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 16px;
+}
+
+.stateLabel {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+}
+
 /* ── Responsive ───────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .header {

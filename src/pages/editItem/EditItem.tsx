@@ -13,6 +13,7 @@ import type { ItemCategory, ItemCondition } from "../../global/types";
 import type { ItemResponse } from "../../global/schema";
 import type { ItemUpdate } from "../../global/request";
 import { useAction } from "../../context/ActionProvider";
+import Spinner from "../../components/spinner/Spinner";
 
 // ── Types ──────────────────────────────────────────────
 
@@ -79,6 +80,7 @@ export default function EditItem({ onCancel }: EditItemProps) {
     Partial<Record<keyof ItemUpdate, string>>
   >({});
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
 
   const isBidLocked = !!item && item.bid_count > 0;
 
@@ -99,6 +101,7 @@ export default function EditItem({ onCancel }: EditItemProps) {
           message: `Item ID ${itemId} is invalid.`,
           duration: 4000,
         });
+        setPageLoading(false);
         return;
       }
 
@@ -139,7 +142,10 @@ export default function EditItem({ onCancel }: EditItemProps) {
             message: "If you are seeing this error, please report it.",
             duration: 4000,
           });
+          setPageLoading(false);
         }
+      } finally {
+        if (isMounted) setPageLoading(false);
       }
     }
 
@@ -330,7 +336,7 @@ export default function EditItem({ onCancel }: EditItemProps) {
         duration: 4000,
       });
 
-      navigate("/me/listings");
+      navigate("/listings");
     } catch (e: unknown) {
       addToast({
         type: "error",
@@ -352,6 +358,15 @@ export default function EditItem({ onCancel }: EditItemProps) {
   // ── Form ──────────────────────────────────────────────
 
   const charLeft = 500 - description.length;
+
+  if (pageLoading) {
+    return (
+      <div className={styles.stateWrapper}>
+        <Spinner />
+        <p className={styles.stateLabel}>Fetching item…</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>

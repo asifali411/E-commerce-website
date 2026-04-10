@@ -220,7 +220,7 @@ export default function CreateItem({
       });
     } finally {
       setLoading(false);
-      navigate("/me/listings");
+      navigate("/listings");
     }
   }
 

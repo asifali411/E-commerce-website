@@ -28,11 +28,11 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { to: "/",                 label: "Home",          icon: <Home01 />           , isHome: true },
-  { to: "/me/listings",      label: "My listings",   icon: <Grid01 />           },
-  { to: "/me/bids",          label: "My bids",       icon: <Wallet03 />         },
-  { to: "/me/transactions",  label: "Transactions",  icon: <SwitchVertical01 /> },
-  { to: "/me/ratings",       label: "Ratings",       icon: <Star01 />           },
-  { to: "/me/notifications", label: "Notifications", icon: <Bell01 />           , isNotification: true },
+  { to: "/listings",      label: "My listings",   icon: <Grid01 />           },
+  { to: "/bids",          label: "My bids",       icon: <Wallet03 />         },
+  { to: "/transactions",  label: "Transactions",  icon: <SwitchVertical01 /> },
+  { to: "/ratings",       label: "Ratings",       icon: <Star01 />           },
+  { to: "/notifications", label: "Notifications", icon: <Bell01 />           , isNotification: true },
 ];
 
 export default function Nav() {
@@ -96,7 +96,7 @@ export default function Nav() {
         {isAuthenticated && (
           <div className={styles.bottom}>
             <NavLink
-              to="/me/profile"
+              to="/profile"
               className={({ isActive }) =>
                 `${styles.navLink} ${isActive ? styles.active : ""}`
               }

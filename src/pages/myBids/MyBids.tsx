@@ -305,7 +305,7 @@ export default function MyBids() {
   }
 
   function handleViewTransaction() {
-    navigate("/me/transactions");
+    navigate("/transactions");
   }
 
   return (

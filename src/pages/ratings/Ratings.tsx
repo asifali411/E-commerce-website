@@ -311,7 +311,7 @@ export default function Ratings() {
           </p>
           <button
             className={styles.btnSecondary}
-            onClick={() => navigate("/me/transactions")}
+            onClick={() => navigate("/transactions")}
           >
             <ArrowRight size={15} />
             Go to Transactions

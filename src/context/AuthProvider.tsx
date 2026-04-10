@@ -2,14 +2,12 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import axios from "axios";
-
-import type {
-  PrivateUsersResponse,
-} from "../global/schema";
+import type { PrivateUsersResponse } from "../global/schema";
 
 // --- Axios Instance -----------------------------------------
 export const api = axios.create({
@@ -22,7 +20,6 @@ interface AuthContextType {
   user: PrivateUsersResponse | null;
   isAuthenticated: boolean;
   loading: boolean;
-
   // Auth
   login: (username: string, password: string) => Promise<void>;
   register: (data: {
@@ -50,11 +47,11 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<PrivateUsersResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  let isRefreshing = false;
+  const isRefreshing = useRef(false);
 
   const fetchUser = async () => {
     try {
-      const res = await api.get<PrivateUsersResponse>("/me");
+      const res = await api.get<PrivateUsersResponse>("/profile/");
       setUser(res.data);
     } catch {
       setUser(null);
@@ -99,7 +96,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // --- Effects ----------------------------------------------
-
   useEffect(() => {
     fetchUser();
 
@@ -109,19 +105,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const originalRequest = error.config;
 
         if (error.response?.status === 401 && !originalRequest._retry) {
-          if (isRefreshing) {
+          if (isRefreshing.current) {
             return Promise.reject(error);
           }
 
           originalRequest._retry = true;
-          isRefreshing = true;
+          isRefreshing.current = true;
 
           try {
             await api.post("/refresh");
-            isRefreshing = false;
+            isRefreshing.current = false;
             return api(originalRequest);
           } catch (refreshError) {
-            isRefreshing = false;
+            isRefreshing.current = false;
             setUser(null);
             return Promise.reject(refreshError);
           }
@@ -141,7 +137,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     isAuthenticated: !!user,
     loading,
-
     login,
     register,
     logout,

@@ -77,8 +77,8 @@ function getTypeMeta(type: NotificationType): TypeMeta {
 
 function routeFor(n: NotificationResponse): string {
   const cat = categoryOf(n.type);
-  if (cat === "Bids") return "/me/bids";
-  if (cat === "Ratings") return "/me/ratings";
+  if (cat === "Bids") return "/bids";
+  if (cat === "Ratings") return "/ratings";
   
   const itemId = n.payload?.item_id as number | undefined;
   return itemId ? `/items/${itemId}` : "/";
