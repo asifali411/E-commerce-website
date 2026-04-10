@@ -20,6 +20,7 @@ import ItemDetail from "../pages/itemDetail/ItemDetail";
 import CreateItem from "../pages/createItem/CreateItem";
 import Profile from "../pages/profile/Profile";
 import ProtectedRoute from "./ProtectedRoute";
+import EditItem from "../pages/editItem/EditItem";
 
 // Placeholder pages
 const NotFound = () => <div>404 — page not found</div>;
@@ -52,6 +53,7 @@ function AnimatedRoutes() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/items/create" element={<PageWrapper><CreateItem /></PageWrapper>} />
+            <Route path="/items/edit/:id" element={<PageWrapper><EditItem /></PageWrapper>} />
             <Route path="/me/listings" element={<PageWrapper><MyListings /></PageWrapper>} />
             <Route path="/me/bids" element={<PageWrapper><MyBids /></PageWrapper>} />
             <Route path="/me/transactions" element={<PageWrapper><Transactions /></PageWrapper>} />

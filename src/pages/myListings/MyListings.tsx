@@ -140,14 +140,20 @@ function ListingRow({
           <>
             <button
               className={styles.actionBtn}
-              onClick={() => onEdit(listing.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(listing.id)
+              }}
               title="Edit listing"
             >
               <Edit01 size={14} />
             </button>
             <button
               className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
-              onClick={() => onDelete(listing.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(listing.id)
+              }}
               title="Delete listing"
             >
               <Trash01 size={14} />
@@ -200,7 +206,7 @@ export default function MyListings() {
   const totalSold = listings.filter((l) => l.status === "Sold").length;
 
   function handleEdit(id: number) {
-    navigate(`/items/${id}/edit`);
+    navigate(`/items/edit/${id}`);
   }
 
   function handleOpenDelete(id: number) {

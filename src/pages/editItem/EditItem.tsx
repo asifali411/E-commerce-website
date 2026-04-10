@@ -1,41 +1,31 @@
-import { useState, useRef, useCallback } from "react";
-import styles from "./CreateItem.module.css";
+import { useState, useEffect, useCallback, useRef } from "react";
+import styles from "./EditItem.module.css";
 import {
   Package,
   Monitor01,
   PencilLine,
   Building07,
-  Image01
+  Image01,
 } from "@untitledui/icons";
-import { useAuth } from "../../context/AuthProvider";
 import { useToast } from "../../components/toast/Toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { ItemCategory, ItemCondition } from "../../global/types";
+import type { ItemResponse } from "../../global/schema";
+import type { ItemUpdate } from "../../global/request";
 import { useAction } from "../../context/ActionProvider";
 
 // ── Types ──────────────────────────────────────────────
 
-interface ItemCreate {
-  title: string;
-  description: string;
-  min_price: number;
-  quantity: number;
-  condition: ItemCondition;
-  categories: ItemCategory[];
-}
-
-interface ItemResponse {
-  id: number;
-  title: string;
-}
-
-interface CreateItemProps {
-  apiBase?: string;
+interface EditItemProps {
   onSuccess?: (item: ItemResponse) => void;
   onCancel?: () => void;
 }
 
-// ── Constants ──────────────────────────────────────────────────────────────
+type ExistingImageSlot = { kind: "existing"; id: number; url: string };
+type NewImageSlot = { kind: "new"; file: File; preview: string };
+type ImageSlot = ExistingImageSlot | NewImageSlot;
+
+// ── Constants ─────────────────────────────────────────
 
 const CONDITIONS: { value: ItemCondition; label: string; desc: string }[] = [
   { value: "New", label: "New", desc: "Unused, original condition" },
@@ -58,45 +48,120 @@ const CATEGORIES: { value: ItemCategory; label: string; icon: any }[] = [
   { value: "Miscellaneous", label: "Miscellaneous", icon: <Package /> },
 ];
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────
 
 function FieldError({ msg }: { msg?: string }) {
   if (!msg) return null;
   return <span className={styles.fieldError}>{msg}</span>;
 }
 
-// ── Main Component ─────────────────────────────────────────────────────────
+// ── Main Component ─────────────────────────────────────
 
-export default function CreateItem({
-  onSuccess,
-  onCancel,
-}: CreateItemProps) {
+export default function EditItem({ onCancel }: EditItemProps) {
+  const { id } = useParams<{ id: string }>();
+  const itemId = Number(id);
+
+  const [item, setItem] = useState<ItemResponse | undefined>(undefined);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [minPrice, setMinPrice] = useState("");
+  const [minPrice, setMinPrice] = useState<string>("");
   const [quantity, setQuantity] = useState("1");
   const [condition, setCondition] = useState<ItemCondition | "">("");
   const [categories, setCategories] = useState<ItemCategory[]>([]);
 
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imageSlots, setImageSlots] = useState<ImageSlot[]>([]);
+  const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
+
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [errors, setErrors] = useState<
-    Partial<Record<keyof ItemCreate, string>>
+    Partial<Record<keyof ItemUpdate, string>>
   >({});
   const [loading, setLoading] = useState(false);
 
-  const { isAuthenticated } = useAuth();
-  const { createItem, uploadImage} = useAction();
+  const isBidLocked = !!item && item.bid_count > 0;
+
+  const { fetchItem, updateItem, uploadImage, deleteImage } = useAction();
   const { addToast } = useToast();
   const navigate = useNavigate();
 
-  // ── Validation ───────────────────────────────────────────────────────────
+  // ── Load existing item ────────────────────────────────
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadItem() {
+      if (isNaN(itemId)) {
+        addToast({
+          type: "error",
+          title: "Invalid Item ID",
+          message: `Item ID ${itemId} is invalid.`,
+          duration: 4000,
+        });
+        return;
+      }
+
+      try {
+        const data = await fetchItem(itemId);
+        if (!isMounted) return;
+
+        if (data) {
+          setItem(data);
+          setTitle(data.title);
+          setDescription(data.description);
+          setMinPrice(String(data.min_price));
+          setQuantity(String(data.quantity));
+          setCondition(data.condition);
+          setCategories(data.categories);
+          setImageSlots(
+            data.images.map(
+              (img): ExistingImageSlot => ({
+                kind: "existing",
+                id: img.id,
+                url: img.image_path,
+              }),
+            ),
+          );
+        } else {
+          addToast({
+            type: "error",
+            title: "Failed to find item.",
+            message: "If you are seeing this error, please report it.",
+            duration: 4000,
+          });
+        }
+      } catch {
+        if (isMounted) {
+          addToast({
+            type: "error",
+            title: "Failed to find item.",
+            message: "If you are seeing this error, please report it.",
+            duration: 4000,
+          });
+        }
+      }
+    }
+
+    loadItem();
+    return () => {
+      isMounted = false;
+    };
+  }, [itemId, fetchItem]);
+
+  useEffect(() => {
+    return () => {
+      imageSlots.forEach((slot) => {
+        if (slot.kind === "new") URL.revokeObjectURL(slot.preview);
+      });
+    };
+  }, []);
+
+  // ── Validation ────────────────────────────────────────
 
   function validate(): boolean {
     const e: typeof errors = {};
+
     if (!title.trim()) e.title = "Title is required.";
     else if (title.length < 3) e.title = "Title must be at least 3 characters.";
 
@@ -105,59 +170,60 @@ export default function CreateItem({
       e.description = "Description must be at least 10 characters.";
 
     const price = parseFloat(minPrice);
-
     if (!minPrice) e.min_price = "Minimum price is required.";
     else if (isNaN(price) || price <= 0)
       e.min_price = "Enter a valid price greater than 0.";
 
     const qty = parseInt(quantity, 10);
-
     if (!quantity) e.quantity = "Quantity is required.";
     else if (isNaN(qty) || qty < 1) e.quantity = "Quantity must be at least 1.";
 
     if (!condition) e.condition = "Select a condition.";
     if (categories.length === 0) e.categories = "Select at least one category.";
+
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
-  // ── Image handling ───────────────────────────────────────────────────────
+  // ── Image handling ────────────────────────────────────
 
-  function addFiles(files: FileList | null) {
+  const addFiles = useCallback((files: FileList | null) => {
     if (!files) return;
-    const allowed = Array.from(files).filter((f) =>
+
+    const incoming = Array.from(files).filter((f) =>
       f.type.startsWith("image/"),
     );
-    const next = [...imageFiles, ...allowed].slice(0, 3);
-    setImageFiles(next);
-    next.forEach((f, i) => {
-      if (imagePreviews[i]) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreviews((prev) => {
-          const arr = [...prev];
-          arr[i] = e.target?.result as string;
-          return arr;
-        });
-      };
-      reader.readAsDataURL(f);
+    if (incoming.length === 0) return;
+
+    setImageSlots((prev) => {
+      const remaining = 3 - prev.length;
+      if (remaining <= 0) return prev;
+
+      const added: NewImageSlot[] = incoming
+        .slice(0, remaining)
+        .map((file) => ({
+          kind: "new" as const,
+          file,
+          preview: URL.createObjectURL(file),
+        }));
+
+      return [...prev, ...added];
     });
-    const previews: string[] = [];
-    next.forEach((f, i) => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        previews[i] = ev.target?.result as string;
-        if (previews.filter(Boolean).length === next.length) {
-          setImagePreviews([...previews]);
-        }
-      };
-      reader.readAsDataURL(f);
-    });
-  }
+  }, []);
 
   function removeImage(index: number) {
-    setImageFiles((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+    setImageSlots((prev) => {
+      const slot = prev[index];
+      if (!slot) return prev;
+
+      if (slot.kind === "existing") {
+        setDeletedImageIds((ids) => [...ids, slot.id]);
+      } else {
+        URL.revokeObjectURL(slot.preview);
+      }
+
+      return prev.filter((_, i) => i !== index);
+    });
   }
 
   const onDrop = useCallback(
@@ -166,10 +232,10 @@ export default function CreateItem({
       setDragOver(false);
       addFiles(e.dataTransfer.files);
     },
-    [imageFiles],
+    [addFiles],
   );
 
-  // ── Submit ───────────────────────────────────────────────────────────────
+  // ── Submit ────────────────────────────────────────────
 
   async function handleSubmit() {
     if (!validate()) return;
@@ -177,40 +243,94 @@ export default function CreateItem({
     setErrors({});
 
     try {
-      const body: ItemCreate = {
-        title: title.trim(),
-        description: description.trim(),
-        min_price: parseFloat(minPrice),
-        quantity: parseInt(quantity, 10),
-        condition: condition as ItemCondition,
-        categories,
-      };
+      // ── 1. Build a partial update ──
+      const body: ItemUpdate = {};
 
-      const item: ItemResponse | null = await createItem(body);
+      if (title.trim() !== item?.title) body.title = title.trim();
 
-      if(!item){
-        
+      if (description.trim() !== item?.description)
+        body.description = description.trim();
+
+      if (parseFloat(minPrice) !== item?.min_price)
+        body.min_price = parseFloat(minPrice);
+
+      if (parseInt(quantity, 10) !== item?.quantity)
+        body.quantity = parseInt(quantity, 10);
+
+      if (condition !== item?.condition)
+        body.condition = condition as ItemCondition;
+
+      const categoriesChanged =
+        categories.length !== item?.categories.length ||
+        categories.some((c) => !item?.categories.includes(c));
+      if (categoriesChanged) body.categories = categories;
+
+      if (Object.keys(body).length > 0) {
+        const result = await updateItem(itemId, body);
+
+        if (!result) {
+          addToast({
+            type: "error",
+            title: "Failed to update item.",
+            message:
+              "This might be an issue with the server. Please try again later.",
+            duration: 4000,
+          });
+          return;
+        }
+      }
+
+      // ── 2. Delete removed images ───────────────────────────
+      const deleteResults = await Promise.all(
+        deletedImageIds.map((imgId) =>
+          deleteImage(imgId).then((ok) => ({ imgId, ok })),
+        ),
+      );
+
+      const failedDeletes = deleteResults.filter((r) => !r.ok);
+      if (failedDeletes.length > 0) {
         addToast({
           type: "error",
-          title: isAuthenticated ? "Failed to create Item" : "You are logged out.",
-          message: isAuthenticated ? "" : "Please login to continue.",
-          duration: 4000,
+          title: "Some images could not be removed.",
+          message: `${failedDeletes.length} image(s) failed to delete. The rest of your changes were saved.`,
+          duration: 5000,
         });
-        setLoading(false);
+      }
+
+      // ── 3. Upload new images ───────────────────────────────
+      const newSlots = imageSlots.filter(
+        (s): s is NewImageSlot => s.kind === "new",
+      );
+
+      const uploadResults = await Promise.all(
+        newSlots.map((slot) =>
+          uploadImage(itemId, slot.file).then((res) => ({
+            file: slot.file.name,
+            ok: res !== null,
+          })),
+        ),
+      );
+
+      const failedUploads = uploadResults.filter((r) => !r.ok);
+      if (failedUploads.length > 0) {
+        addToast({
+          type: "error",
+          title: "Some images could not be uploaded.",
+          message: `${failedUploads.length} image(s) failed to upload. The rest of your changes were saved.`,
+          duration: 5000,
+        });
         return;
       }
 
-      for (const file of imageFiles) {
-        uploadImage(item.id, file);
-      }
-
-      onSuccess?.(item);
+      // ── 4. All done ────────────────────────────────────────
       addToast({
         type: "success",
-        title: `${body.title} is now live and accepting bids.`,
-        message: "",
+        title: "Item updated successfully.",
+        message: `Your item '${title.trim()}' has been updated.`,
         duration: 4000,
       });
+
+      navigate("/me/listings");
     } catch (e: unknown) {
       addToast({
         type: "error",
@@ -220,7 +340,6 @@ export default function CreateItem({
       });
     } finally {
       setLoading(false);
-      navigate("/me/listings");
     }
   }
 
@@ -230,13 +349,12 @@ export default function CreateItem({
     );
   }
 
-  // ── Form ─────────────────────────────────────────────────────────────────
+  // ── Form ──────────────────────────────────────────────
 
   const charLeft = 500 - description.length;
 
   return (
     <div className={styles.page}>
-      {/* Header */}
       <header className={styles.header}>
         {onCancel && (
           <button className={styles.cancelBtn} onClick={onCancel}>
@@ -244,19 +362,17 @@ export default function CreateItem({
           </button>
         )}
         <div className={styles.headerText}>
-          <h1 className={styles.pageTitle}>List an Item</h1>
+          <h1 className={styles.pageTitle}>Edit your Item</h1>
           <p className={styles.pageSubtitle}>
-            Fill in the details below to start receiving bids.
+            Fill in the details below to update your item.
           </p>
         </div>
       </header>
 
       <div className={styles.formWrapper}>
-
         <div className={styles.formGrid}>
           {/* ── LEFT COLUMN ── */}
           <div className={styles.leftCol}>
-            {/* Title */}
             <div className={styles.field}>
               <label className={styles.label} htmlFor="item-title">
                 Title <span className={styles.required}>*</span>
@@ -273,7 +389,6 @@ export default function CreateItem({
               <FieldError msg={errors.title} />
             </div>
 
-            {/* Description */}
             <div className={styles.field}>
               <label className={styles.label} htmlFor="item-desc">
                 Description <span className={styles.required}>*</span>
@@ -296,9 +411,10 @@ export default function CreateItem({
               </div>
             </div>
 
-            {/* Price + Quantity */}
             <div className={styles.twoCol}>
-              <div className={styles.field}>
+              <div
+                className={`${styles.field} ${isBidLocked ? styles.disabled : ""}`}
+              >
                 <label className={styles.label} htmlFor="item-price">
                   Min Price (₹) <span className={styles.required}>*</span>
                 </label>
@@ -309,6 +425,7 @@ export default function CreateItem({
                     type="number"
                     min={0}
                     step="0.01"
+                    disabled={isBidLocked}
                     className={`${styles.input} ${styles.inputWithPrefix} ${errors.min_price ? styles.inputError : ""}`}
                     placeholder="0.00"
                     value={minPrice}
@@ -318,7 +435,9 @@ export default function CreateItem({
                 <FieldError msg={errors.min_price} />
               </div>
 
-              <div className={styles.field}>
+              <div
+                className={`${styles.field} ${isBidLocked ? styles.disabled : ""}`}
+              >
                 <label className={styles.label} htmlFor="item-qty">
                   Quantity <span className={styles.required}>*</span>
                 </label>
@@ -326,6 +445,7 @@ export default function CreateItem({
                   id="item-qty"
                   type="number"
                   min={1}
+                  disabled={isBidLocked}
                   className={`${styles.input} ${errors.quantity ? styles.inputError : ""}`}
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
@@ -333,12 +453,19 @@ export default function CreateItem({
                 <FieldError msg={errors.quantity} />
               </div>
             </div>
+
+            <div>
+              You cannot edit the price, quantity and condition of this item
+              once bids are placed.{" "}
+              <span className={styles.dropLink}>Learn More</span>
+            </div>
           </div>
 
           {/* ── RIGHT COLUMN ── */}
           <div className={styles.rightCol}>
-            {/* Condition */}
-            <div className={styles.field}>
+            <div
+              className={`${styles.field} ${isBidLocked ? styles.disabled : ""}`}
+            >
               <label className={styles.label}>
                 Condition <span className={styles.required}>*</span>
               </label>
@@ -347,6 +474,7 @@ export default function CreateItem({
                   <button
                     key={c.value}
                     type="button"
+                    disabled={isBidLocked}
                     className={`${styles.condCard} ${condition === c.value ? styles.condCardActive : ""}`}
                     onClick={() => setCondition(c.value)}
                   >
@@ -358,7 +486,6 @@ export default function CreateItem({
               <FieldError msg={errors.condition} />
             </div>
 
-            {/* Categories */}
             <div className={styles.field}>
               <label className={styles.label}>
                 Categories <span className={styles.required}>*</span>
@@ -391,46 +518,50 @@ export default function CreateItem({
                 <span className={styles.labelHint}> — up to 3 photos</span>
               </label>
 
-              {/* Drop zone */}
-              <div
-                className={`${styles.dropZone} ${dragOver ? styles.dropZoneActive : ""}`}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setDragOver(true);
-                }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={onDrop}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className={styles.fileInput}
-                  onChange={(e) => addFiles(e.target.files)}
-                />
-                <div className={styles.dropContent}>
-                  <span className={styles.dropIcon}>
-                    <Image01/>
-                  </span>
-                  <p className={styles.dropText}>
-                    Drop images here or{" "}
-                    <span className={styles.dropLink}>browse</span>
-                  </p>
-                  <p className={styles.dropHint}>
-                    PNG, JPG, WEBP · max 3 files
-                  </p>
+              {imageSlots.length < 3 && (
+                <div
+                  className={`${styles.dropZone} ${dragOver ? styles.dropZoneActive : ""}`}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragOver(true);
+                  }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={onDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className={styles.fileInput}
+                    onChange={(e) => addFiles(e.target.files)}
+                  />
+                  <div className={styles.dropContent}>
+                    <span className={styles.dropIcon}>
+                      <Image01 />
+                    </span>
+                    <p className={styles.dropText}>
+                      Drop images here or{" "}
+                      <span className={styles.dropLink}>browse</span>
+                    </p>
+                    <p className={styles.dropHint}>
+                      PNG, JPG, WEBP · max 3 files
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Previews */}
-              {imagePreviews.length > 0 && (
+              {imageSlots.length > 0 && (
                 <div className={styles.previewGrid}>
-                  {imagePreviews.map((src, i) => (
+                  {imageSlots.map((slot, i) => (
                     <div key={i} className={styles.previewItem}>
                       <img
-                        src={src}
+                        src={
+                          slot.kind === "existing"
+                            ? `/api/${slot.url}`
+                            : slot.preview
+                        }
                         alt={`preview ${i + 1}`}
                         className={styles.previewImg}
                       />
@@ -455,7 +586,6 @@ export default function CreateItem({
           </div>
         </div>
 
-        {/* Submit */}
         <div className={styles.submitRow}>
           {onCancel && (
             <button
@@ -471,7 +601,7 @@ export default function CreateItem({
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? <span className={styles.spinner} /> : "Publish Listing"}
+            {loading ? <span className={styles.spinner} /> : "Update Listing"}
           </button>
         </div>
       </div>

@@ -17,7 +17,7 @@ interface ActionContextType {
   fetchBids: (skip?: number, limit?: number) => Promise<BidHistoryResponse[]>;
   fetchItem: (id: number) => Promise<ItemResponse | null>;
   createItem: (data: ItemCreate) => Promise<ItemResponse | null>;
-  updateItem: (id: number, data: ItemUpdate) => Promise<ItemResponse | null>;
+  updateItem: (id: number, data: ItemUpdate) => Promise<string | null>;
   deleteItem: (id: number) => Promise<boolean>;
 
   // Images
@@ -164,9 +164,9 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const updateItem = async (
     id: number,
     data: ItemUpdate,
-  ): Promise<ItemResponse | null> => {
+  ): Promise<string | null> => {
     try {
-      const res = await api.patch<ItemResponse>(`/items/${id}`, data);
+      const res = await api.patch<string>(`/items/${id}`, data);
       await fetchNotifications();
       return res.data;
     } catch (error) {
