@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   SearchLg,
   User01,
@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const CATEGORIES = [
   "All" , "Electronics" , "Stationary" , "Rent" , "Miscellaneous"
@@ -28,10 +29,15 @@ export default function Home() {
   const navigate = useNavigate();
   const [items, setItems] = useState<ItemResponse[]>([]);
   const { user } = useAuth();
-  const { fetchFeed } = useAction();
+  const { fetchFeed, fetchSearchItems } = useAction();
   const [loading, setLoading] = useState(true);
   const [loadmoreLoading, setLoadmoreLoading] = useState(false);
   const [page, setPage] = useState(0);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+
+  useHotkeys("ctrl+k", () => {
+    searchInputRef.current?.focus()
+  }, {preventDefault: true})
 
   const loadMore = async () => {
     setLoadmoreLoading(true);
@@ -78,6 +84,26 @@ export default function Home() {
     return matchesCategory && matchesSearch;
   });
 
+  const handleSearch = async () => {
+    try {
+      setLoading(true);
+
+      const data = search.length > 0 ? await fetchSearchItems({search: search}) : await fetchFeed(0, 10);
+
+      const map = new Map();
+      data.forEach((item) => {
+        if (!map.has(item.id)) {
+          map.set(item.id, item);
+        }
+      });
+      setItems(Array.from(map.values()));
+    } catch (err) {
+
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className={styles.page}>
       {/* ── Header ── */}
@@ -86,7 +112,13 @@ export default function Home() {
 
         <div className={styles.headerRight}>
           {/* Search */}
-          <div className={styles.searchWrap}>
+          <form
+            className={styles.searchWrap}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSearch();
+            }}
+          >
             <SearchLg size={16} className={styles.searchIcon} />
             <input
               type="text"
@@ -94,8 +126,10 @@ export default function Home() {
               placeholder="Search items..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              ref={searchInputRef}
             />
-          </div>
+            <div className={styles.shortcut}>Ctrl + K</div>
+          </form>
 
           {/* Auth */}
           {user === null && (
@@ -161,7 +195,7 @@ export default function Home() {
         <div className={styles.loadMoreRow}>
           <button className={styles.loadMoreBtn} onClick={loadMore}>
             {loadmoreLoading ? "Loading..." : "Load more"}
-            {loadmoreLoading ? <Spinner size={16}/> : <ArrowRight size={15} />}
+            {loadmoreLoading ? <Spinner size={16} /> : <ArrowRight size={15} />}
           </button>
         </div>
       )}

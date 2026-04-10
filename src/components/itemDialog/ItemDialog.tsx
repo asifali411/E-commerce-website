@@ -160,14 +160,14 @@ function ImageCarousel({
         className={styles.carouselImg}
       />
 
-      {
+      {/* {
         images[idx].status === "Pending" &&
         <div className={styles.processingOverlay}>
           Image is being processed
           <br />
           This may take a while
         </div>
-      }
+      } */}
 
       {images.length > 1 && (
         <>

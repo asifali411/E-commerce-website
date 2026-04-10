@@ -70,6 +70,23 @@
   box-shadow: 0 0 0 3px var(--color-grey-200);
 }
 
+.shortcut {
+  font-size: 0.5rem;
+  border: 1px solid var(--color-card-border);
+  background-color: var(--color-bg);
+  padding: 0.2rem 0.3rem;
+  border-radius: 4px;
+  position: absolute;
+  right: 0.5rem;
+  pointer-events: none;
+  user-select: none;
+  -moz-user-select: none;
+}
+
+.searchInput:focus~.shortcut{
+  display: none;
+}
+
 /* ── Auth buttons ─────────────────────────────────────────── */
 .authButtons {
   display: flex;

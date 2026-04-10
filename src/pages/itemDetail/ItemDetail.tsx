@@ -162,7 +162,8 @@ export default function ItemDetail() {
     );
   }
 
-  const hasImages = item.images && item.images.length > 0;
+  const hasImages = item.images && item.images.length > 0 || item.images;
+  console.log(item);
 
   return (
     <div className={styles.page}>
@@ -182,7 +183,7 @@ export default function ItemDetail() {
         {/* Left: Gallery */}
         <section className={styles.gallery}>
           <div className={styles.mainImage}>
-            {hasImages && item.images[activeImage]?.status === "Completed" && (
+            {hasImages && (
               <img
                 src={`/api/${item.images[activeImage].image_path}`}
                 alt={item.title}
@@ -190,13 +191,13 @@ export default function ItemDetail() {
               />
             )}
 
-            {hasImages && item.images[activeImage]?.status === "Pending" && (
+            {/* {hasImages && item.images[activeImage]?.status === "Pending" && (
               <div className={styles.processingOverlay}>
                 Image is being processed
                 <br />
                 This may take a while
               </div>
-            )}
+            )} */}
 
             {!hasImages && (
               <div className={styles.noImage}>
