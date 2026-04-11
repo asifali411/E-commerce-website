@@ -47,6 +47,9 @@ export interface PrivateUsersResponse {
   locked: boolean;
   role: UserRole;
   disabled: boolean;
+  image_path: string | null;
+  member_since: string;
+  activityData: any;
 }
 
 export interface ItemImageResponse {

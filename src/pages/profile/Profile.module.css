@@ -110,6 +110,7 @@
 .avatarWrap {
   position: relative;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .avatar {
@@ -124,12 +125,14 @@
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: var(--color-grey-100);
+  background: var(--color-grey-400);
   border: 3px solid var(--color-card-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-muted);
+  color: var(--color-bg);
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 .statusDot {

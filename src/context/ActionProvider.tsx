@@ -57,6 +57,8 @@ interface ActionContextType {
   ) => Promise<AdminItemResponse[]>;
   fetchAdminItem: (itemId: number) => Promise<AdminUniqueItemResponse | null>;
   deleteAdminItem: (itemId: number) => Promise<boolean>;
+
+  updateAvatar: (image: File) => Promise<boolean>;
 }
 
 // --- Context ------------------------------------------------
@@ -281,16 +283,22 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.get<SellerTransactionResponse[]>(
         "/transactions/my-selled-transactions",
       );
-      switch (res.status) {
-        case 200:
-          return Array.isArray(res.data) ? res.data : [];
-        case 404:
-          break;
-        default:
-          console.error("fetchSellerTransactions failed:", res);
+
+      if (res.status === 200) {
+        return Array.isArray(res.data) ? res.data : [];
       }
+
+      if (res.status === 404) {
+        return [];
+      }
+
+      console.error("fetchSellerTransactions failed:", res);
       return [];
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.status === 404) {
+        return [];
+      }
+
       console.error("fetchSellerTransactions failed:", error);
       return [];
     }
@@ -420,6 +428,24 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateAvatar = async (image: File): Promise<boolean> => {
+    try {
+      const formData = new FormData();
+      formData.append("file", image);
+
+      await api.post<ItemImageResponse>(`/profile/image`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return true;
+    } catch (error) {
+      console.error("updateImage failed:", error);
+      return false;
+    }
+  };
+
   const value: ActionContextType = {
     //fetch
     fetchFeed,
@@ -442,6 +468,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     updateItem,
     updateBid,
     updateRating,
+    updateAvatar,
     
     //delete
     deleteItem,

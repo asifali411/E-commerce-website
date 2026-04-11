@@ -103,9 +103,19 @@ export default function Nav() {
               }
             >
               <span className={styles.iconWrap}>
-                <div className={styles.avatar}>
-                  {user?.username.slice(0, 2).toUpperCase()}
-                </div>
+                {
+                  !user?.image_path && 
+                  <div className={styles.avatar}>
+                    {user?.username?.slice(0, 2).toUpperCase()}
+                  </div>
+                }
+
+                {
+                  user?.image_path &&
+                  <div className={styles.avatar}>
+                    <img src={`/api/${user.image_path}`} alt={user.username}/>
+                  </div>
+                }
               </span>
               <span className={styles.label}>{user?.username}</span>
             </NavLink>
