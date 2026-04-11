@@ -6,6 +6,7 @@ import type { ItemResponse } from "../../global/schema";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
 import { useAuth } from "../../context/AuthProvider";
+import { useToast } from "../../components/toast/Toast";
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
@@ -55,6 +56,7 @@ export default function ItemDetail() {
   const { id } = useParams<{ id: string }>();
   const itemId = Number(id);
   const { user } = useAuth();
+  const { addToast } = useToast();
 
   // --- State ---
   const [item, setItem] = useState<ItemResponse | null>(null);
@@ -104,6 +106,17 @@ export default function ItemDetail() {
     };
   }, [itemId, fetchItem]);
 
+  useEffect(() => {
+    if(bidSuccess){
+      addToast({
+        type: "success",
+        title: "Bid placed successfully.",
+        message: `Bid of ₹${bidPrice} has been successfully placed for ${item?.title}.`,
+        duration: 4000,
+      });
+    }
+  }, [bidSuccess])
+
   // --- Handlers ---
   const onBack = () => navigate(-1);
 
@@ -134,6 +147,14 @@ export default function ItemDetail() {
         if (updated) setItem(updated);
       }
     } catch (e: any) {
+
+      addToast({
+        type: "error",
+        title: "Failed to place bid.",
+        message: e.message,
+        duration: 4000,
+      });
+
       setBidError(e.message || "Failed to place bid.");
     } finally {
       setBidLoading(false);
@@ -163,7 +184,6 @@ export default function ItemDetail() {
   }
 
   const hasImages = item.images && item.images.length > 0 || item.images;
-  console.log(item);
 
   return (
     <div className={styles.page}>

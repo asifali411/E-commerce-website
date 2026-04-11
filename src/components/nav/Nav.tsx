@@ -27,13 +27,15 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { to: "/",                 label: "Home",          icon: <Home01 />           , isHome: true },
-  { to: "/listings",      label: "My listings",   icon: <Grid01 />           },
-  { to: "/bids",          label: "My bids",       icon: <Wallet03 />         },
-  { to: "/transactions",  label: "Transactions",  icon: <SwitchVertical01 /> },
-  { to: "/ratings",       label: "Ratings",       icon: <Star01 />           },
-  { to: "/notifications", label: "Notifications", icon: <Bell01 />           , isNotification: true },
+  { to: "/",               label: "Home",           icon: <Home01 />           , isHome: true },
+  { to: "/listings",       label: "My listings",    icon: <Grid01 />           },
+  { to: "/bids",           label: "My bids",        icon: <Wallet03 />         },
+  { to: "/transactions",   label: "Transactions",   icon: <SwitchVertical01 /> },
+  { to: "/ratings",        label: "Ratings",        icon: <Star01 />           },
+  { to: "/notifications",  label: "Notifications",  icon: <Bell01 />           , isNotification: true },
 ];
+
+let activePath = "/";
 
 export default function Nav() {
 
@@ -42,7 +44,6 @@ export default function Nav() {
   const {isAuthenticated, user, logout} = useAuth();
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
   const { unreadCount } = useNotifications();
-  const [activePath, setActivePath] = useState("/");
 
   const handleNavExpansion = (value: boolean): void => {
     setNavExpanded(value);
@@ -75,7 +76,7 @@ export default function Nav() {
               <button
                 onClick={() => {
                   if (!isAuthenticated) return;
-                  setActivePath(item.to);
+                  activePath = item.to;
                   navigate(item.to);
                 }}
                 className={`${styles.navLink} ${activePath == item.to ? styles.active : ""}`}
@@ -161,7 +162,7 @@ export default function Nav() {
         open={openLogoutDialog}
         title="Log out"
         description="Are you sure you want to log out?"
-        confirmLabel={"Log out"}
+        confirmLabel="Log out"
         cancelLabel="Cancel"
         variant="danger"
         onConfirm={handleLogout}
