@@ -199,7 +199,7 @@
   padding: 14px 16px;
   background: var(--color-card);
   border: 1px solid var(--color-card-border);
-  border-radius: var(--border-radius);
+  border-radius: calc(var(--border-radius) * 2);
   cursor: pointer;
   transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   outline: none;

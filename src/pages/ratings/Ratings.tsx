@@ -10,11 +10,12 @@ import {
 import styles from "./Ratings.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import type { RatingResponse } from "../../global/schema";
+import type { RatingStatus } from "../../global/types";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
 
 // ── Types ──────────────────────────────────────────────────
-type FilterTab = "All" | "Pending" | "Completed";
+type FilterTab = "All" | RatingStatus;
 
 // ── Helpers ────────────────────────────────────────────────
 function average(nums: number[]): number {
@@ -22,25 +23,34 @@ function average(nums: number[]): number {
   return nums.reduce((a, b) => a + b, 0) / nums.length;
 }
 
-// ── Star display ───────────────────────────────
+// ── Star display ───────────────────────────────────────────
 function StarDisplay({
   score,
   size = 14,
 }: {
-  score: number | null;
+  score: number | null | undefined;
   size?: number;
 }) {
-  if (score === null) return <span className={styles.scorePending}>—</span>;
+  if (score === null || score === undefined)
+    return <span className={styles.scorePending}>—</span>;
+
+  const full = Math.floor(score);
+  const partial = score - full;
   return (
     <div className={styles.starDisplay}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <span
-          key={n}
-          className={`${styles.starGlyph} ${n <= score ? styles.starFilled : styles.starEmpty}`}
-        >
-          <Star01 size={size} />
-        </span>
-      ))}
+      {[1, 2, 3, 4, 5].map((n) => {
+        const fill =
+          n <= full ? 100 : n === full + 1 ? Math.round(partial * 100) : 0;
+        return (
+          <span
+            key={n}
+            className={`${styles.starGlyph} ${fill > 0 ? styles.starFilled : styles.starEmpty}`}
+            style={{ opacity: `${fill === 0 ? 1 : fill / 100}` }}
+          >
+            <Star01 size={size} />
+          </span>
+        );
+      })}
       <span className={styles.scoreNumber}>{score.toFixed(1)}</span>
     </div>
   );
@@ -71,7 +81,15 @@ function RatingRow({
     <article className={`${styles.row} ${isPending ? styles.rowPending : ""}`}>
       {/* Avatar */}
       <div className={styles.rowAvatar}>
-        <User01 size={18} className={styles.rowAvatarIcon} />
+        {rating.rated_user.image_path ? (
+          <img
+            src={rating.rated_user.image_path}
+            alt={rating.rated_user.username}
+            className={styles.rowAvatarImg}
+          />
+        ) : (
+          <User01 size={18} className={styles.rowAvatarIcon} />
+        )}
       </div>
 
       {/* User info */}
@@ -85,8 +103,18 @@ function RatingRow({
           </span>
         </div>
         <span className={styles.rowDate}>
-          {new Date(rating.created_at).toLocaleDateString()}
+          {new Date(rating.created_at).toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
         </span>
+      </div>
+
+      {/* Counterpart rating */}
+      <div className={styles.rowCounterRating}>
+        <span className={styles.rowCounterLabel}>Their rating</span>
+        <StarDisplay score={rating.rated_user.rating} size={13} />
       </div>
 
       {/* Score */}
@@ -111,7 +139,7 @@ function RatingRow({
 
       {/* Action */}
       <div className={styles.rowAction}>
-        {isPending && (
+        {isPending ? (
           <button
             className={styles.actionBtnRate}
             onClick={() => onRateNow(rating.id)}
@@ -120,8 +148,9 @@ function RatingRow({
             Rate now
             <ArrowRight size={13} />
           </button>
+        ) : (
+          <span className={styles.noAction}>—</span>
         )}
-        {isCompleted && <span className={styles.noAction}>—</span>}
       </div>
     </article>
   );
@@ -156,11 +185,14 @@ function RateModal({
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <h2 className={styles.modalTitle}>Rate {username}</h2>
         <p className={styles.modalSubtitle}>How was your experience?</p>
+
         <div className={styles.modalStars}>
           {[1, 2, 3, 4, 5].map((n) => (
             <button
               key={n}
-              className={`${styles.modalStar} ${n <= (hovered || selected) ? styles.modalStarActive : ""}`}
+              className={`${styles.modalStar} ${
+                n <= (hovered || selected) ? styles.modalStarActive : ""
+              }`}
               onMouseEnter={() => setHovered(n)}
               onMouseLeave={() => setHovered(0)}
               onClick={() => setSelected(n)}
@@ -169,9 +201,11 @@ function RateModal({
             </button>
           ))}
         </div>
+
         {selected > 0 && (
           <p className={styles.modalScoreLabel}>{selected} / 5</p>
         )}
+
         <div className={styles.modalActions}>
           <button className={styles.btnSecondary} onClick={onClose}>
             Cancel
@@ -212,10 +246,10 @@ export default function Ratings() {
   const pending = ratings.filter((r) => r.status === "Pending");
   const completed = ratings.filter((r) => r.status === "Completed");
 
-  const filtered = ratings.filter((r) => {
-    if (activeTab === "All") return true;
-    return r.status === activeTab;
-  });
+  const filtered =
+    activeTab === "All"
+      ? ratings
+      : ratings.filter((r) => r.status === activeTab);
 
   const completedScores = completed
     .map((r) => r.score)
@@ -223,11 +257,17 @@ export default function Ratings() {
   const avgScore = completedScores.length ? average(completedScores) : null;
 
   const handleSubmitRating = async (ratingId: number, score: number) => {
+    // API: GET /ratings/{rating_id}/{score}
     const updated = await updateRating(ratingId, score);
-    console.log(updated);
     if (updated) {
       setRatings((prev) => prev.map((r) => (r.id === ratingId ? updated : r)));
     }
+  };
+
+  const tabCounts: Record<FilterTab, number> = {
+    All: ratings.length,
+    Pending: pending.length,
+    Completed: completed.length,
   };
 
   return (
@@ -263,13 +303,7 @@ export default function Ratings() {
             {tab === "Pending" && <span className={styles.tabDotPending} />}
             {tab === "Completed" && <span className={styles.tabDotCompleted} />}
             {tab}
-            <span className={styles.tabCount}>
-              {tab === "All"
-                ? ratings.length
-                : tab === "Pending"
-                  ? pending.length
-                  : completed.length}
-            </span>
+            <span className={styles.tabCount}>{tabCounts[tab]}</span>
           </button>
         ))}
       </div>

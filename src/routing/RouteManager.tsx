@@ -49,15 +49,17 @@ function AnimatedRoutes() {
 
         <Route element={<Nav />}>
           <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
-          <Route path="/items/:id" element={<PageWrapper><ItemDetail /></PageWrapper>} />
 
           <Route element={<ProtectedRoute />}>
+            <Route path="/items/:id" element={<PageWrapper><ItemDetail /></PageWrapper>} />
             <Route path="/items/create" element={<PageWrapper><CreateItem /></PageWrapper>} />
             <Route path="/items/edit/:id" element={<PageWrapper><EditItem /></PageWrapper>} />
+
             <Route path="/listings" element={<PageWrapper><MyListings /></PageWrapper>} />
             <Route path="/bids" element={<PageWrapper><MyBids /></PageWrapper>} />
             <Route path="/transactions" element={<PageWrapper><Transactions /></PageWrapper>} />
             <Route path="/ratings" element={<PageWrapper><Ratings /></PageWrapper>} />
+            
             <Route path="/notifications" element={<PageWrapper><Notifications /></PageWrapper>} />
             <Route path="/profile" element={<PageWrapper><Profile /></PageWrapper>} />
           </Route>

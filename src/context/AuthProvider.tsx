@@ -52,7 +52,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchUser = async () => {
     try {
       const res = await api.get<PrivateUsersResponse>("/profile/");
-      setUser(res.data);
+      
+      if(res.status === 200){
+        setUser(res.data);
+      } else {
+        setUser(null);
+      }
     } catch {
       setUser(null);
     } finally {
@@ -98,6 +103,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // --- Effects ----------------------------------------------
   useEffect(() => {
     fetchUser();
+
+    if(!user){
+      logout();
+      refresh();
+    }
 
     const interceptor = api.interceptors.response.use(
       (response) => response,
