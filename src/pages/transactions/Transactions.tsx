@@ -7,11 +7,10 @@ import {
   Building07,
   CheckCircle,
   Clock,
-  Star01,
   ArrowRight,
-  User01,
   ShoppingBag01,
   Tag01,
+  ChevronRight,
 } from "@untitledui/icons";
 import styles from "./Transactions.module.css";
 import type {
@@ -25,6 +24,7 @@ import type {
 } from "../../global/types";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
+import TransactionDialog from "../../components/transactionDialog/TransactionDialog";
 
 // ── Types ──────────────────────────────────────────────────
 type Role = "Buyer" | "Seller";
@@ -37,6 +37,7 @@ const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
   Stationary: <PencilLine size={11} />,
   Rent: <Building07 size={11} />,
   Miscellaneous: <Package size={11} />,
+  Accessories: <Tag01 size={11} />,
 };
 
 const CONDITION_CLASS: Record<ItemCondition, string> = {
@@ -44,28 +45,6 @@ const CONDITION_CLASS: Record<ItemCondition, string> = {
   Lightly_Used: styles.conditionLight,
   Heavily_Used: styles.conditionHeavy,
 };
-
-// ── Star rating picker ─────────────────────────────────────
-function StarPicker({ onRate }: { onRate: (score: number) => void }) {
-  const [hovered, setHovered] = useState(0);
-  return (
-    <div className={styles.starPicker}>
-      <span className={styles.starPickerLabel}>Rate:</span>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button
-          key={n}
-          className={`${styles.starBtn} ${hovered >= n ? styles.starBtnActive : ""}`}
-          onMouseEnter={() => setHovered(n)}
-          onMouseLeave={() => setHovered(0)}
-          onClick={() => onRate(n)}
-          title={`${n} star${n > 1 ? "s" : ""}`}
-        >
-          <Star01 size={15} />
-        </button>
-      ))}
-    </div>
-  );
-}
 
 // ── Stat pill ──────────────────────────────────────────────
 function StatPill({ label, value }: { label: string; value: number }) {
@@ -80,16 +59,21 @@ function StatPill({ label, value }: { label: string; value: number }) {
 // ── Buyer Transaction Row ──────────────────────────────────
 function BuyerTransactionRow({
   tx,
-  onRate,
+  onClick,
 }: {
   tx: BuyerTransactionResponse;
-  onRate: (ratingId: number, score: number) => void;
+  onClick: () => void;
 }) {
   const isPending = tx.status === "Pending";
-  const isCompleted = tx.status === "Completed";
 
   return (
-    <article className={`${styles.row} ${isPending ? styles.rowPending : ""}`}>
+    <article
+      className={`${styles.row} ${isPending ? styles.rowPending : ""}`}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && onClick()}
+    >
       {/* Thumbnail */}
       <div className={styles.rowThumb}>
         <Package size={20} className={styles.rowThumbIcon} />
@@ -106,28 +90,25 @@ function BuyerTransactionRow({
         <div className={styles.rowTags}>
           {tx.item.categories.map((cat) => (
             <span key={cat} className={styles.categoryTag}>
-              {CATEGORY_ICON[cat]}
+              {CATEGORY_ICON[cat as ItemCategory]}
               {cat}
             </span>
           ))}
           <span
-            className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition]}`}
+            className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition as ItemCondition]}`}
           >
-            {tx.item.condition}
+            {tx.item.condition.replace("_", " ")}
           </span>
         </div>
       </div>
 
-      {/* Counterparty */}
+      {/* Seller */}
       <div className={styles.rowParty}>
         <span className={styles.rowPartyLabel}>Seller</span>
-        <div className={styles.rowPartyName}>
-          <User01 size={12} className={styles.rowPartyIcon} />
-          {tx.item.seller.username}
-        </div>
+        <span className={styles.rowPartyName}>{tx.item.seller.username}</span>
       </div>
 
-      {/* Agreed price */}
+      {/* Price */}
       <div className={styles.rowPrice}>
         <span className={styles.rowPriceLabel}>Agreed price</span>
         <span className={styles.rowPriceValue}>
@@ -153,15 +134,9 @@ function BuyerTransactionRow({
         )}
       </div>
 
-      {/* Actions */}
-      <div className={styles.rowActions}>
-        {isPending && (
-          <span className={styles.awaitingLabel}>
-            <Clock size={12} />
-            Awaiting seller
-          </span>
-        )}
-        {isCompleted && <span className={styles.noActions}>—</span>}
+      {/* Chevron */}
+      <div className={styles.rowChevron}>
+        <ChevronRight size={16} />
       </div>
     </article>
   );
@@ -170,16 +145,21 @@ function BuyerTransactionRow({
 // ── Seller Transaction Row ─────────────────────────────────
 function SellerTransactionRow({
   tx,
-  onRate,
+  onClick,
 }: {
   tx: SellerTransactionResponse;
-  onRate: (ratingId: number, score: number) => void;
+  onClick: () => void;
 }) {
   const isPending = tx.status === "Pending";
-  const isCompleted = tx.status === "Completed";
 
   return (
-    <article className={`${styles.row} ${isPending ? styles.rowPending : ""}`}>
+    <article
+      className={`${styles.row} ${isPending ? styles.rowPending : ""}`}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && onClick()}
+    >
       {/* Thumbnail */}
       <div className={styles.rowThumb}>
         <Package size={20} className={styles.rowThumbIcon} />
@@ -196,28 +176,25 @@ function SellerTransactionRow({
         <div className={styles.rowTags}>
           {tx.item.categories.map((cat) => (
             <span key={cat} className={styles.categoryTag}>
-              {CATEGORY_ICON[cat]}
+              {CATEGORY_ICON[cat as ItemCategory]}
               {cat}
             </span>
           ))}
           <span
-            className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition]}`}
+            className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition as ItemCondition]}`}
           >
-            {tx.item.condition}
+            {tx.item.condition.replace("_", " ")}
           </span>
         </div>
       </div>
 
-      {/* Counterparty */}
+      {/* Buyer */}
       <div className={styles.rowParty}>
         <span className={styles.rowPartyLabel}>Buyer</span>
-        <div className={styles.rowPartyName}>
-          <User01 size={12} className={styles.rowPartyIcon} />
-          {tx.buyer.username}
-        </div>
+        <span className={styles.rowPartyName}>{tx.buyer.username}</span>
       </div>
 
-      {/* Agreed price */}
+      {/* Price */}
       <div className={styles.rowPrice}>
         <span className={styles.rowPriceLabel}>Agreed price</span>
         <span className={styles.rowPriceValue}>
@@ -243,15 +220,9 @@ function SellerTransactionRow({
         )}
       </div>
 
-      {/* Actions */}
-      <div className={styles.rowActions}>
-        {isCompleted && <span className={styles.noActions}>—</span>}
-        {isPending && (
-          <span className={styles.awaitingLabel}>
-            <Clock size={12} />
-            Awaiting completion
-          </span>
-        )}
+      {/* Chevron */}
+      <div className={styles.rowChevron}>
+        <ChevronRight size={16} />
       </div>
     </article>
   );
@@ -260,8 +231,7 @@ function SellerTransactionRow({
 // ── Main page ──────────────────────────────────────────────
 export default function Transactions() {
   const navigate = useNavigate();
-  const { fetchSellerTransactions, fetchBuyerTransactions, updateRating } =
-    useAction();
+  const { fetchSellerTransactions, fetchBuyerTransactions } = useAction();
 
   const [roleView, setRoleView] = useState<Role>("Buyer");
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
@@ -270,6 +240,13 @@ export default function Transactions() {
   const [sellerTxs, setSellerTxs] = useState<SellerTransactionResponse[]>([]);
   const [loadingBuyer, setLoadingBuyer] = useState(true);
   const [loadingSeller, setLoadingSeller] = useState(true);
+
+  // Dialog state — union type keyed by role
+  const [dialogState, setDialogState] = useState<
+    | { role: "Buyer"; tx: BuyerTransactionResponse }
+    | { role: "Seller"; tx: SellerTransactionResponse }
+    | null
+  >(null);
 
   useEffect(() => {
     fetchBuyerTransactions().then((data) => {
@@ -298,13 +275,6 @@ export default function Transactions() {
 
   const totalForRole =
     roleView === "Buyer" ? buyerTxs.length : sellerTxs.length;
-
-  async function handleRate(ratingId: number, score: number) {
-    await updateRating(ratingId, score);
-    // Refresh both after rating
-    fetchBuyerTransactions().then(setBuyerTxs);
-    fetchSellerTransactions().then(setSellerTxs);
-  }
 
   return (
     <div className={styles.page}>
@@ -376,7 +346,11 @@ export default function Transactions() {
         buyerFiltered.length > 0 ? (
           <div className={styles.list}>
             {buyerFiltered.map((tx, i) => (
-              <BuyerTransactionRow key={i} tx={tx} onRate={handleRate} />
+              <BuyerTransactionRow
+                key={i}
+                tx={tx}
+                onClick={() => setDialogState({ role: "Buyer", tx })}
+              />
             ))}
           </div>
         ) : (
@@ -398,7 +372,11 @@ export default function Transactions() {
       ) : sellerFiltered.length > 0 ? (
         <div className={styles.list}>
           {sellerFiltered.map((tx, i) => (
-            <SellerTransactionRow key={i} tx={tx} onRate={handleRate} />
+            <SellerTransactionRow
+              key={i}
+              tx={tx}
+              onClick={() => setDialogState({ role: "Seller", tx })}
+            />
           ))}
         </div>
       ) : (
@@ -417,6 +395,22 @@ export default function Transactions() {
           </button>
         </div>
       )}
+
+      {/* ── Dialog ── */}
+      {dialogState &&
+        (dialogState.role === "Buyer" ? (
+          <TransactionDialog
+            role="Buyer"
+            tx={dialogState.tx}
+            onClose={() => setDialogState(null)}
+          />
+        ) : (
+          <TransactionDialog
+            role="Seller"
+            tx={dialogState.tx}
+            onClose={() => setDialogState(null)}
+          />
+        ))}
     </div>
   );
 }

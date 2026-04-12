@@ -96,7 +96,7 @@ const StarRating: React.FC<{ rating: number }> = ({
           return (
             <span key={i} className={styles.starWrap}>
               <Star01 size={16} className={styles.starBg} />
-              <div className={styles.starFill} style={{ width: `${fill}%`, opacity: `${fill / 100}` }}>
+              <div className={`${fill > 0 ? styles.starFill : styles.starOutline}`} style={{opacity: `${fill === 0 ? 1 : fill / 100}` }}>
                 <Star01 size={16} />
               </div>
             </span>

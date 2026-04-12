@@ -30,6 +30,7 @@ export interface Item {
 export interface PublicUsersResponse {
   username: string;
   rating: number;
+  image_path: string;
 }
 
 export interface ProtectedUserResponse {

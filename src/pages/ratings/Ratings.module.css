@@ -634,6 +634,10 @@
   transform: scale(1.15);
 }
 
+.modalStarActive svg, .modalStar:hover {
+  fill: var(--color-warning, #f59e0b);
+}
+
 .modalScoreLabel {
   font-size: 13px;
   color: var(--color-text-muted);

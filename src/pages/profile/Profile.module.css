@@ -234,7 +234,7 @@
   color: transparent;
 }
 
-.starFill {
+.starFill, .starOutline {
   position: absolute;
   left: 0;
   top: 0;
@@ -244,7 +244,11 @@
 }
 
 .starFill svg{
-    fill: var(--color-cta);
+  fill: var(--color-cta);
+}
+
+.starOutline svg {
+  color: var(--color-grey-200);
 }
 
 .ratingValue {

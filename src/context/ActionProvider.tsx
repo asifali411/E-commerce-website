@@ -365,7 +365,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     score: number,
   ): Promise<RatingResponse | null> => {
     try {
-      const res = await api.patch<RatingResponse>(
+      const res = await api.get<RatingResponse>(
         `/ratings/${ratingId}/${score}`,
       );
       await fetchNotifications();

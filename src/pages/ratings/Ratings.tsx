@@ -3,10 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {
   Star01,
   User01,
-  Package,
-  Monitor01,
-  PencilLine,
-  Building07,
   ArrowRight,
   CheckCircle,
   Clock,
@@ -14,29 +10,19 @@ import {
 import styles from "./Ratings.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import type { RatingResponse } from "../../global/schema";
-import type { ItemCategory } from "../../global/types";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
 
 // ── Types ──────────────────────────────────────────────────
-type RatingView = "Given";
 type FilterTab = "All" | "Pending" | "Completed";
 
 // ── Helpers ────────────────────────────────────────────────
-const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
-  All: <Package size={11} />,
-  Electronics: <Monitor01 size={11} />,
-  Stationary: <PencilLine size={11} />,
-  Rent: <Building07 size={11} />,
-  Miscellaneous: <Package size={11} />,
-};
-
 function average(nums: number[]): number {
   if (!nums.length) return 0;
   return nums.reduce((a, b) => a + b, 0) / nums.length;
 }
 
-// ── Star display (read-only) ───────────────────────────────
+// ── Star display ───────────────────────────────
 function StarDisplay({
   score,
   size = 14,
@@ -221,7 +207,7 @@ export default function Ratings() {
       setRatings(data);
       setLoading(false);
     })();
-  }, []);
+  }, [fetchMyRatings]);
 
   const pending = ratings.filter((r) => r.status === "Pending");
   const completed = ratings.filter((r) => r.status === "Completed");
@@ -238,6 +224,7 @@ export default function Ratings() {
 
   const handleSubmitRating = async (ratingId: number, score: number) => {
     const updated = await updateRating(ratingId, score);
+    console.log(updated);
     if (updated) {
       setRatings((prev) => prev.map((r) => (r.id === ratingId ? updated : r)));
     }
@@ -258,6 +245,9 @@ export default function Ratings() {
             />
             <StatPill label="Given" value={ratings.length} />
             <StatPill label="Pending" value={pending.length} />
+            {avgScore !== null && (
+              <StatPill label="Avg given" value={`★ ${avgScore.toFixed(1)}`} />
+            )}
           </div>
         </div>
       </header>

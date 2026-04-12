@@ -1,0 +1,322 @@
+/* ── Backdrop ─────────────────────────────────────────────── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Dialog ───────────────────────────────────────────────── */
+.dialog {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: calc(var(--border-radius) + 4px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  animation: slideUp 0.18s ease;
+  padding: 1rem;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* ── Close button ─────────────────────────────────────────── */
+.closeBtn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-grey-100);
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  z-index: 1;
+  padding: 0;
+}
+
+.closeBtn:hover {
+  background: var(--color-grey-200);
+  color: var(--color-text);
+  transform: none;
+}
+
+/* ── Dialog Header ────────────────────────────────────────── */
+.dialogHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--color-card-border);
+  background: var(--color-card);
+}
+
+.dialogHeaderLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.itemThumb {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--border-radius);
+  background: var(--color-grey-100);
+  border: 1px solid var(--color-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.dialogTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 6px;
+  line-height: 1.3;
+  padding-right: 32px;
+}
+
+.dialogTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* ── Dialog Body ──────────────────────────────────────────── */
+.dialogBody {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Sections ─────────────────────────────────────────────── */
+.section {
+  padding: 16px 20px;
+}
+
+.section + .section {
+  border-top: 1px solid var(--color-card-border);
+}
+
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--color-text-muted);
+  margin: 0 0 12px;
+}
+
+/* ── Detail rows ──────────────────────────────────────────── */
+.detailList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: 18px 90px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.detailIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+
+.detailLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.detailValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.priceValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.contactLink {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.contactLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Counterparty card ────────────────────────────────────── */
+.counterpartyCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--color-grey-100);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius);
+  margin-bottom: 12px;
+}
+
+.counterpartyAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--color-grey-200);
+  border: 1px solid var(--color-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.counterpartyInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.counterpartyName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* ── Star display ─────────────────────────────────────────── */
+.starDisplay {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.starFilled {
+  color: var(--color-cta);
+  fill: var(--color-cta);
+}
+
+.starEmpty {
+  color: var(--color-grey-300);
+}
+
+.ratingValue {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-left: 4px;
+}
+
+/* ── Shared badges / chips / tags (mirrored from page) ────── */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.statusPending {
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  color: var(--color-warning);
+}
+
+.statusCompleted {
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+}
+
+.roleChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.roleChipBuyer {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+}
+
+.roleChipSeller {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+}
+
+.categoryTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--color-grey-100);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-card-border);
+}
+
+.conditionTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.conditionNew {
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+}
+
+.conditionLight {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+}
+
+.conditionHeavy {
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  color: var(--color-warning);
+}
