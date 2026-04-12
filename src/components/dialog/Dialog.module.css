@@ -33,11 +33,6 @@
     to   { transform: translateY(0);   opacity: 1; }
 }
 
-/* ── Variant left-border accents ── */
-/* .danger  { border-left: 3px solid var(--color-error);   }
-.warning { border-left: 3px solid var(--color-warning);  }
-.success { border-left: 3px solid var(--color-success);  } */
-
 .header {
     display: flex;
     align-items: center;

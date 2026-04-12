@@ -1,10 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import styles from "./CreateItem.module.css";
 import {
-  Package,
-  Monitor01,
-  PencilLine,
-  Building07,
   Image01
 } from "@untitledui/icons";
 import { useAuth } from "../../context/AuthProvider";
@@ -12,6 +8,7 @@ import { useToast } from "../../components/toast/Toast";
 import { useNavigate } from "react-router-dom";
 import type { ItemCategory, ItemCondition } from "../../global/types";
 import { useAction } from "../../context/ActionProvider";
+import { CATEGORIES } from "../../global/var";
 
 // ── Types ──────────────────────────────────────────────
 
@@ -51,12 +48,12 @@ const CONDITIONS: { value: ItemCondition; label: string; desc: string }[] = [
   },
 ];
 
-const CATEGORIES: { value: ItemCategory; label: string; icon: any }[] = [
-  { value: "Electronics", label: "Electronics", icon: <Monitor01 /> },
-  { value: "Stationary", label: "Stationary", icon: <PencilLine /> },
-  { value: "Rent", label: "Rent", icon: <Building07 /> },
-  { value: "Miscellaneous", label: "Miscellaneous", icon: <Package /> },
-];
+// const CATEGORIES: { value: ItemCategory; label: string; icon: any }[] = [
+//   { value: "Electronics", label: "Electronics", icon: <Monitor01 /> },
+//   { value: "Stationary", label: "Stationary", icon: <PencilLine /> },
+//   { value: "Rent", label: "Rent", icon: <Building07 /> },
+//   { value: "Miscellaneous", label: "Miscellaneous", icon: <Package /> },
+// ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -365,17 +362,17 @@ export default function CreateItem({
                 <span className={styles.labelHint}> — pick all that apply</span>
               </label>
               <div className={styles.categoryGroup}>
-                {CATEGORIES.map((cat) => {
-                  const selected = categories.includes(cat.value);
+                {Object.entries(CATEGORIES).map(([cat, icon]) => {
+                  const selected = categories.includes(cat as ItemCategory);
                   return (
                     <button
-                      key={cat.value}
+                      key={cat}
                       type="button"
                       className={`${styles.catChip} ${selected ? styles.catChipActive : ""}`}
-                      onClick={() => toggleCategory(cat.value)}
+                      onClick={() => toggleCategory(cat as ItemCategory)}
                     >
-                      <span>{cat.icon}</span>
-                      {cat.label}
+                      <span>{icon}</span>
+                      {cat}
                       {selected && <span className={styles.catCheck}>✓</span>}
                     </button>
                   );

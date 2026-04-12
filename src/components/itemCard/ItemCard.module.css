@@ -106,26 +106,6 @@
   transform: scale(1.08);
 }
 
-/* .actionBtnSaved svg{
-  --heart-color: #f4491e;
-  fill: var(--heart-color);
-  color: var(--heart-color);
-}
-
-@media (prefers-color-scheme: dark) {
-  .actionBtnSaved {
-    color: #fda4af;
-  }
-  .actionBtnSaved:hover {
-    border-color: #fda4af;
-    color: #fda4af;
-  }
-
-  .actionBtnSaved svg{
-    fill: #fda4af;
-  }
-} */
-
 /* Report button */
 .actionBtnReport:hover {
   color: #e11d48;

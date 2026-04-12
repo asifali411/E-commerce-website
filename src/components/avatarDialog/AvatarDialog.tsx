@@ -39,13 +39,9 @@ async function getCroppedBlob(
 // ─── types ───────────────────────────────────────────────────────────────────
 
 export interface AvatarDialogProps {
-  /** Whether the dialog is visible */
   open: boolean;
-  /** Current avatar URL shown as fallback before a new image is chosen */
   currentAvatar?: string;
-  /** Called when the user dismisses the dialog without saving */
   onClose: () => void;
-  /** Called with the final cropped Blob when the user clicks Save */
   onSave: (blob: Blob, previewUrl: string) => void | Promise<void>;
 }
 
@@ -61,15 +57,12 @@ export const AvatarDialog: React.FC<AvatarDialogProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // raw image chosen by the user (object URL)
   const [rawImage, setRawImage] = useState<string | null>(null);
 
-  // crop state
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
-  // final preview blob URL
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewBlob, setPreviewBlob] = useState<Blob | null>(null);
 
@@ -100,7 +93,6 @@ export const AvatarDialog: React.FC<AvatarDialogProps> = ({
       setZoom(1);
       setStep("crop");
 
-      // reset input so the same file can be re-selected
       e.target.value = "";
     },
     [],

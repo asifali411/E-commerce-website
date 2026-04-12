@@ -16,7 +16,7 @@ import Dialog from "../../components/dialog/Dialog";
 import ItemDialog from "../../components/itemDialog/ItemDialog";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
-import { CATEGORY_ICON } from "../../global/var";
+import { CATEGORIES } from "../../global/var";
 
 // ── Types ──────────────────────────────────────────────────
 type FilterTab = "All" | "Active" | "Sold";
@@ -79,7 +79,7 @@ function ListingRow({
         <div className={styles.rowTags}>
           {listing.categories?.map((cat) => (
             <span key={cat} className={styles.categoryTag}>
-              {CATEGORY_ICON[cat] ?? <Package size={11} />}
+              {CATEGORIES[cat] ?? <Package size={11} />}
               {cat}
             </span>
           ))}

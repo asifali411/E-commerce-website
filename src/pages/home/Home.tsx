@@ -3,7 +3,6 @@ import {
   SearchLg,
   User01,
   LogIn01,
-  Tag01,
   ArrowRight,
 } from "@untitledui/icons";
 import styles from "./Home.module.css";
@@ -16,10 +15,7 @@ import { useAuth } from "../../context/AuthProvider";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
 import { useHotkeys } from "react-hotkeys-hook";
-
-const CATEGORIES = [
-  "All" , "Electronics" , "Stationary" , "Rent" , "Miscellaneous"
-];
+import { CATEGORIES } from "../../global/var";
 
 // ── Main page ──────────────────────────────────────────────
 export default function Home() {
@@ -159,13 +155,13 @@ export default function Home() {
 
       {/* ── Category filter ── */}
       <div className={styles.filterRow}>
-        {CATEGORIES.map((cat: any) => (
+        {Object.entries(CATEGORIES).map(([cat, icon]) => (
           <button
             key={cat}
             className={`${styles.filterChip} ${activeCategory === cat ? styles.filterChipActive : ""}`}
-            onClick={() => setActiveCategory(cat)}
+            onClick={() => setActiveCategory(cat as ItemCategory)}
           >
-            {cat !== "All" && <Tag01 size={13} />}
+            {icon}
             {cat}
           </button>
         ))}

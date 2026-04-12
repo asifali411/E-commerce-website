@@ -18,7 +18,7 @@ import type {
 } from "../../global/schema";
 import type { ItemCategory, ItemCondition } from "../../global/types";
 import styles from "./TransactionDialog.module.css";
-import { CATEGORY_ICON } from "../../global/var";
+import { CATEGORIES } from "../../global/var";
 
 // ── Helpers ────────────────────────────────────────────────
 
@@ -117,7 +117,7 @@ export default function TransactionDialog(props: TransactionDialogProps) {
               <div className={styles.dialogTags}>
                 {item.categories.map((cat) => (
                   <span key={cat} className={styles.categoryTag}>
-                    {CATEGORY_ICON[cat as ItemCategory]}
+                    {CATEGORIES[cat as ItemCategory]}
                     {cat}
                   </span>
                 ))}

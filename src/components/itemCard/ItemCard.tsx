@@ -1,7 +1,6 @@
 import {
   User01,
   Star01,
-  Clock,
   Package,
   Flag01,
 } from "@untitledui/icons";
@@ -12,12 +11,8 @@ import type { ItemResponse } from "../../global/schema";
 import { useAuth } from "../../context/AuthProvider";
 import { useToast } from "../toast/Toast";
 import ReportDialog from "../reportDialog/ReportDialog";
-import { CATEGORY_ICON } from "../../global/var";
+import { CATEGORIES } from "../../global/var";
 import { useState } from "react";
-
-// ── Place holders ────────────────────────────────────────────────
-// let timeLeft = `${Math.floor(Math.random() * 10 + 2)} days left`;
-let timeLeft; 
 
 // ── Helpers ────────────────────────────────────────────────
 const CONDITION_CLASS: Record<ItemCondition, string> = {
@@ -56,13 +51,6 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
         handleNavigation();
       }}
     >
-      {/* TODO: fix this, currently using placeholders */}
-      {timeLeft && (
-        <div className={styles.urgencyBadge}>
-          <Clock size={12} />
-          {timeLeft}
-        </div>
-      )}
 
       {showReportDialog && (
         <ReportDialog itemId={item.id} onClose={() => setShowReportDialog(false)} />
@@ -99,7 +87,7 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
           <div className={styles.categoryWrapper}>
             {item.categories.map((cat) => (
               <span key={cat} className={styles.categoryTag}>
-                {CATEGORY_ICON[cat]}
+                {CATEGORIES[cat]}
                 {cat}
               </span>
             ))}

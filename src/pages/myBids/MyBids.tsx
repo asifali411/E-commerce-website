@@ -18,63 +18,11 @@ import { useAuth } from "../../context/AuthProvider";
 import Dialog from "../../components/dialog/Dialog";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
-import { CATEGORY_ICON } from "../../global/var";
+import { CATEGORIES } from "../../global/var";
 
 // ── Types ──────────────────────────────────────────────────
 
 type FilterTab = "All" | "Pending" | "Accepted" | "Rejected";
-
-// ── Mock data ──────────────────────────────────────────────
-
-const MOCK_BIDS: BidHistoryResponse[] = [
-  {
-    "id": 0,
-    "price": 69,
-    "quantity": 1,
-    "bider": {
-      "username": "user",
-      "rating": 2.5
-    },
-    "status": "Accepted",
-    "item": {
-      "id": 0,
-      "title": "string",
-      "seller": {
-        "username": "string",
-        "rating": 2.5
-      },
-      "min_price": 470,
-      "categories": [
-        "Electronics"
-      ],
-      "condition": "New"
-    }
-  },
-
-  {
-    "id": 1,
-    "price": 69,
-    "quantity": 1,
-    "bider": {
-      "username": "test",
-      "rating": 2.5
-    },
-    "status": "Pending",
-    "item": {
-      "id": 0,
-      "title": "string",
-      "seller": {
-        "username": "string",
-        "rating": 2.5
-      },
-      "min_price": 470,
-      "categories": [
-        "Miscellaneous"
-      ],
-      "condition": "Heavily_Used"
-    }
-  }
-];
 
 // ── Helpers ────────────────────────────────────────────────
 
@@ -130,7 +78,7 @@ function BidRow({
         <div className={styles.rowTags}>
           {bid.item.categories.map((cat) => (
             <span key={cat} className={styles.categoryTag}>
-              {CATEGORY_ICON[cat]}
+              {CATEGORIES[cat]}
               {cat}
             </span>
           ))}
@@ -323,7 +271,7 @@ export default function MyBids() {
         <div className={styles.headerLeft}>
           <h1 className={styles.pageTitle}>My Bids</h1>
           <div className={styles.stats}>
-            <StatPill label="Total" value={MOCK_BIDS.length} />
+            <StatPill label="Total" value={bidings.length} />
             <StatPill label="Pending" value={countFor("Pending")} />
             <StatPill label="Accepted" value={countFor("Accepted")} />
             <StatPill label="Rejected" value={countFor("Rejected")} />

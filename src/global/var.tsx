@@ -10,7 +10,7 @@ import {
 // ------ Variables ------------------------------------------------------
 export let navExpanded = false;
 
-export const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
+export const CATEGORIES: Record<ItemCategory, React.ReactNode> = {
   All: <Package size={12} />,
   Electronics: <Monitor01 size={12} />,
   Stationary: <PencilLine size={12} />,

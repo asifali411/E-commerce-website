@@ -22,7 +22,7 @@ import type {
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
 import TransactionDialog from "../../components/transactionDialog/TransactionDialog";
-import { CATEGORY_ICON } from "../../global/var";
+import { CATEGORIES } from "../../global/var";
 
 // ── Types ──────────────────────────────────────────────────
 type Role = "Buyer" | "Seller";
@@ -80,7 +80,7 @@ function BuyerTransactionRow({
         <div className={styles.rowTags}>
           {tx.item.categories.map((cat) => (
             <span key={cat} className={styles.categoryTag}>
-              {CATEGORY_ICON[cat as ItemCategory]}
+              {CATEGORIES[cat as ItemCategory]}
               {cat}
             </span>
           ))}
@@ -166,7 +166,7 @@ function SellerTransactionRow({
         <div className={styles.rowTags}>
           {tx.item.categories.map((cat) => (
             <span key={cat} className={styles.categoryTag}>
-              {CATEGORY_ICON[cat as ItemCategory]}
+              {CATEGORIES[cat as ItemCategory]}
               {cat}
             </span>
           ))}
