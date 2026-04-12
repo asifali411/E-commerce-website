@@ -5,9 +5,6 @@ import {
   Mail01,
   Star01,
   Package,
-  Monitor01,
-  PencilLine,
-  Building07,
   CheckCircle,
   Clock,
   Tag01,
@@ -21,16 +18,9 @@ import type {
 } from "../../global/schema";
 import type { ItemCategory, ItemCondition } from "../../global/types";
 import styles from "./TransactionDialog.module.css";
+import { CATEGORY_ICON } from "../../global/var";
 
 // ── Helpers ────────────────────────────────────────────────
-const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
-  All: <Package size={12}/>,
-  Electronics: <Monitor01 size={12} />,
-  Stationary: <PencilLine size={12} />,
-  Rent: <Building07 size={12} />,
-  Miscellaneous: <Package size={12} />,
-  Accessories: <Tag01 size={12} />,
-};
 
 const CONDITION_CLASS: Record<ItemCondition, string> = {
   New: styles.conditionNew,

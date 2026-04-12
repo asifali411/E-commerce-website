@@ -5,9 +5,6 @@ import {
   Package,
   Edit01,
   Trash01,
-  Monitor01,
-  PencilLine,
-  Building07,
   CheckCircle,
   Users01,
   Tag01,
@@ -19,17 +16,12 @@ import Dialog from "../../components/dialog/Dialog";
 import ItemDialog from "../../components/itemDialog/ItemDialog";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
+import { CATEGORY_ICON } from "../../global/var";
 
 // ── Types ──────────────────────────────────────────────────
 type FilterTab = "All" | "Active" | "Sold";
 
 // ── Helpers ────────────────────────────────────────────────
-const CATEGORY_ICON: Record<string, React.ReactNode> = {
-  Electronics: <Monitor01 size={11} />,
-  Stationary: <PencilLine size={11} />,
-  Rent: <Building07 size={11} />,
-  Misseleneous: <Package size={11} />,
-};
 
 const CONDITION_CLASS: Record<string, string> = {
   New: styles.conditionNew,

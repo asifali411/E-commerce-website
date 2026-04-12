@@ -4,9 +4,6 @@ import {
   Package,
   Edit01,
   Trash01,
-  Monitor01,
-  PencilLine,
-  Building07,
   CheckCircle,
   XCircle,
   Clock,
@@ -15,12 +12,13 @@ import {
   ShoppingBag01,
 } from "@untitledui/icons";
 import styles from "./MyBids.module.css";
-import type { ItemCategory, ItemCondition, BidStatus } from "../../global/types";
+import type { ItemCondition, BidStatus } from "../../global/types";
 import type { BidHistoryResponse } from "../../global/schema";
 import { useAuth } from "../../context/AuthProvider";
 import Dialog from "../../components/dialog/Dialog";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
+import { CATEGORY_ICON } from "../../global/var";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -79,13 +77,6 @@ const MOCK_BIDS: BidHistoryResponse[] = [
 ];
 
 // ── Helpers ────────────────────────────────────────────────
-const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
-  All: <Package size={11} />,
-  Electronics: <Monitor01 size={11} />,
-  Stationary: <PencilLine size={11} />,
-  Rent: <Building07 size={11} />,
-  Miscellaneous: <Package size={11} />,
-};
 
 const CONDITION_CLASS: Record<ItemCondition, string> = {
   New: styles.conditionNew,

@@ -2,9 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Package,
-  Monitor01,
-  PencilLine,
-  Building07,
   CheckCircle,
   Clock,
   ArrowRight,
@@ -25,20 +22,13 @@ import type {
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
 import TransactionDialog from "../../components/transactionDialog/TransactionDialog";
+import { CATEGORY_ICON } from "../../global/var";
 
 // ── Types ──────────────────────────────────────────────────
 type Role = "Buyer" | "Seller";
 type FilterTab = "All" | "Pending" | "Completed";
 
 // ── Helpers ────────────────────────────────────────────────
-const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
-  All: <Package size={11} />,
-  Electronics: <Monitor01 size={11} />,
-  Stationary: <PencilLine size={11} />,
-  Rent: <Building07 size={11} />,
-  Miscellaneous: <Package size={11} />,
-  Accessories: <Tag01 size={11} />,
-};
 
 const CONDITION_CLASS: Record<ItemCondition, string> = {
   New: styles.conditionNew,

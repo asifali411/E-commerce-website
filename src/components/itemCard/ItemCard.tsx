@@ -3,17 +3,17 @@ import {
   Star01,
   Clock,
   Package,
-  Monitor01,
-  PencilLine,
-  Building07,
   Flag01,
 } from "@untitledui/icons";
 import styles from "./ItemCard.module.css";
 import { useNavigate } from "react-router-dom";
-import type { ItemCategory, ItemCondition } from "../../global/types";
+import type { ItemCondition } from "../../global/types";
 import type { ItemResponse } from "../../global/schema";
 import { useAuth } from "../../context/AuthProvider";
 import { useToast } from "../toast/Toast";
+import ReportDialog from "../reportDialog/ReportDialog";
+import { CATEGORY_ICON } from "../../global/var";
+import { useState } from "react";
 
 // ── Place holders ────────────────────────────────────────────────
 // let timeLeft = `${Math.floor(Math.random() * 10 + 2)} days left`;
@@ -26,14 +26,6 @@ const CONDITION_CLASS: Record<ItemCondition, string> = {
   "Heavily_Used": styles.conditionHeavy,
 };
 
-const CATEGORY_ICON: Record<ItemCategory, React.ReactNode> = {
-  All: <Package size={11} />,
-  Electronics: <Monitor01 size={11} />,
-  Stationary: <PencilLine size={11} />,
-  Rent: <Building07 size={11} />,
-  Miscellaneous: <Package size={11} />,
-};
-
 // ── Component ──────────────────────────────────────────────
 export default function ItemCard({ item }: { item: ItemResponse }) {
 
@@ -41,6 +33,7 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
 
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const [showReportDialog, setShowReportDialog] = useState(false);
 
   const handleNavigation = () => {
     if(isAuthenticated){
@@ -71,6 +64,10 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
         </div>
       )}
 
+      {showReportDialog && (
+        <ReportDialog itemId={item.id} onClose={() => setShowReportDialog(false)} />
+      )}
+
       {/* Image area */}
 
       <div className={styles.cardImagePlaceholder}>
@@ -78,7 +75,10 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
           <Package size={32} className={styles.cardImageIcon} />
         )}
         {item.images.length > 0 && (
-          <img src={`/api/${item.images[0].image_path}`} className={styles.cardImage}></img>
+          <img
+            src={`/api/${item.images[0].image_path}`}
+            className={styles.cardImage}
+          ></img>
         )}
 
         {/* Hover actions */}
