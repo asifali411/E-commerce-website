@@ -8,29 +8,12 @@ import type {
   TransactionStatus,
   RatingStatus,
   NotificationType,
-  ImageStatus,
 } from "./types";
-
-export interface Item {
-  id: number;
-  seller: {
-    username: string;
-    rating: number;
-  };
-  title: string;
-  description: string;
-  min_price: number;
-  quantity: number;
-  status: ItemStatus;
-  categories: ItemCategory[];
-  condition: ItemCondition;
-  images: string[];
-}
 
 export interface PublicUsersResponse {
   username: string;
   rating: number;
-  image_path: string;
+  image_path: string | null;
 }
 
 export interface ProtectedUserResponse {
@@ -38,6 +21,7 @@ export interface ProtectedUserResponse {
   rating: number;
   phone_no: string;
   email: string;
+  image_path: string | null;
 }
 
 export interface PrivateUsersResponse {
@@ -47,16 +31,12 @@ export interface PrivateUsersResponse {
   rating: number;
   locked: boolean;
   role: UserRole;
-  disabled: boolean;
   image_path: string | null;
-  member_since: string;
-  activityData: any;
 }
 
 export interface ItemImageResponse {
   id: number;
   image_path: string;
-  status: ImageStatus;
 }
 
 export interface BidResponse {
@@ -79,20 +59,10 @@ export interface ItemResponse {
   categories: ItemCategory[];
   condition: ItemCondition;
   images: ItemImageResponse[];
-  bids: BidResponse[];
 }
 
-export interface ItemResponse {
-  id: number;
-  seller: PublicUsersResponse;
-  title: string;
-  description: string;
-  min_price: number;
-  quantity: number;
-  status: ItemStatus;
-  categories: ItemCategory[];
-  condition: ItemCondition;
-  images: ItemImageResponse[];
+export interface UniqueItemResponse extends ItemResponse {
+  bids: BidResponse[];
 }
 
 export interface AdminItemResponse {
@@ -102,6 +72,7 @@ export interface AdminItemResponse {
   description: string;
   min_price: number;
   quantity: number;
+  bid_count: number;
   status: ItemStatus;
   categories: ItemCategory[];
   condition: ItemCondition;
@@ -116,32 +87,6 @@ export interface ReportResponse {
 
 export interface AdminUniqueItemResponse extends AdminItemResponse {
   reports: ReportResponse[];
-}
-
-export interface SellerTransactionResponse {
-  buyer: ProtectedUserResponse;
-  price: number;
-  status: TransactionStatus;
-  quantity: number;
-  item: ItemResponse;
-}
-
-export interface RatingResponse {
-  id: number;
-  rated_user: PublicUsersResponse;
-  score?: number | null;
-  created_at: string;
-  status: RatingStatus;
-}
-
-export interface NotificationResponse {
-  id: number;
-  type: NotificationType;
-  title: string;
-  message: string;
-  is_read: boolean;
-  payload: Record<string, unknown>;
-  created_at: string;
 }
 
 export interface BidItemResponse {
@@ -169,6 +114,14 @@ export interface SellerTransactionItemResponse {
   condition: ItemCondition;
 }
 
+export interface SellerTransactionResponse {
+  buyer: ProtectedUserResponse;
+  price: number;
+  status: TransactionStatus;
+  quantity: number;
+  item: SellerTransactionItemResponse;
+}
+
 export interface BuyerTransactionItemResponse {
   id: number;
   title: string;
@@ -182,4 +135,22 @@ export interface BuyerTransactionResponse {
   status: TransactionStatus;
   quantity: number;
   item: BuyerTransactionItemResponse;
+}
+
+export interface RatingResponse {
+  id: number;
+  rated_user: PublicUsersResponse;
+  score?: number | null;
+  created_at: string;
+  status: RatingStatus;
+}
+
+export interface NotificationResponse {
+  id: number;
+  type: NotificationType;
+  title: string;
+  message: string;
+  is_read: boolean;
+  payload: Record<string, unknown>;
+  created_at: string;
 }

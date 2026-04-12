@@ -1,8 +1,23 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { api } from "./AuthProvider";
-import type { AdminItemResponse, AdminUniqueItemResponse, BidHistoryResponse, BidResponse, BuyerTransactionResponse, ItemImageResponse, ItemResponse, RatingResponse, SellerTransactionResponse } from "../global/schema";
+import type {
+  AdminItemResponse,
+  AdminUniqueItemResponse,
+  BidHistoryResponse,
+  BuyerTransactionResponse,
+  ItemResponse,
+  RatingResponse,
+  SellerTransactionResponse,
+  UniqueItemResponse,
+} from "../global/schema";
 import type { ItemCategory } from "../global/types";
-import type { BidCreate, BidUpdate, ItemCreate, ItemUpdate, ReportCreate } from "../global/request";
+import type {
+  BidCreate,
+  BidUpdate,
+  ItemCreate,
+  ItemUpdate,
+  ReportCreate,
+} from "../global/request";
 import { useNotifications } from "./NotificationProvides";
 
 interface ActionContextType {
@@ -15,37 +30,28 @@ interface ActionContextType {
   }) => Promise<ItemResponse[]>;
   fetchSelledItems: (skip?: number, limit?: number) => Promise<ItemResponse[]>;
   fetchBids: (skip?: number, limit?: number) => Promise<BidHistoryResponse[]>;
-  fetchItem: (id: number) => Promise<ItemResponse | null>;
-  createItem: (data: ItemCreate) => Promise<ItemResponse | null>;
-  updateItem: (id: number, data: ItemUpdate) => Promise<string | null>;
+  fetchItem: (id: number) => Promise<UniqueItemResponse | null>;
+  createItem: (data: ItemCreate) => Promise<boolean>;
+  updateItem: (id: number, data: ItemUpdate) => Promise<string>;
   deleteItem: (id: number) => Promise<boolean>;
 
   // Images
-  uploadImage: (
-    itemId: number,
-    file: File,
-  ) => Promise<ItemImageResponse | null>;
+  uploadImage: (itemId: number, file: File) => Promise<boolean>;
   deleteImage: (imageId: number) => Promise<boolean>;
 
   // Bids
-  createBid: (itemId: number, data: BidCreate) => Promise<BidResponse | null>;
-  updateBid: (bidId: number, data: BidUpdate) => Promise<BidResponse | null>;
+  createBid: (itemId: number, data: BidCreate) => Promise<boolean>;
+  updateBid: (bidId: number, data: BidUpdate) => Promise<boolean>;
   deleteBid: (bidId: number) => Promise<boolean>;
 
   // Transactions
   fetchSellerTransactions: () => Promise<SellerTransactionResponse[]>;
   fetchBuyerTransactions: () => Promise<BuyerTransactionResponse[]>;
-  createTransaction: (
-    itemId: number,
-    bidId: number,
-  ) => Promise<SellerTransactionResponse | null>;
+  createTransaction: (itemId: number, bidId: number) => Promise<boolean>;
 
   // Ratings
   fetchMyRatings: () => Promise<RatingResponse[]>;
-  updateRating: (
-    ratingId: number,
-    score: number,
-  ) => Promise<RatingResponse | null>;
+  updateRating: (ratingId: number, score: number) => Promise<boolean>;
 
   // Reports
   reportItem: (itemId: number, data: ReportCreate) => Promise<boolean>;
@@ -66,12 +72,12 @@ interface ActionContextType {
 const ActionContext = createContext<ActionContextType | undefined>(undefined);
 
 export const useAction = () => {
-    const context = useContext(ActionContext);
-    if(!context){
-        throw new Error("useAction must be used within ActionProvider");
-    }
-    return context;
-}
+  const context = useContext(ActionContext);
+  if (!context) {
+    throw new Error("useAction must be used within ActionProvider");
+  }
+  return context;
+};
 
 // --- Provider -----------------------------------------------
 export const ActionProvider = ({ children }: { children: ReactNode }) => {
@@ -143,9 +149,9 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const fetchItem = async (id: number): Promise<ItemResponse | null> => {
+  const fetchItem = async (id: number): Promise<UniqueItemResponse | null> => {
     try {
-      const res = await api.get<ItemResponse>(`/items/${id}`);
+      const res = await api.get<UniqueItemResponse>(`/items/${id}`);
       return res.data;
     } catch (error) {
       console.error("fetchItem failed:", error);
@@ -153,28 +159,25 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const createItem = async (data: ItemCreate): Promise<ItemResponse | null> => {
+  const createItem = async (data: ItemCreate): Promise<boolean> => {
     try {
-      const res = await api.post<ItemResponse>("/items/create", data);
+      await api.post("/items/create", data);
       await fetchNotifications();
-      return res.data;
+      return true;
     } catch (error) {
       console.error("createItem failed:", error);
-      return null;
+      return false;
     }
   };
 
-  const updateItem = async (
-    id: number,
-    data: ItemUpdate,
-  ): Promise<string | null> => {
+  const updateItem = async (id: number, data: ItemUpdate): Promise<string> => {
     try {
       const res = await api.patch<string>(`/items/${id}`, data);
       await fetchNotifications();
       return res.data;
     } catch (error) {
       console.error("updateItem failed:", error);
-      return null;
+      return "";
     }
   };
 
@@ -191,30 +194,18 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
 
   // --- Images -----------------------------------------------
 
-  const uploadImage = async (
-    itemId: number,
-    file: File,
-  ): Promise<ItemImageResponse | null> => {
+  const uploadImage = async (itemId: number, file: File): Promise<boolean> => {
     try {
       const formData = new FormData();
       formData.append("image", file);
-      const res = await api.post<ItemImageResponse>(
-        `/images/${itemId}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } },
-      );
-
-      switch (res.status) {
-        case 200:
-          await fetchNotifications();
-          return res.data;
-        default:
-          console.error("uploadImage failed", res);
-          return null;
-      }
+      await api.post(`/images/${itemId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      await fetchNotifications();
+      return true;
     } catch (error) {
       console.error("uploadImage failed:", error);
-      return null;
+      return false;
     }
   };
 
@@ -230,38 +221,32 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // --- Bids -------------------------------------------------
+
   const createBid = async (
     itemId: number,
     data: BidCreate,
-  ): Promise<BidResponse | null> => {
+  ): Promise<boolean> => {
     try {
-      const res = await api.post<BidResponse>(`/bids/${itemId}`, data);
-
-      switch (res.status) {
-        case 200:
-          await fetchNotifications();
-          return res.data;
-        default:
-          console.error("createBid failed", res);
-          return null;
-      }
+      await api.post(`/bids/${itemId}`, data);
+      await fetchNotifications();
+      return true;
     } catch (error) {
       console.error("createBid failed:", error);
-      return null;
+      return false;
     }
   };
 
   const updateBid = async (
     bidId: number,
     data: BidUpdate,
-  ): Promise<BidResponse | null> => {
+  ): Promise<boolean> => {
     try {
-      const res = await api.patch<BidResponse>(`/bids/${bidId}`, data);
+      await api.patch(`/bids/${bidId}`, data);
       await fetchNotifications();
-      return res.data;
+      return true;
     } catch (error) {
       console.error("updateBid failed:", error);
-      return null;
+      return false;
     }
   };
 
@@ -277,6 +262,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // --- Transactions -----------------------------------------
+
   const fetchSellerTransactions = async (): Promise<
     SellerTransactionResponse[]
   > => {
@@ -284,22 +270,9 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.get<SellerTransactionResponse[]>(
         "/transactions/my-selled-transactions",
       );
-
-      if (res.status === 200) {
-        return Array.isArray(res.data) ? res.data : [];
-      }
-
-      if (res.status === 404) {
-        return [];
-      }
-
-      console.error("fetchSellerTransactions failed:", res);
-      return [];
+      return Array.isArray(res.data) ? res.data : [];
     } catch (error: any) {
-      if (error?.response?.status === 404) {
-        return [];
-      }
-
+      if (error?.response?.status === 404) return [];
       console.error("fetchSellerTransactions failed:", error);
       return [];
     }
@@ -312,15 +285,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.get<BuyerTransactionResponse[]>(
         "/transactions/my-buyed-transactions",
       );
-      switch (res.status) {
-        case 200:
-          return Array.isArray(res.data) ? res.data : [];
-        case 404:
-          break;
-        default:
-          console.error("fetchBuyerTransactions failed:", res);
-      }
-      return [];
+      return Array.isArray(res.data) ? res.data : [];
     } catch (error) {
       console.error("fetchBuyerTransactions failed:", error);
       return [];
@@ -330,26 +295,19 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const createTransaction = async (
     itemId: number,
     bidId: number,
-  ): Promise<SellerTransactionResponse | null> => {
+  ): Promise<boolean> => {
     try {
-      const res = await api.post<SellerTransactionResponse>(
-        `/transactions/${itemId}/${bidId}`,
-      );
-      switch (res.status) {
-        case 200:
-          await fetchNotifications();
-          return res.data;
-        default:
-          console.error("uploadImage failed", res);
-          return null;
-      }
+      await api.post(`/transactions/${itemId}/${bidId}`);
+      await fetchNotifications();
+      return true;
     } catch (error) {
       console.error("createTransaction failed:", error);
-      return null;
+      return false;
     }
   };
 
   // --- Ratings ----------------------------------------------
+
   const fetchMyRatings = async (): Promise<RatingResponse[]> => {
     try {
       const res = await api.get<RatingResponse[]>("/ratings/my-ratings");
@@ -363,20 +321,19 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const updateRating = async (
     ratingId: number,
     score: number,
-  ): Promise<RatingResponse | null> => {
+  ): Promise<boolean> => {
     try {
-      const res = await api.get<RatingResponse>(
-        `/ratings/${ratingId}/${score}`,
-      );
+      await api.get(`/ratings/${ratingId}/${score}`);
       await fetchNotifications();
-      return res.data;
+      return true;
     } catch (error) {
       console.error("updateRating failed:", error);
-      return null;
+      return false;
     }
   };
 
   // --- Reports ----------------------------------------------
+
   const reportItem = async (
     itemId: number,
     data: ReportCreate,
@@ -392,6 +349,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // --- Admin ------------------------------------------------
+
   const fetchReportedItems = async (
     skip = 0,
     limit = 10,
@@ -429,13 +387,15 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // --- Profile ----------------------------------------------
+
   const updateAvatar = async (image: File): Promise<boolean> => {
     try {
       const formData = new FormData();
       formData.append("image", image);
-
-      await api.post<ItemImageResponse>(`/profile/image`, formData);
-
+      await api.post("/profile/image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return true;
     } catch (error) {
       console.error("updateAvatar failed:", error);
@@ -444,7 +404,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const value: ActionContextType = {
-    //fetch
+    // fetch
     fetchFeed,
     fetchSearchItems,
     fetchSelledItems,
@@ -456,24 +416,24 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     fetchReportedItems,
     fetchAdminItem,
 
-    //create
+    // create
     createItem,
     createBid,
     createTransaction,
 
-    //update
+    // update
     updateItem,
     updateBid,
     updateRating,
     updateAvatar,
-    
-    //delete
+
+    // delete
     deleteItem,
     deleteImage,
     deleteBid,
     deleteAdminItem,
 
-    //other
+    // other
     uploadImage,
     reportItem,
   };

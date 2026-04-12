@@ -14,7 +14,7 @@ import {
   AlertCircle,
 } from "@untitledui/icons";
 import styles from "./ItemDialog.module.css";
-import type { ItemResponse, BidResponse, ItemImageResponse } from "../../global/schema";
+import type { BidResponse, ItemImageResponse, UniqueItemResponse } from "../../global/schema";
 import type { ItemCondition } from "../../global/types";
 import { useAction } from "../../context/ActionProvider";
 
@@ -199,7 +199,7 @@ export default function ItemDialog({
 }: ItemDialogProps) {
   const { fetchItem, createTransaction, updateBid } = useAction();
 
-  const [item, setItem] = useState<ItemResponse | null>(null);
+  const [item, setItem] = useState<UniqueItemResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [accepting, setAccepting] = useState<number | null>(null);

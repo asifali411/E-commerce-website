@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import type { ItemCategory, ItemCondition } from "../../global/types";
 import { useAction } from "../../context/ActionProvider";
 import { CATEGORIES } from "../../global/var";
+import type { UniqueItemResponse } from "../../global/schema";
 
 // ── Types ──────────────────────────────────────────────
 
@@ -86,7 +87,7 @@ export default function CreateItem({
   const [loading, setLoading] = useState(false);
 
   const { isAuthenticated } = useAuth();
-  const { createItem, uploadImage} = useAction();
+  const { createItem, uploadImage, fetchItem } = useAction();
   const { addToast } = useToast();
   const navigate = useNavigate();
 
@@ -183,7 +184,13 @@ export default function CreateItem({
         categories,
       };
 
-      const item: ItemResponse | null = await createItem(body);
+      const res: any | null = await createItem(body);
+      let item: UniqueItemResponse | null = null;
+
+      if(res){
+        console.log(res, res.id);
+        item = await fetchItem(res.id);
+      }
 
       if(!item){
         

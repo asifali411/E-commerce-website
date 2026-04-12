@@ -4,7 +4,6 @@ export type ItemStatus = "Active" | "Sold";
 export type BidStatus = "Accepted" | "Pending" | "Rejected";
 export type TransactionStatus = "Pending" | "Completed";
 export type RatingStatus = "Pending" | "Completed";
-export type ImageStatus = "Pending" | "Completed";
 export type UserRole = "User" | "Admin";
 export type NotificationType =
   | "Item_Created"
