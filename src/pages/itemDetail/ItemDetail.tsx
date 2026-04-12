@@ -247,7 +247,7 @@ export default function ItemDetail() {
         {/* Right: Details */}
         <section className={styles.details}>
           <div className={styles.categoryRow}>
-            {item.categories.map((c) => (
+            {item.categories?.map((c) => (
               <span key={c} className={styles.category}>
                 {c}
               </span>
@@ -262,7 +262,7 @@ export default function ItemDetail() {
             <div className={styles.priceBlock}>
               <span className={styles.priceLabel}>Min Price</span>
               <span className={styles.price}>
-                ₹{item.min_price.toLocaleString()}
+                ₹{item.min_price?.toLocaleString()}
               </span>
             </div>
             <div className={styles.priceBlock}>
@@ -273,7 +273,7 @@ export default function ItemDetail() {
 
           <div className={styles.sellerCard}>
             <div className={styles.avatar}>
-              {item.seller.username.slice(0, 2).toUpperCase()}
+              {item.seller.username?.slice(0, 2).toUpperCase()}
             </div>
             <div>
               <p className={styles.sellerName}>{item.seller.username}</p>

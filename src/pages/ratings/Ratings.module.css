@@ -86,8 +86,6 @@
 
 .tab:hover {
   color: var(--color-text);
-  background-color: var(--color-grey-100);
-  transform: none;
 }
 
 .tabActive {
@@ -358,14 +356,16 @@
   padding: 8px 16px;
   font-size: 0.82rem;
   font-weight: 500;
-  color: var(--color-text-muted);
-  background-color: var(--color-button);
+  color: var(--color-text);
+  background: var(--color-card);
   border-radius: var(--border-radius);
+  border: 1px solid var(--color-card-border);
 }
 
 .btnSecondary:hover {
-  background-color: var(--color-button-hover);
-  color: var(--color-text);
+  background-color: var(--color-grey-100);
+  border-color: var(--color-grey-300);
+  transform: translateY(-1px);
 }
 
 /* ── Empty state ──────────────────────────────────────────── */

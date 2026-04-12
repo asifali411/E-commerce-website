@@ -207,8 +207,8 @@ export default function CreateItem({
       onSuccess?.(item);
       addToast({
         type: "success",
-        title: `${body.title} is now live and accepting bids.`,
-        message: "",
+        title: "Item created successfully",
+        message: `${body.title} has been created for ${body.min_price} rupees`,
         duration: 4000,
       });
     } catch (e: unknown) {
