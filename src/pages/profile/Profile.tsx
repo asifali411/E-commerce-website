@@ -20,6 +20,7 @@ import { useAuth } from "../../context/AuthProvider";
 import { useState } from "react";
 import { useAction } from "../../context/ActionProvider";
 import AvatarDialog from "../../components/avatarDialog/AvatarDialog";
+import { useToast } from "../../components/toast/Toast";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -129,8 +130,9 @@ const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
 
 const Profile: React.FC<{ userId?: string }> = () => {
 
-  const {user} = useAuth();
+  const {user, refresh} = useAuth();
   const { updateAvatar } = useAction();
+  const { addToast } = useToast();
 
   const memberSinceDate = new Date(user?.member_since!);
   const memberSinceFormatted = memberSinceDate.toLocaleDateString("en-IN", {
@@ -147,9 +149,9 @@ const Profile: React.FC<{ userId?: string }> = () => {
 
       <AvatarDialog
         open={openAvatarDialog}
-        currentAvatar={user?.image_path ?? undefined}
+        currentAvatar={user?.image_path ? `/api/${user?.image_path}` : undefined}
         onClose={() => setOpenAvatarDialog(false)}
-        onSave={async (blob: Blob, previewUrl: string) => {
+        onSave={async (blob: Blob) => {
           try {
             const avatarFile = new File([blob], "avatar.jpg", {
               type: "image/jpeg",
@@ -157,10 +159,21 @@ const Profile: React.FC<{ userId?: string }> = () => {
             });
 
             await updateAvatar(avatarFile);
-
             setOpenAvatarDialog(false);
+            refresh();
+            addToast({
+              type: "success",
+              title: "Avatar is being updated.",
+              message: "This may take a while.",
+              duration: 4000,
+            });
           } catch (error) {
-            console.error("Failed to update avatar:", error);
+            addToast({
+              type: "error",
+              title: "Failed to update avatar.",
+              message: "Please ensure the file format is correct.",
+              duration: 4000,
+            });
           }
         }}
       />
@@ -175,7 +188,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
             >
               {user?.image_path ? (
                 <img
-                  src={user?.image_path}
+                  src={`/api/${user?.image_path}`}
                   alt={user?.username}
                   className={styles.avatar}
                 />

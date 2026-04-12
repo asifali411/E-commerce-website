@@ -58,6 +58,7 @@ interface ActionContextType {
   fetchAdminItem: (itemId: number) => Promise<AdminUniqueItemResponse | null>;
   deleteAdminItem: (itemId: number) => Promise<boolean>;
 
+  // Profile
   updateAvatar: (image: File) => Promise<boolean>;
 }
 
@@ -431,17 +432,13 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const updateAvatar = async (image: File): Promise<boolean> => {
     try {
       const formData = new FormData();
-      formData.append("file", image);
+      formData.append("image", image);
 
-      await api.post<ItemImageResponse>(`/profile/image`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await api.post<ItemImageResponse>(`/profile/image`, formData);
 
       return true;
     } catch (error) {
-      console.error("updateImage failed:", error);
+      console.error("updateAvatar failed:", error);
       return false;
     }
   };
