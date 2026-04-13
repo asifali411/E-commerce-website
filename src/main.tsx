@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthProvider.tsx'
-import { NotificationProvider } from './context/NotificationProvides.tsx'
+import { NotificationProvider } from './context/NotificationProvider.tsx'
 import { ActionProvider } from './context/ActionProvider.tsx'
 import { AdminProvider } from './context/AdminProvider.tsx'
 

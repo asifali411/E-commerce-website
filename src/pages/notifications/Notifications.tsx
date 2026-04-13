@@ -17,7 +17,7 @@ import { useAuth } from "../../context/AuthProvider";
 import type { NotificationResponse } from "../../global/schema";
 import type { NotificationType } from "../../global/types";
 import Spinner from "../../components/spinner/Spinner";
-import { useNotifications } from "../../context/NotificationProvides";
+import { useNotifications } from "../../context/NotificationProvider";
 
 // ── Types ──────────────────────────────────────────────────
 

@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import Dialog from "../dialog/Dialog";
-import { useNotifications } from "../../context/NotificationProvides";
+import { useNotifications } from "../../context/NotificationProvider";
 
 interface NavItem {
   to: string;
