@@ -1,8 +1,6 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { api } from "./AuthProvider";
 import type {
-  AdminItemResponse,
-  AdminUniqueItemResponse,
   BidHistoryResponse,
   BuyerTransactionResponse,
   CreateItemResponse,
@@ -55,14 +53,6 @@ interface ActionContextType {
 
   // Reports
   reportItem: (itemId: number, data: ReportCreate) => Promise<boolean>;
-
-  // Admin
-  fetchReportedItems: (
-    skip?: number,
-    limit?: number,
-  ) => Promise<AdminItemResponse[]>;
-  fetchAdminItem: (itemId: number) => Promise<AdminUniqueItemResponse | null>;
-  deleteAdminItem: (itemId: number) => Promise<boolean>;
 
   // Profile
   updateAvatar: (image: File) => Promise<boolean>;
@@ -340,46 +330,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       console.error("reportItem failed:", error);
       return false;
     }
-  };
-
-  // --- Admin ------------------------------------------------
-
-  const fetchReportedItems = async (
-    skip = 0,
-    limit = 10,
-  ): Promise<AdminItemResponse[]> => {
-    try {
-      const res = await api.get<AdminItemResponse[]>("/admin/reported-items", {
-        params: { skip, limit },
-      });
-      return Array.isArray(res.data) ? res.data : [];
-    } catch (error) {
-      console.error("fetchReportedItems failed:", error);
-      return [];
-    }
-  };
-
-  const fetchAdminItem = async (
-    itemId: number,
-  ): Promise<AdminUniqueItemResponse | null> => {
-    try {
-      const res = await api.get<AdminUniqueItemResponse>(`/admin/${itemId}`);
-      return res.data;
-    } catch (error) {
-      console.error("fetchAdminItem failed:", error);
-      return null;
-    }
-  };
-
-  const deleteAdminItem = async (itemId: number): Promise<boolean> => {
-    try {
-      await api.delete(`/admin/${itemId}`);
-      return true;
-    } catch (error) {
-      console.error("deleteAdminItem failed:", error);
-      return false;
-    }
-  };
+  };  
 
   // --- Profile ----------------------------------------------
 
@@ -407,8 +358,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     fetchSellerTransactions,
     fetchBuyerTransactions,
     fetchMyRatings,
-    fetchReportedItems,
-    fetchAdminItem,
 
     // create
     createItem,
@@ -425,7 +374,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     deleteItem,
     deleteImage,
     deleteBid,
-    deleteAdminItem,
 
     // other
     uploadImage,

@@ -17,7 +17,7 @@ export type NotificationType =
   | "Rating_Pending"
   | "Rating_Received"
   | "Reported_Successfully";
-export  type ReportCategory =
+export type ReportCategory =
   | "Illegal_Items"
   | "Explicit_or_Adult_Content"
   | "Restricted_or_Prohibited_Items"

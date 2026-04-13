@@ -12,6 +12,7 @@ import {
     LogIn01,
     LogOut01,
     User01,
+    Tool02
 } from "@untitledui/icons";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
@@ -27,12 +28,13 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { to: "/",               label: "Home",           icon: <Home01 />           , isHome: true },
-  { to: "/listings",       label: "My listings",    icon: <Grid01 />           },
-  { to: "/bids",           label: "My bids",        icon: <Wallet03 />         },
-  { to: "/transactions",   label: "Transactions",   icon: <SwitchVertical01 /> },
-  { to: "/ratings",        label: "Ratings",        icon: <Star01 />           },
-  { to: "/notifications",  label: "Notifications",  icon: <Bell01 />           , isNotification: true },
+  { to: "/",               label: "Home",           icon: <Home01 />,            isHome: true },
+  { to: "/listings",       label: "My listings",    icon: <Grid01 />,           },
+  { to: "/bids",           label: "My bids",        icon: <Wallet03 />,         },
+  { to: "/transactions",   label: "Transactions",   icon: <SwitchVertical01 />, },
+  { to: "/ratings",        label: "Ratings",        icon: <Star01 />,           },
+  { to: "/notifications",  label: "Notifications",  icon: <Bell01 />,            isNotification: true },
+  { to: "/admin",          label: "Admin panel",    icon: <Tool02 />,           }
 ];
 
 let activePath = "/";

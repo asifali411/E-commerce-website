@@ -1,9 +1,11 @@
 # TODO LIST
 
-<input type="checkbox"> `hard` use ws for handling notification
+- `hard ->` fix ws and handle notification properly
 
-<input type="checkbox"> `hard` add admin panel
+- `hard ->` add admin panel
 
-<input type="checkbox"> `medium` add report feature
+- `hard ->` make entire app responsive
 
-<input type="checkbox"> `hard` make entire app responsive
+- `easy ->` add admin | user role switching feature
+
+- `easy ->` add light | dark mode switching feature

@@ -20,8 +20,11 @@ import ItemDetail from "../pages/itemDetail/ItemDetail";
 import CreateItem from "../pages/createItem/CreateItem";
 import Profile from "../pages/profile/Profile";
 import EditItem from "../pages/editItem/EditItem";
+
 import Error404 from "../pages/error/error404/Error404";
 import Error500 from "../pages/error/error500/Error500";
+
+import AdminPanel from "../pages/adminPanel/AdminPanel";
 
 function PageWrapper({ children }: any) {
   return (
@@ -59,6 +62,7 @@ function AnimatedRoutes() {
             
             <Route path="/notifications" element={<PageWrapper><Notifications /></PageWrapper>} />
             <Route path="/profile" element={<PageWrapper><Profile /></PageWrapper>} />
+            <Route path="/admin" element={<PageWrapper><AdminPanel /></PageWrapper>} />
         </Route>
 
         <Route path="/index.html" element={<Navigate to="/" replace />} />

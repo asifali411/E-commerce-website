@@ -20,7 +20,7 @@ const CONDITION_CLASS: Record<ItemCondition, string> = {
 };
 
 // ── Component ──────────────────────────────────────────────
-export default function ItemCard({ item, onReport }: { item: ItemResponse, onReport: (id: number) => void }) {
+export default function ItemCard({ item, onReport, onClick }: { item: ItemResponse, onReport: (id: number) => void, onClick?: (id: number) => void }) {
 
   const { addToast } = useToast();
 
@@ -44,9 +44,7 @@ export default function ItemCard({ item, onReport }: { item: ItemResponse, onRep
   return (
     <article
       className={styles.card}
-      onClick={() => {
-        handleNavigation();
-      }}
+      onClick={ onClick ? () => { onClick(item.id) } : handleNavigation }
     >
 
       {/* Image area */}
