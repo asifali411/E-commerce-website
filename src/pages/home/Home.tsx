@@ -16,6 +16,7 @@ import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
 import { useHotkeys } from "react-hotkeys-hook";
 import { CATEGORIES } from "../../global/var";
+import ReportDialog from "../../components/reportDialog/ReportDialog";
 
 // ── Main page ──────────────────────────────────────────────
 export default function Home() {
@@ -30,6 +31,8 @@ export default function Home() {
   const [loadmoreLoading, setLoadmoreLoading] = useState(false);
   const [page, setPage] = useState(0);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const [showReport, setShowReport] = useState(false);
+  const [reportItemId, setReportItemId] = useState<number | undefined>(undefined);
 
   useHotkeys("ctrl+k", () => {
     searchInputRef.current?.focus()
@@ -100,8 +103,18 @@ export default function Home() {
     }
   }
 
+  const handleReport = (id: number) => {
+    setShowReport(true);
+    setReportItemId(id);
+  }
+
   return (
     <div className={styles.page}>
+
+      {showReport && reportItemId && (
+        <ReportDialog itemId={reportItemId} onClose={() => setShowReport(false)} />
+      )}
+
       {/* ── Header ── */}
       <header className={styles.header}>
         <h1 className={styles.pageTitle}>Home</h1>
@@ -176,7 +189,7 @@ export default function Home() {
       ) : filtered.length > 0 ? (
         <section className={styles.grid}>
           {filtered.map((item) => (
-            <ItemCard key={item.id} item={item} />
+            <ItemCard key={item.id} item={item} onReport={handleReport} />
           ))}
         </section>
       ) : (

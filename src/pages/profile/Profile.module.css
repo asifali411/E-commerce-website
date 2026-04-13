@@ -176,12 +176,6 @@
   color: var(--color-text);
 }
 
-/* .username {
-  font-size: 13.5px;
-  color: var(--color-text-muted);
-  font-weight: 500;
-} */
-
 .bio {
   margin: 0;
   font-size: 13.5px;
@@ -234,7 +228,6 @@
 }
 
 .starBg {
-  /* color: var(--color-grey-300); */
   color: transparent;
 }
 

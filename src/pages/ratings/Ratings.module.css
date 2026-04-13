@@ -300,7 +300,7 @@
 
 .starGlyph {
   display: inline-flex;
-  color: var(--color-grey-400);
+  color: var(--color-grey-300);
 }
 
 .starFilled, .starFilled svg {

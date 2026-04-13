@@ -10,9 +10,7 @@ import type { ItemCondition } from "../../global/types";
 import type { ItemResponse } from "../../global/schema";
 import { useAuth } from "../../context/AuthProvider";
 import { useToast } from "../toast/Toast";
-import ReportDialog from "../reportDialog/ReportDialog";
 import { CATEGORIES } from "../../global/var";
-import { useState } from "react";
 
 // ── Helpers ────────────────────────────────────────────────
 const CONDITION_CLASS: Record<ItemCondition, string> = {
@@ -22,13 +20,12 @@ const CONDITION_CLASS: Record<ItemCondition, string> = {
 };
 
 // ── Component ──────────────────────────────────────────────
-export default function ItemCard({ item }: { item: ItemResponse }) {
+export default function ItemCard({ item, onReport }: { item: ItemResponse, onReport: (id: number) => void }) {
 
   const { addToast } = useToast();
 
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [showReportDialog, setShowReportDialog] = useState(false);
 
   const handleNavigation = () => {
     if(isAuthenticated){
@@ -52,10 +49,6 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
       }}
     >
 
-      {showReportDialog && (
-        <ReportDialog itemId={item.id} onClose={() => setShowReportDialog(false)} />
-      )}
-
       {/* Image area */}
 
       <div className={styles.cardImagePlaceholder}>
@@ -73,7 +66,10 @@ export default function ItemCard({ item }: { item: ItemResponse }) {
         <div className={styles.cardActions}>
           <button
             className={`${styles.actionBtn} ${styles.actionBtnReport}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onReport(item.id);
+            }}
             title="Report this listing"
           >
             <Flag01 size={15} />
