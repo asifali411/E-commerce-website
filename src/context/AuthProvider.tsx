@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import axios from "axios";
+import axios, { type AxiosError } from "axios";
 import type { PrivateUsersResponse } from "../global/schema";
 
 // --- Axios Instance -----------------------------------------
@@ -15,12 +15,30 @@ export const api = axios.create({
   withCredentials: true,
 });
 
+// --- Error Helper -------------------------------------------
+export function extractErrorMessage(error: unknown, fallback = "Something went wrong"): string {
+  const err = error as AxiosError<{
+    detail?: string | { msg: string; loc: (string | number)[]; type: string }[];
+  }>;
+
+  const detail = err.response?.data?.detail;
+
+  if (!detail) return fallback;
+
+  if (typeof detail === "string") return detail;
+
+  if (Array.isArray(detail) && detail.length > 0) {
+    return detail.map((d) => d.msg).join(", ");
+  }
+
+  return fallback;
+}
+
 // --- Auth Context Type --------------------------------------
 interface AuthContextType {
   user: PrivateUsersResponse | null;
   isAuthenticated: boolean;
   loading: boolean;
-  // Auth
   login: (username: string, password: string) => Promise<void>;
   register: (data: {
     username: string;
@@ -37,9 +55,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 };
 
@@ -52,8 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchUser = async () => {
     try {
       const res = await api.get<PrivateUsersResponse>("/profile/");
-      
-      if(res.status === 200){
+      if(res.data.username){
         setUser(res.data);
       } else {
         setUser(null);
@@ -66,14 +81,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // --- Auth -------------------------------------------------
+
   const login = async (username: string, password: string) => {
     const formData = new URLSearchParams();
     formData.append("username", username);
     formData.append("password", password);
-    await api.post("/login", formData, {
+
+    const res = await api.post<PrivateUsersResponse>("/login", formData, {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
-    await fetchUser();
+
+    setUser(res.data);
   };
 
   const register = async (data: {
@@ -87,8 +105,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    await api.post("/logout");
-    setUser(null);
+    try {
+      await api.post("/logout");
+    } finally {
+      setUser(null);
+    }
   };
 
   const refresh = async () => {
@@ -100,24 +121,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // --- Effects ----------------------------------------------
+  // --- Interceptor ------------------------------------------
   useEffect(() => {
-    fetchUser();
 
-    if(!user){
-      logout();
-      refresh();
-    }
+    fetchUser();
 
     const interceptor = api.interceptors.response.use(
       (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
+      async (error: AxiosError) => {
+        const originalRequest = error.config as typeof error.config & { _retry?: boolean };
 
         if (error.response?.status === 401 && !originalRequest._retry) {
-          if (isRefreshing.current) {
-            return Promise.reject(error);
-          }
+          if (isRefreshing.current) return Promise.reject(error);
 
           originalRequest._retry = true;
           isRefreshing.current = true;
@@ -125,7 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           try {
             await api.post("/refresh");
             isRefreshing.current = false;
-            return api(originalRequest);
+            return api(originalRequest!);
           } catch (refreshError) {
             isRefreshing.current = false;
             setUser(null);
@@ -137,9 +152,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       },
     );
 
-    return () => {
-      api.interceptors.response.eject(interceptor);
-    };
+    return () => api.interceptors.response.eject(interceptor);
   }, []);
 
   // --- Context Value ----------------------------------------

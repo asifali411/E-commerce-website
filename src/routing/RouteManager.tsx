@@ -19,7 +19,6 @@ import SignUp from "../pages/signup/SignUp";
 import ItemDetail from "../pages/itemDetail/ItemDetail";
 import CreateItem from "../pages/createItem/CreateItem";
 import Profile from "../pages/profile/Profile";
-import ProtectedRoute from "./ProtectedRoute";
 import EditItem from "../pages/editItem/EditItem";
 
 // Placeholder pages
@@ -48,9 +47,8 @@ function AnimatedRoutes() {
         <Route path="/register" element={<PageWrapper><SignUp /></PageWrapper>} />
 
         <Route element={<Nav />}>
-          <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+            <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
 
-          <Route element={<ProtectedRoute />}>
             <Route path="/items/:id" element={<PageWrapper><ItemDetail /></PageWrapper>} />
             <Route path="/items/create" element={<PageWrapper><CreateItem /></PageWrapper>} />
             <Route path="/items/edit/:id" element={<PageWrapper><EditItem /></PageWrapper>} />
@@ -62,7 +60,6 @@ function AnimatedRoutes() {
             
             <Route path="/notifications" element={<PageWrapper><Notifications /></PageWrapper>} />
             <Route path="/profile" element={<PageWrapper><Profile /></PageWrapper>} />
-          </Route>
         </Route>
 
         <Route path="/index.html" element={<Navigate to="/" replace />} />
