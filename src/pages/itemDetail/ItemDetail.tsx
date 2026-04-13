@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./ItemDetail.module.css";
 import { useNavigate, useParams } from "react-router-dom";
 import type { ItemCondition, BidStatus } from "../../global/types";
-import type { ItemResponse } from "../../global/schema";
+import type { UniqueItemResponse } from "../../global/schema";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
 import { useAuth } from "../../context/AuthProvider";
@@ -59,7 +59,7 @@ export default function ItemDetail() {
   const { addToast } = useToast();
 
   // --- State ---
-  const [item, setItem] = useState<ItemResponse | null>(null);
+  const [item, setItem] = useState<UniqueItemResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);

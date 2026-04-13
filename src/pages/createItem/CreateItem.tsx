@@ -9,27 +9,14 @@ import { useNavigate } from "react-router-dom";
 import type { ItemCategory, ItemCondition } from "../../global/types";
 import { useAction } from "../../context/ActionProvider";
 import { CATEGORIES } from "../../global/var";
-import type { UniqueItemResponse } from "../../global/schema";
+import type { CreateItemResponse } from "../../global/schema";
+import type { ItemCreate } from "../../global/request";
 
 // ── Types ──────────────────────────────────────────────
 
-interface ItemCreate {
-  title: string;
-  description: string;
-  min_price: number;
-  quantity: number;
-  condition: ItemCondition;
-  categories: ItemCategory[];
-}
-
-interface ItemResponse {
-  id: number;
-  title: string;
-}
-
 interface CreateItemProps {
   apiBase?: string;
-  onSuccess?: (item: ItemResponse) => void;
+  onSuccess?: (item: CreateItemResponse) => void;
   onCancel?: () => void;
 }
 
@@ -49,12 +36,7 @@ const CONDITIONS: { value: ItemCondition; label: string; desc: string }[] = [
   },
 ];
 
-// const CATEGORIES: { value: ItemCategory; label: string; icon: any }[] = [
-//   { value: "Electronics", label: "Electronics", icon: <Monitor01 /> },
-//   { value: "Stationary", label: "Stationary", icon: <PencilLine /> },
-//   { value: "Rent", label: "Rent", icon: <Building07 /> },
-//   { value: "Miscellaneous", label: "Miscellaneous", icon: <Package /> },
-// ];
+const {All, ...ITEM_CATEGORY} = CATEGORIES;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -66,7 +48,7 @@ function FieldError({ msg }: { msg?: string }) {
 // ── Main Component ─────────────────────────────────────────────────────────
 
 export default function CreateItem({
-  onSuccess,
+  // onSuccess,
   onCancel,
 }: CreateItemProps) {
   const [title, setTitle] = useState("");
@@ -87,7 +69,7 @@ export default function CreateItem({
   const [loading, setLoading] = useState(false);
 
   const { isAuthenticated } = useAuth();
-  const { createItem, uploadImage, fetchItem } = useAction();
+  const { createItem, uploadImage } = useAction();
   const { addToast } = useToast();
   const navigate = useNavigate();
 
@@ -184,20 +166,14 @@ export default function CreateItem({
         categories,
       };
 
-      const res: any | null = await createItem(body);
-      let item: UniqueItemResponse | null = null;
+      const res: CreateItemResponse | null = await createItem(body);
 
-      if(res){
-        console.log(res, res.id);
-        item = await fetchItem(res.id);
-      }
-
-      if(!item){
+      if(!res){
         
         addToast({
           type: "error",
           title: isAuthenticated ? "Failed to create Item" : "You are logged out.",
-          message: isAuthenticated ? "" : "Please login to continue.",
+          message: isAuthenticated ? "Please try again later." : "Please login to continue.",
           duration: 4000,
         });
         setLoading(false);
@@ -205,10 +181,10 @@ export default function CreateItem({
       }
 
       for (const file of imageFiles) {
-        uploadImage(item.id, file);
+        uploadImage(res.id, file);
       }
 
-      onSuccess?.(item);
+      // onSuccess?.(item);
       addToast({
         type: "success",
         title: "Item created successfully",
@@ -256,7 +232,6 @@ export default function CreateItem({
       </header>
 
       <div className={styles.formWrapper}>
-
         <div className={styles.formGrid}>
           {/* ── LEFT COLUMN ── */}
           <div className={styles.leftCol}>
@@ -369,7 +344,7 @@ export default function CreateItem({
                 <span className={styles.labelHint}> — pick all that apply</span>
               </label>
               <div className={styles.categoryGroup}>
-                {Object.entries(CATEGORIES).map(([cat, icon]) => {
+                {Object.entries(ITEM_CATEGORY).map(([cat, icon]) => {
                   const selected = categories.includes(cat as ItemCategory);
                   return (
                     <button
@@ -416,7 +391,7 @@ export default function CreateItem({
                 />
                 <div className={styles.dropContent}>
                   <span className={styles.dropIcon}>
-                    <Image01/>
+                    <Image01 />
                   </span>
                   <p className={styles.dropText}>
                     Drop images here or{" "}

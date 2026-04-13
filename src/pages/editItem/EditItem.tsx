@@ -39,12 +39,7 @@ const CONDITIONS: { value: ItemCondition; label: string; desc: string }[] = [
   },
 ];
 
-// const CATEGORIES: { value: ItemCategory; label: string; icon: any }[] = [
-//   { value: "Electronics", label: "Electronics", icon: <Monitor01 /> },
-//   { value: "Stationary", label: "Stationary", icon: <PencilLine /> },
-//   { value: "Rent", label: "Rent", icon: <Building07 /> },
-//   { value: "Miscellaneous", label: "Miscellaneous", icon: <Package /> },
-// ];
+const { All, ...ITEM_CATEGORY } = CATEGORIES;
 
 // ── Helpers ────────────────────────────────────────────
 
@@ -504,7 +499,7 @@ export default function EditItem({ onCancel }: EditItemProps) {
                 <span className={styles.labelHint}> — pick all that apply</span>
               </label>
               <div className={styles.categoryGroup}>
-                {Object.entries(CATEGORIES).map(([cat, icon]) => {
+                {Object.entries(ITEM_CATEGORY).map(([cat, icon]) => {
                   const selected = categories.includes(cat as ItemCategory);
                   return (
                     <button

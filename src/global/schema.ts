@@ -32,6 +32,10 @@ export interface PrivateUsersResponse {
   locked: boolean;
   role: UserRole;
   image_path: string | null;
+
+  // below two types does not exist on backend. they are placeholders for future use.
+  disabled?: boolean;
+  member_since?: string;
 }
 
 export interface ItemImageResponse {
@@ -153,4 +157,9 @@ export interface NotificationResponse {
   is_read: boolean;
   payload: Record<string, unknown>;
   created_at: string;
+}
+
+export interface CreateItemResponse {
+  id: number;
+  message: string;
 }

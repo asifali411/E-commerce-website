@@ -257,10 +257,11 @@ export default function Ratings() {
   const avgScore = completedScores.length ? average(completedScores) : null;
 
   const handleSubmitRating = async (ratingId: number, score: number) => {
-    // API: GET /ratings/{rating_id}/{score}
-    const updated = await updateRating(ratingId, score);
-    if (updated) {
-      setRatings((prev) => prev.map((r) => (r.id === ratingId ? updated : r)));
+    const res = await updateRating(ratingId, score);
+    const updated = await fetchMyRatings();
+
+    if(res && updated){
+      setRatings(updated);
     }
   };
 

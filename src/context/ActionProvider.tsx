@@ -5,6 +5,7 @@ import type {
   AdminUniqueItemResponse,
   BidHistoryResponse,
   BuyerTransactionResponse,
+  CreateItemResponse,
   ItemResponse,
   RatingResponse,
   SellerTransactionResponse,
@@ -31,7 +32,7 @@ interface ActionContextType {
   fetchSelledItems: (skip?: number, limit?: number) => Promise<ItemResponse[]>;
   fetchBids: (skip?: number, limit?: number) => Promise<BidHistoryResponse[]>;
   fetchItem: (id: number) => Promise<UniqueItemResponse | null>;
-  createItem: (data: ItemCreate) => Promise<boolean>;
+  createItem: (data: ItemCreate) => Promise<CreateItemResponse | null>;
   updateItem: (id: number, data: ItemUpdate) => Promise<string>;
   deleteItem: (id: number) => Promise<boolean>;
 
@@ -159,14 +160,17 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const createItem = async (data: ItemCreate): Promise<boolean> => {
+  const createItem = async (data: ItemCreate): Promise<CreateItemResponse | null> => {
     try {
-      await api.post("/items/create", data);
+      const res = await api.post("/items/create", data);
       await fetchNotifications();
-      return true;
+      if(res.status === 200){
+        return res.data;
+      }
+      return null;
     } catch (error) {
       console.error("createItem failed:", error);
-      return false;
+      return null;
     }
   };
 
@@ -227,9 +231,12 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     data: BidCreate,
   ): Promise<boolean> => {
     try {
-      await api.post(`/bids/${itemId}`, data);
+      const res = await api.post(`/bids/${itemId}`, data);
       await fetchNotifications();
-      return true;
+      if(res.status === 200){
+        return true;
+      }
+      return false;
     } catch (error) {
       console.error("createBid failed:", error);
       return false;
