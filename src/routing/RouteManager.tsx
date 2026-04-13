@@ -20,9 +20,7 @@ import ItemDetail from "../pages/itemDetail/ItemDetail";
 import CreateItem from "../pages/createItem/CreateItem";
 import Profile from "../pages/profile/Profile";
 import EditItem from "../pages/editItem/EditItem";
-
-// Placeholder pages
-const NotFound = () => <div>404 — page not found</div>;
+import Error404 from "../pages/error/error404/Error404";
 
 function PageWrapper({ children }: any) {
   return (
@@ -63,7 +61,7 @@ function AnimatedRoutes() {
         </Route>
 
         <Route path="/index.html" element={<Navigate to="/" replace />} />
-        <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+        <Route path="*" element={<PageWrapper><Error404 /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );

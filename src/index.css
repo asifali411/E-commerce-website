@@ -60,7 +60,6 @@ html {
 /*Firefox*/
 @supports (-moz-appearance: none) {
   * {
-    /* scrollbar-width: thin; */
     scrollbar-color: var(--color-text-muted) transparent;
   }
 }
