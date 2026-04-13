@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LogIn01, Eye, EyeOff } from "@untitledui/icons";
 import styles from "./Login.module.css";
 import { useAuth } from "../../context/AuthProvider";
+import { useToast } from "../../components/toast/Toast";
 
 type FormData = { username: string; password: string };
 type FormErrors = { username: string; password: string };
@@ -10,6 +11,7 @@ type FormErrors = { username: string; password: string };
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { addToast } = useToast();
 
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -58,16 +60,32 @@ export default function Login() {
 
       navigate("/");
     } catch (err: any) {
-      if (err?.response?.status === 401) {
-        setErrors({
-          username: "Invalid username or password",
-          password: "Invalid username or password",
-        });
-      } else {
-        setErrors({
-          username: "Something went wrong. Please try again.",
-          password: "",
-        });
+      
+      switch(err?.response?.status) {
+        case 400:
+          setErrors({
+            username: "Invalid username or password",
+            password: "Invalid username or password",
+          });
+          addToast({
+            type: "error",
+            title: "Invalid username or password.",
+            message: "Please recheck your username and password.",
+            duration: 4000,
+          });
+          break;
+        default:
+          setErrors({
+            username: "Something went wrong. Please try again.",
+            password: "",
+          });
+  
+          addToast({
+            type: "error",
+            title: "Something went wrong. Please try again.",
+            message: "",
+            duration: 4000,
+          });
       }
     } finally {
       setLoading(false);

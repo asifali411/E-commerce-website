@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserPlus01, Eye, EyeOff } from "@untitledui/icons";
 import styles from "./SignUp.module.css";
 import { useAuth } from "../../context/AuthProvider";
+import { useToast } from "../../components/toast/Toast";
 
 /* ── Types ── */
 
@@ -33,6 +34,7 @@ const contactRegex = /^\d{10}$/;
 function SignUp() {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const { addToast } = useToast();
 
   const [step, setStep] = useState<1 | 2>(1);
   const [loading, setLoading] = useState(false);
@@ -148,6 +150,13 @@ function SignUp() {
         ...prev,
         username: typeof msg === "string" ? msg : "Registration failed",
       }));
+
+      addToast({
+        type: "error",
+        title: "Registration failed",
+        message: typeof msg === "string" ? msg: "Something went wrong. Please try again.",
+        duration: 4000,
+      });
 
       setStep(1);
     } finally {
