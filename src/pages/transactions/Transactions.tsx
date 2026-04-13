@@ -95,7 +95,7 @@ function BuyerTransactionRow({
       {/* Seller */}
       <div className={styles.rowParty}>
         <span className={styles.rowPartyLabel}>Seller</span>
-        <span className={styles.rowPartyName}>{tx.item.seller.username}</span>
+        <span className={styles.rowPartyName}>{tx.seller.username}</span>
       </div>
 
       {/* Price */}
@@ -105,7 +105,7 @@ function BuyerTransactionRow({
           ₹{tx.price.toLocaleString("en-IN")}
         </span>
         {tx.quantity > 1 && (
-          <span className={styles.rowPriceQty}>× {tx.quantity}</span>
+          <span className={styles.rowPriceQty}>x {tx.quantity}</span>
         )}
       </div>
 
@@ -191,7 +191,7 @@ function SellerTransactionRow({
           ₹{tx.price.toLocaleString("en-IN")}
         </span>
         {tx.quantity > 1 && (
-          <span className={styles.rowPriceQty}>× {tx.quantity}</span>
+          <span className={styles.rowPriceQty}>x {tx.quantity}</span>
         )}
       </div>
 

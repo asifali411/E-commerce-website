@@ -71,6 +71,8 @@ export default function ItemDetail() {
   const [bidError, setBidError] = useState<string | null>(null);
   const [bidSuccess, setBidSuccess] = useState(false);
 
+  const [hasBid, setHasBid] = useState(true);
+
   // --- Effects ---
   useEffect(() => {
     let isMounted = true;
@@ -89,6 +91,11 @@ export default function ItemDetail() {
         if (isMounted) {
           if (data) {
             setItem(data);
+            if(data.bids.some((bid) => bid.bider.username === user?.username)) {
+              setHasBid(true);
+            } else {
+              setHasBid(false);
+            }
           } else {
             setError("Item not found");
           }
@@ -108,6 +115,12 @@ export default function ItemDetail() {
 
   useEffect(() => {
     if(bidSuccess){
+      if (item?.bids.some((bid) => bid.bider.username === user?.username)) {
+        setHasBid(true);
+      } else {
+        setHasBid(false);
+      }
+
       addToast({
         type: "success",
         title: "Bid placed successfully.",
@@ -211,14 +224,6 @@ export default function ItemDetail() {
               />
             )}
 
-            {/* {hasImages && item.images[activeImage]?.status === "Pending" && (
-              <div className={styles.processingOverlay}>
-                Image is being processed
-                <br />
-                This may take a while
-              </div>
-            )} */}
-
             {!hasImages && (
               <div className={styles.noImage}>
                 <span>No Image</span>
@@ -283,7 +288,7 @@ export default function ItemDetail() {
 
           {item.status === "Active" && (
             <div
-              className={`${styles.bidForm} ${user?.username === item.seller.username ? styles.disabled : ""}`}
+              className={`${styles.bidForm} ${user?.username === item.seller.username || hasBid ? styles.disabled : ""}`}
             >
               <h3 className={styles.bidHeading}>Place a Bid</h3>
               <div className={styles.bidInputRow}>
@@ -296,7 +301,7 @@ export default function ItemDetail() {
                     onChange={(e) => setBidPrice(e.target.value)}
                     placeholder={`Min. ${item.min_price}`}
                     className={styles.bidInput}
-                    disabled={user?.username === item.seller.username}
+                    disabled={user?.username === item.seller.username || hasBid}
                   />
                 </label>
                 <label className={styles.bidLabel}>
@@ -308,7 +313,7 @@ export default function ItemDetail() {
                     value={bidQty}
                     onChange={(e) => setBidQty(Number(e.target.value))}
                     className={styles.bidInput}
-                    disabled={user?.username === item.seller.username}
+                    disabled={user?.username === item.seller.username || hasBid}
                   />
                 </label>
               </div>
@@ -322,7 +327,8 @@ export default function ItemDetail() {
                 disabled={
                   bidLoading ||
                   !bidPrice ||
-                  user?.username === item.seller.username
+                  user?.username === item.seller.username ||
+                  hasBid
                 }
               >
                 {bidLoading ? "Placing…" : "Submit Bid"}

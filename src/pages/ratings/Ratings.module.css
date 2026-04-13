@@ -303,7 +303,7 @@
   color: var(--color-grey-400);
 }
 
-.starFilled svg {
+.starFilled, .starFilled svg {
   color: var(--color-cta);
   fill: var(--color-cta);
 }
@@ -460,8 +460,9 @@
   transform: scale(1.2);
 }
 
-.modalStarActive {
+.modalStarActive, .modalStarActive svg {
   color: var(--color-cta);
+  fill: var(--color-cta);
 }
 
 .modalScoreLabel {

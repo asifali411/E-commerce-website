@@ -135,6 +135,7 @@ export interface BuyerTransactionItemResponse {
 }
 
 export interface BuyerTransactionResponse {
+  seller: ProtectedUserResponse;
   price: number;
   status: TransactionStatus;
   quantity: number;
