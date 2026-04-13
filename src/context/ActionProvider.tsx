@@ -19,7 +19,6 @@ import type {
   ItemUpdate,
   ReportCreate,
 } from "../global/request";
-import { useNotifications } from "./NotificationProvides";
 
 interface ActionContextType {
   fetchFeed: (skip?: number, limit?: number) => Promise<ItemResponse[]>;
@@ -82,7 +81,6 @@ export const useAction = () => {
 
 // --- Provider -----------------------------------------------
 export const ActionProvider = ({ children }: { children: ReactNode }) => {
-  const { fetchNotifications } = useNotifications();
 
   // --- Items ------------------------------------------------
 
@@ -163,7 +161,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const createItem = async (data: ItemCreate): Promise<CreateItemResponse | null> => {
     try {
       const res = await api.post("/items/create", data);
-      await fetchNotifications();
       if(res.status === 200){
         return res.data;
       }
@@ -177,7 +174,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const updateItem = async (id: number, data: ItemUpdate): Promise<string> => {
     try {
       const res = await api.patch<string>(`/items/${id}`, data);
-      await fetchNotifications();
       return res.data;
     } catch (error) {
       console.error("updateItem failed:", error);
@@ -188,7 +184,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const deleteItem = async (id: number): Promise<boolean> => {
     try {
       await api.delete(`/items/${id}`);
-      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("deleteItem failed:", error);
@@ -205,7 +200,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       await api.post(`/images/${itemId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("uploadImage failed:", error);
@@ -216,7 +210,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const deleteImage = async (imageId: number): Promise<boolean> => {
     try {
       await api.delete(`/images/${imageId}`);
-      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("deleteImage failed:", error);
@@ -232,7 +225,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<boolean> => {
     try {
       const res = await api.post(`/bids/${itemId}`, data);
-      await fetchNotifications();
       if(res.status === 200){
         return true;
       }
@@ -249,7 +241,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<boolean> => {
     try {
       await api.patch(`/bids/${bidId}`, data);
-      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("updateBid failed:", error);
@@ -260,7 +251,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const deleteBid = async (bidId: number): Promise<boolean> => {
     try {
       await api.delete(`/bids/${bidId}`);
-      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("deleteBid failed:", error);
@@ -305,7 +295,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<boolean> => {
     try {
       await api.post(`/transactions/${itemId}/${bidId}`);
-      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("createTransaction failed:", error);
@@ -331,7 +320,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<boolean> => {
     try {
       await api.get(`/ratings/${ratingId}/${score}`);
-      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("updateRating failed:", error);
@@ -347,7 +335,6 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<boolean> => {
     try {
       await api.post(`/reports/${itemId}`, data);
-      await fetchNotifications();
       return true;
     } catch (error) {
       console.error("reportItem failed:", error);

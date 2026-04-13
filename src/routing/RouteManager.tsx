@@ -62,6 +62,7 @@ function AnimatedRoutes() {
         </Route>
 
         <Route path="/index.html" element={<Navigate to="/" replace />} />
+        <Route path="/500" element={<PageWrapper><Error500 /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><Error404 /></PageWrapper>} />
       </Routes>
     </AnimatePresence>

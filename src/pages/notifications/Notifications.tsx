@@ -145,7 +145,7 @@ export default function Notifications() {
     if (isAuthenticated) {
       fetchNotifications();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, fetchNotifications]);
 
   function handleMarkAllRead() {
     markAllRead();

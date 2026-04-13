@@ -14,7 +14,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""),
-        ws: true, // we are not using wb i think but for safety
+        ws: true,
       },
     },
   },
