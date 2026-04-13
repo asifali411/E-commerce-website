@@ -57,7 +57,7 @@
 
 .statLabel {
   font-size: 12px;
-  color: var(--color-text-grey);
+  color: var(--color-text);
 }
 
 /* ── New listing button ───────────────────────────────────── */
@@ -104,7 +104,7 @@
   border-radius: 0;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
-  color: var(--color-text-grey);
+  color: var(--color-text);
   font-family: inherit;
   font-size: 13.5px;
   font-weight: 400;
@@ -139,7 +139,7 @@
   padding: 0 5px;
   border-radius: 20px;
   background-color: var(--color-grey-100);
-  color: var(--color-text-grey);
+  color: var(--color-text-muted);
   font-size: 11px;
   font-weight: 500;
 }
@@ -277,7 +277,7 @@
 
 .categoryTag {
   background-color: var(--color-grey-100);
-  color: var(--color-text-grey);
+  color: var(--color-text);
 }
 
 .conditionNew   { 
@@ -322,7 +322,7 @@
 
 .rowBidsLabel {
   font-size: 11px;
-  color: var(--color-text-grey);
+  color: var(--color-text);
 }
 
 /* Price column */
@@ -367,7 +367,7 @@
 
 .statusSold {
   background-color: var(--color-grey-100);
-  color: var(--color-text-grey);
+  color: var(--color-text);
 }
 
 .activeDot {
@@ -393,7 +393,7 @@
   width: 30px;
   height: 30px;
   border-radius: var(--border-radius);
-  color: var(--color-text-grey);
+  color: var(--color-text);
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease,
               color 0.15s ease, transform 0.15s ease;
@@ -454,6 +454,6 @@
 .emptySubtitle {
   margin: 0;
   font-size: 13.5px;
-  color: var(--color-text-grey);
+  color: var(--color-text-muted);
   margin-bottom: 8px;
 }

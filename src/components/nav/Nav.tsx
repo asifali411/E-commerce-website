@@ -80,7 +80,7 @@ export default function Nav() {
                   navigate(item.to);
                 }}
                 className={`${styles.navLink} ${activePath == item.to ? styles.active : ""}`}
-                disabled={!isAuthenticated && !item.isHome}
+                disabled={!isAuthenticated}
               >
                 <span className={styles.iconWrap}>{item.icon}</span>
                 <span className={styles.label}>{item.label}</span>

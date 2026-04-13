@@ -17,21 +17,18 @@
 
   --color-primary: #6366f1;
   --color-primary-hover: #4f46e5;
-
+  --color-secondary: #65a30d;
   --color-cta: #f59e0b;
-
   --color-accent: #06b6d4;
   --color-accent-soft: #cffafe;
 
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
-
   --color-text: #0f172a;
   --color-text-muted: #475569;
-
+  --color-text-grey: #94a3b8;
   --color-card: #ffffff;
   --color-card-border: #e2e8f0;
-
   --color-button: #eef2ff;
   --color-button-hover: #e0e7ff;
 
@@ -42,7 +39,7 @@
   --color-grey-50: #f9fafb;
   --color-grey-100: #f1f5f9;
   --color-grey-200: #e2e8f0;
-  --color-grey-300: #cbd5f5;
+  --color-grey-300: #cbd5e1;
   --color-grey-400: #94a3b8;
   --color-grey-500: #64748b;
   --color-grey-600: #475569;
@@ -64,7 +61,7 @@ html {
 @supports (-moz-appearance: none) {
   * {
     /* scrollbar-width: thin; */
-    scrollbar-color: var(--color-text-grey) transparent;
+    scrollbar-color: var(--color-text-muted) transparent;
   }
 }
 
@@ -74,7 +71,7 @@ html::-webkit-scrollbar {
 }
 
 html::-webkit-scrollbar-thumb {
-  background-color: var(--color-text-grey);
+  background-color: var(--color-text-muted);
 }
 
 html::-webkit-scrollbar-thumb:hover {
@@ -110,27 +107,25 @@ button:hover{
   :root {
     --color-primary: #8b8df8;
     --color-primary-hover: #7375f2;
-  
     --color-secondary: #b7e07a;
-  
     --color-cta: #e69a2e;
-  
+    --color-accent: #22d3ee;
+    --color-accent-soft: #164e63;
+
     --color-bg: #1f2430;
     --color-surface: #262c3a;
-    --color-card: #2d3445;
-  
-    --color-card-border: #3a4154;
-  
     --color-text: #e6e9f2;
     --color-text-muted: #aab1c6;
-  
+    --color-text-grey: #6b728a;
+    --color-card: #2d3445;
+    --color-card-border: #3a4154;
     --color-button: #303850;
     --color-button-hover: #3a4460;
-  
-    --color-error: #ff7a8f;
+
     --color-success: #8fbf3f;
+    --color-error: #ff7a8f;
     --color-warning: #f4c152;
-  
+
     --color-grey-50: #1f2430;
     --color-grey-100: #262c3a;
     --color-grey-200: #2d3445;

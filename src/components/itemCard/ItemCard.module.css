@@ -157,7 +157,7 @@
 
 .categoryTag {
   background-color: var(--color-grey-100);
-  color: var(--color-text-grey);
+  color: var(--color-text);
 }
 
 /* Condition colours */
@@ -217,5 +217,5 @@
 
 .cardBids {
   font-size: 12px;
-  color: var(--color-text-grey);
+  color: var(--color-text);
 }

@@ -42,7 +42,7 @@
 .searchIcon {
   position: absolute;
   left: 11px;
-  color: var(--color-text-grey);
+  color: var(--color-text-muted);
   pointer-events: none;
   flex-shrink: 0;
 }
@@ -62,7 +62,7 @@
 }
 
 .searchInput::placeholder {
-  color: var(--color-text-grey);
+  color: var(--color-text-muted);
 }
 
 .searchInput:focus {
@@ -150,7 +150,7 @@
   border-radius: 20px;
   border: 1px solid var(--color-card-border);
   background-color: var(--color-card);
-  color: var(--color-text-grey);
+  color: var(--color-text);
   font-family: inherit;
   font-size: 13px;
   font-weight: 400;
@@ -194,7 +194,7 @@
   justify-content: center;
   gap: 12px;
   padding: 64px 0;
-  color: var(--color-text-grey);
+  color: var(--color-text);
   font-size: 14px;
 }
 
