@@ -11,7 +11,6 @@ export default function Error404() {
           <span className={styles.four}>4</span>
           <div className={styles.zeroWrapper}>
             <div className={styles.zero}>
-              {/* <div className={styles.zeroInner} /> */}
             </div>
           </div>
           <span className={styles.four}>4</span>
@@ -26,11 +25,11 @@ export default function Error404() {
         </p>
 
         <div className={styles.actions}>
-          <button className={styles.btnPrimary} onClick={() => navigate("/")}>
-            Go home
-          </button>
           <button className={styles.btnSecondary} onClick={() => navigate(-1)}>
             Go back
+          </button>
+          <button className={styles.btnPrimary} onClick={() => navigate("/")}>
+            Go home
           </button>
         </div>
 
