@@ -64,69 +64,73 @@ function BuyerTransactionRow({
       tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && onClick()}
     >
-      {/* Thumbnail */}
-      <div className={styles.rowThumb}>
-        <Package size={20} className={styles.rowThumbIcon} />
-      </div>
-
-      {/* Main info */}
-      <div className={styles.rowMain}>
-        <div className={styles.rowTitleRow}>
-          <h3 className={styles.rowTitle}>{tx.item.title}</h3>
-          <span className={`${styles.roleChip} ${styles.roleChipBuyer}`}>
-            Bought
-          </span>
+      <div className={styles.mobileHeader}>
+        {/* Thumbnail */}
+        <div className={styles.rowThumb}>
+          <Package size={20} className={styles.rowThumbIcon} />
         </div>
-        <div className={styles.rowTags}>
-          {tx.item.categories.map((cat) => (
-            <span key={cat} className={styles.categoryTag}>
-              {CATEGORIES[cat as ItemCategory]}
-              {cat}
+
+        {/* Main info */}
+        <div className={styles.rowMain}>
+          <div className={styles.rowTitleRow}>
+            <h3 className={styles.rowTitle}>{tx.item.title}</h3>
+            <span className={`${styles.roleChip} ${styles.roleChipBuyer}`}>
+              Bought
             </span>
-          ))}
-          <span
-            className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition as ItemCondition]}`}
-          >
-            {tx.item.condition.replace("_", " ")}
-          </span>
+          </div>
+          <div className={styles.rowTags}>
+            {tx.item.categories.map((cat) => (
+              <span key={cat} className={styles.categoryTag}>
+                {CATEGORIES[cat as ItemCategory]}
+                {cat}
+              </span>
+            ))}
+            <span
+              className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition as ItemCondition]}`}
+            >
+              {tx.item.condition.replace("_", " ")}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Seller */}
-      <div className={styles.rowParty}>
-        <span className={styles.rowPartyLabel}>Seller</span>
-        <span className={styles.rowPartyName}>{tx.seller.username}</span>
-      </div>
+      <div className={styles.rowStatsGroup}>
+        {/* Seller */}
+        <div className={styles.rowParty}>
+          <span className={styles.rowPartyLabel}>Seller</span>
+          <span className={styles.rowPartyName}>{tx.seller.username}</span>
+        </div>
 
-      {/* Price */}
-      <div className={styles.rowPrice}>
-        <span className={styles.rowPriceLabel}>Agreed price</span>
-        <span className={styles.rowPriceValue}>
-          ₹{tx.price.toLocaleString("en-IN")}
-        </span>
-        {tx.quantity > 1 && (
-          <span className={styles.rowPriceQty}>x {tx.quantity}</span>
-        )}
-      </div>
-
-      {/* Status */}
-      <div className={styles.rowStatus}>
-        {isPending ? (
-          <span className={`${styles.statusBadge} ${styles.statusPending}`}>
-            <Clock size={11} />
-            Pending
+        {/* Price */}
+        <div className={styles.rowPrice}>
+          <span className={styles.rowPriceLabel}>Agreed price</span>
+          <span className={styles.rowPriceValue}>
+            ₹{tx.price.toLocaleString("en-IN")}
           </span>
-        ) : (
-          <span className={`${styles.statusBadge} ${styles.statusCompleted}`}>
-            <CheckCircle size={11} />
-            Completed
-          </span>
-        )}
-      </div>
+          {tx.quantity > 1 && (
+            <span className={styles.rowPriceQty}>x {tx.quantity}</span>
+          )}
+        </div>
 
-      {/* Chevron */}
-      <div className={styles.rowChevron}>
-        <ChevronRight size={16} />
+        {/* Status */}
+        <div className={styles.rowStatus}>
+          {isPending ? (
+            <span className={`${styles.statusBadge} ${styles.statusPending}`}>
+              <Clock size={11} />
+              Pending
+            </span>
+          ) : (
+            <span className={`${styles.statusBadge} ${styles.statusCompleted}`}>
+              <CheckCircle size={11} />
+              Completed
+            </span>
+          )}
+        </div>
+
+        {/* Chevron */}
+        <div className={styles.rowChevron}>
+          <ChevronRight size={16} />
+        </div>
       </div>
     </article>
   );
@@ -150,69 +154,73 @@ function SellerTransactionRow({
       tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && onClick()}
     >
-      {/* Thumbnail */}
-      <div className={styles.rowThumb}>
-        <Package size={20} className={styles.rowThumbIcon} />
-      </div>
-
-      {/* Main info */}
-      <div className={styles.rowMain}>
-        <div className={styles.rowTitleRow}>
-          <h3 className={styles.rowTitle}>{tx.item.title}</h3>
-          <span className={`${styles.roleChip} ${styles.roleChipSeller}`}>
-            Sold
-          </span>
+      <div className={styles.mobileHeader}>
+        {/* Thumbnail */}
+        <div className={styles.rowThumb}>
+          <Package size={20} className={styles.rowThumbIcon} />
         </div>
-        <div className={styles.rowTags}>
-          {tx.item.categories.map((cat) => (
-            <span key={cat} className={styles.categoryTag}>
-              {CATEGORIES[cat as ItemCategory]}
-              {cat}
+
+        {/* Main info */}
+        <div className={styles.rowMain}>
+          <div className={styles.rowTitleRow}>
+            <h3 className={styles.rowTitle}>{tx.item.title}</h3>
+            <span className={`${styles.roleChip} ${styles.roleChipSeller}`}>
+              Sold
             </span>
-          ))}
-          <span
-            className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition as ItemCondition]}`}
-          >
-            {tx.item.condition.replace("_", " ")}
-          </span>
+          </div>
+          <div className={styles.rowTags}>
+            {tx.item.categories.map((cat) => (
+              <span key={cat} className={styles.categoryTag}>
+                {CATEGORIES[cat as ItemCategory]}
+                {cat}
+              </span>
+            ))}
+            <span
+              className={`${styles.conditionTag} ${CONDITION_CLASS[tx.item.condition as ItemCondition]}`}
+            >
+              {tx.item.condition.replace("_", " ")}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Buyer */}
-      <div className={styles.rowParty}>
-        <span className={styles.rowPartyLabel}>Buyer</span>
-        <span className={styles.rowPartyName}>{tx.buyer.username}</span>
-      </div>
+      <div className={styles.rowStatsGroup}>
+        {/* Buyer */}
+        <div className={styles.rowParty}>
+          <span className={styles.rowPartyLabel}>Buyer</span>
+          <span className={styles.rowPartyName}>{tx.buyer.username}</span>
+        </div>
 
-      {/* Price */}
-      <div className={styles.rowPrice}>
-        <span className={styles.rowPriceLabel}>Agreed price</span>
-        <span className={styles.rowPriceValue}>
-          ₹{tx.price.toLocaleString("en-IN")}
-        </span>
-        {tx.quantity > 1 && (
-          <span className={styles.rowPriceQty}>x {tx.quantity}</span>
-        )}
-      </div>
-
-      {/* Status */}
-      <div className={styles.rowStatus}>
-        {isPending ? (
-          <span className={`${styles.statusBadge} ${styles.statusPending}`}>
-            <Clock size={11} />
-            Pending
+        {/* Price */}
+        <div className={styles.rowPrice}>
+          <span className={styles.rowPriceLabel}>Agreed price</span>
+          <span className={styles.rowPriceValue}>
+            ₹{tx.price.toLocaleString("en-IN")}
           </span>
-        ) : (
-          <span className={`${styles.statusBadge} ${styles.statusCompleted}`}>
-            <CheckCircle size={11} />
-            Completed
-          </span>
-        )}
-      </div>
+          {tx.quantity > 1 && (
+            <span className={styles.rowPriceQty}>x {tx.quantity}</span>
+          )}
+        </div>
 
-      {/* Chevron */}
-      <div className={styles.rowChevron}>
-        <ChevronRight size={16} />
+        {/* Status */}
+        <div className={styles.rowStatus}>
+          {isPending ? (
+            <span className={`${styles.statusBadge} ${styles.statusPending}`}>
+              <Clock size={11} />
+              Pending
+            </span>
+          ) : (
+            <span className={`${styles.statusBadge} ${styles.statusCompleted}`}>
+              <CheckCircle size={11} />
+              Completed
+            </span>
+          )}
+        </div>
+
+        {/* Chevron */}
+        <div className={styles.rowChevron}>
+          <ChevronRight size={16} />
+        </div>
       </div>
     </article>
   );
