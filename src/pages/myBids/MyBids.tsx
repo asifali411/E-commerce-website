@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Package,
-  Edit01,
   Trash01,
   CheckCircle,
   XCircle,
@@ -61,90 +60,94 @@ function BidRow({
     <article
       className={`${styles.row} ${isRejected ? styles.rowRejected : ""}`}
     >
-      {/* Thumbnail */}
-      <div className={styles.rowThumb}>
-        <Package size={20} className={styles.rowThumbIcon} />
-      </div>
-
-      {/* Main info */}
-      <div className={styles.rowMain}>
-        <div className={styles.rowTitleRow}>
-          <h3 className={styles.rowTitle}>{bid.item.title}</h3>
-          <span className={styles.sellerChip}>by {bid.bider.username}</span>
+      <div className={styles.mobileHeader}>
+        {/* Thumbnail */}
+        <div className={styles.rowThumb}>
+          <Package size={20} className={styles.rowThumbIcon} />
         </div>
-        <p className={styles.rowDesc}>
-          {/* {bid.item.description} */}
+
+        {/* Main info */}
+        <div className={styles.rowMain}>
+          <div className={styles.rowTitleRow}>
+            <h3 className={styles.rowTitle}>{bid.item.title}</h3>
+            <span className={styles.sellerChip}>by {bid.bider.username}</span>
+          </div>
+          <p className={styles.rowDesc}>
+            {/* {bid.item.description} */}
           </p>
-        <div className={styles.rowTags}>
-          {bid.item.categories.map((cat) => (
-            <span key={cat} className={styles.categoryTag}>
-              {CATEGORIES[cat]}
-              {cat}
+          <div className={styles.rowTags}>
+            {bid.item.categories.map((cat) => (
+              <span key={cat} className={styles.categoryTag}>
+                {CATEGORIES[cat]}
+                {cat}
+              </span>
+            ))}
+            <span
+              className={`${styles.conditionTag} ${CONDITION_CLASS[bid.item.condition]}`}
+            >
+              {bid.item.condition}
             </span>
-          ))}
-          <span
-            className={`${styles.conditionTag} ${CONDITION_CLASS[bid.item.condition]}`}
-          >
-            {bid.item.condition}
-          </span>
-          <span className={styles.metaChip}>
-            {/* Placed {bid.placedAt} */}
-          </span>
+            <span className={styles.metaChip}>
+              {/* Placed {bid.placedAt} */}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* My bid */}
-      <div className={styles.rowBidAmount}>
-        <span className={styles.rowBidLabel}>Your bid</span>
-        <span className={styles.rowBidValue}>
-          ₹{bid.price.toLocaleString("en-IN")}
-        </span>
-        {bid.quantity > 1 && (
-          <span className={styles.rowBidQty}>x {bid.quantity}</span>
-        )}
-      </div>
+      <div className={styles.rowStatsGroup}>
+        {/* My bid */}
+        <div className={styles.rowBidAmount}>
+          <span className={styles.rowBidLabel}>Your bid</span>
+          <span className={styles.rowBidValue}>
+            ₹{bid.price.toLocaleString("en-IN")}
+          </span>
+          {bid.quantity > 1 && (
+            <span className={styles.rowBidQty}>x {bid.quantity}</span>
+          )}
+        </div>
 
-      {/* Item min price */}
-      <div className={styles.rowMinPrice}>
-        <span className={styles.rowMinPriceLabel}>Min. price</span>
-        <span className={styles.rowMinPriceValue}>
-          ₹{bid.price.toLocaleString("en-IN")}
-        </span>
-      </div>
+        {/* Item min price */}
+        <div className={styles.rowMinPrice}>
+          <span className={styles.rowMinPriceLabel}>Min. price</span>
+          <span className={styles.rowMinPriceValue}>
+            ₹{bid.price.toLocaleString("en-IN")}
+          </span>
+        </div>
 
-      {/* Status */}
-      <div className={styles.rowStatus}>
-        {isPending && (
-          <span className={`${styles.statusBadge} ${styles.statusPending}`}>
-            <Clock size={11} />
-            Pending
-          </span>
-        )}
-        {isAccepted && (
-          <span className={`${styles.statusBadge} ${styles.statusAccepted}`}>
-            <CheckCircle size={11} />
-            Accepted
-          </span>
-        )}
-        {isRejected && (
-          <span className={`${styles.statusBadge} ${styles.statusRejected}`}>
-            <XCircle size={11} />
-            Rejected
-          </span>
-        )}
+        {/* Status */}
+        <div className={styles.rowStatus}>
+          {isPending && (
+            <span className={`${styles.statusBadge} ${styles.statusPending}`}>
+              <Clock size={11} />
+              Pending
+            </span>
+          )}
+          {isAccepted && (
+            <span className={`${styles.statusBadge} ${styles.statusAccepted}`}>
+              <CheckCircle size={11} />
+              Accepted
+            </span>
+          )}
+          {isRejected && (
+            <span className={`${styles.statusBadge} ${styles.statusRejected}`}>
+              <XCircle size={11} />
+              Rejected
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Actions */}
       <div className={styles.rowActions}>
         {isPending && (
           <>
-            <button
+            {/* <button
               className={styles.actionBtn}
               onClick={() => onEdit(bid.id)}
               title="Edit bid"
             >
               <Edit01 size={14} />
-            </button>
+            </button> */}
             <button
               className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
               onClick={() => onWithdraw(bid.id)}
