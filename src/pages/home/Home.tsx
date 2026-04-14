@@ -17,6 +17,7 @@ import { useAction } from "../../context/ActionProvider";
 import { useHotkeys } from "react-hotkeys-hook";
 import { CATEGORIES } from "../../global/var";
 import ReportDialog from "../../components/reportDialog/ReportDialog";
+import FilterDropdown from "../../components/dropdown/FilterDropdown";
 
 // ── Main page ──────────────────────────────────────────────
 export default function Home() {
@@ -110,11 +111,12 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
-
       {showReport && reportItemId && (
-        <ReportDialog itemId={reportItemId} onClose={() => setShowReport(false)} />
+        <ReportDialog
+          itemId={reportItemId}
+          onClose={() => setShowReport(false)}
+        />
       )}
-
       {/* ── Header ── */}
       <header className={styles.header}>
         <h1 className={styles.pageTitle}>Home</h1>
@@ -165,7 +167,6 @@ export default function Home() {
           )}
         </div>
       </header>
-
       {/* ── Category filter ── */}
       <div className={styles.filterRow}>
         {Object.entries(CATEGORIES).map(([cat, icon]) => (
@@ -178,6 +179,34 @@ export default function Home() {
             {cat}
           </button>
         ))}
+      </div>
+
+      {/* ── Category dropdown & Searchbar── */}
+      <div className={styles.tobbar}>
+        <FilterDropdown
+          onChange={(cat: ItemCategory) => {
+            setActiveCategory(cat);
+          }}
+        />
+
+        <form
+          className={styles.searchWrap}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSearch();
+          }}
+        >
+          <SearchLg size={16} className={styles.searchIcon} />
+          <input
+            type="text"
+            className={styles.searchInput}
+            placeholder="Search items..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            ref={searchInputRef}
+          />
+          <div className={styles.shortcut}>Ctrl + K</div>
+        </form>
       </div>
 
       {/* ── Grid ── */}
@@ -198,7 +227,6 @@ export default function Home() {
           <p>No items found.</p>
         </div>
       )}
-
       {/* ── Load more ── */}
       {filtered.length > 0 && (
         <div className={styles.loadMoreRow}>

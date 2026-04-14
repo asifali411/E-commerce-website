@@ -221,11 +221,6 @@ export default function MyBids() {
     setOpenDeleteDialog(true);
   }
 
-  function handleEdit(bidId: number) {
-    // TODO: PATCH /bids/{bid_id}
-    // console.log("edit bid", bidId);
-  }
-
   async function handleWithdraw() {
     if(deleteBidId == null) return;
 
@@ -316,7 +311,8 @@ export default function MyBids() {
             <BidRow
               key={bid.id}
               bid={bid}
-              onEdit={handleEdit}
+              //TODO: add edit bid option in the future.
+              onEdit={() => {}}
               onWithdraw={handleOpenDelete}
               onViewTransaction={handleViewTransaction}
             />
