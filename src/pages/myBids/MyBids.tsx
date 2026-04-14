@@ -223,7 +223,7 @@ export default function MyBids() {
 
   function handleEdit(bidId: number) {
     // TODO: PATCH /bids/{bid_id}
-    console.log("edit bid", bidId);
+    // console.log("edit bid", bidId);
   }
 
   async function handleWithdraw() {

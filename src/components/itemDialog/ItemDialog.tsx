@@ -236,7 +236,6 @@ export default function ItemDialog({
     setSuccessMsg(null);
     const result = await createTransaction(item.id, bidId);
     if (result) {
-      console.log(result);
       setSuccessMsg("Bid accepted! Transaction created.");
       await loadItem();
       onBidAccepted?.();

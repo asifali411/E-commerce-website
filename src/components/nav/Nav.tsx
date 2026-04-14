@@ -1,18 +1,18 @@
 import { navExpanded, setNavExpanded } from "../../global/var";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import styles from "./Nav.module.css";
 
 import {
-    Home01,
-    Grid01,
-    Wallet03,
-    SwitchVertical01,
-    Star01,
-    Bell01,
-    LogIn01,
-    LogOut01,
-    User01,
-    Tool02
+  Home01,
+  Grid01,
+  Wallet03,
+  SwitchVertical01,
+  Star01,
+  Bell01,
+  LogIn01,
+  LogOut01,
+  User01,
+  Tool02,
 } from "@untitledui/icons";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
@@ -31,45 +31,55 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { to: "/",               label: "Home",           icon: <Home01 />,            isHome: true },
-  { to: "/listings",       label: "My listings",    icon: <Grid01 />,           },
-  { to: "/bids",           label: "My bids",        icon: <Wallet03 />,         },
-  { to: "/transactions",   label: "Transactions",   icon: <SwitchVertical01 />, },
-  { to: "/ratings",        label: "Ratings",        icon: <Star01 />,           },
-  { to: "/notifications",  label: "Notifications",  icon: <Bell01 />,            isNotification: true },
-  { to: "/admin",          label: "Admin panel",    icon: <Tool02 />,            isAdminPanel: true }
+  { to: "/", label: "Home", icon: <Home01 />, isHome: true },
+  { to: "/listings", label: "My listings", icon: <Grid01 /> },
+  { to: "/bids", label: "My bids", icon: <Wallet03 /> },
+  { to: "/transactions", label: "Transactions", icon: <SwitchVertical01 /> },
+  { to: "/ratings", label: "Ratings", icon: <Star01 /> },
+  {
+    to: "/notifications",
+    label: "Notifications",
+    icon: <Bell01 />,
+    isNotification: true,
+  },
+  { to: "/admin", label: "Admin panel", icon: <Tool02 />, isAdminPanel: true },
 ];
 
-let activePath = "/";
-
 export default function Nav() {
-
   const [expanded, setExpanded] = useState(navExpanded);
   const navigate = useNavigate();
-  const {isAuthenticated, user, logout} = useAuth();
+  const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
   const { unreadCount } = useNotifications();
   const { isAdmin } = useAdmin();
- 
+
   const handleNavExpansion = (value: boolean): void => {
     setNavExpanded(value);
     setExpanded(value);
-  }
+  };
 
   const handleLogout = (): void => {
     logout();
     setOpenLogoutDialog(false);
     navigate("/");
-  }
- 
+  };
+
+  const isActive = (to: string) =>
+    to === "/" ? location.pathname === "/" : location.pathname.startsWith(to);
+
+  const visibleNavItems = navItems.filter(
+    (item) => !(item.isAdminPanel && !isAdmin),
+  );
+
   return (
     <div className={styles.shell}>
+      {/* ── Sidebar (desktop) ── */}
       <nav
         className={`${styles.sidebar} ${expanded ? styles.expanded : ""}`}
         onMouseEnter={() => handleNavExpansion(true)}
         onMouseLeave={() => handleNavExpansion(false)}
       >
-        {/* Logo */}
         <div className={styles.logo}>
           <div className={styles.logoMark}>
             <Logo />
@@ -77,34 +87,27 @@ export default function Nav() {
           <span className={styles.logoText}>Campus Bid</span>
         </div>
 
-        {/* Main links */}
         <ul className={styles.navList}>
-          {navItems.map((item) => {
-
-            if(item.isAdminPanel && !isAdmin) return;
-
-            return (
-              <li key={item.to}>
-                <button
-                  onClick={() => {
-                    if (!isAuthenticated) return;
-                    activePath = item.to;
-                    navigate(item.to);
-                  }}
-                  className={`${styles.navLink} ${activePath == item.to ? styles.active : ""}`}
-                  disabled={!isAuthenticated}
-                >
-                  <span className={styles.iconWrap}>{item.icon}</span>
-                  <span className={styles.label}>{item.label}</span>
-                  {isAuthenticated && item.isNotification && unreadCount > 0 && (
-                    <span className={styles.indicator}>
-                      {unreadCount > 9 ? "9+" : unreadCount}
-                    </span>
-                  )}
-                </button>
-              </li>
-            );
-          })}
+          {visibleNavItems.map((item) => (
+            <li key={item.to}>
+              <button
+                onClick={() => {
+                  if (!isAuthenticated) return;
+                  navigate(item.to);
+                }}
+                className={`${styles.navLink} ${isActive(item.to) ? styles.active : ""}`}
+                disabled={!isAuthenticated}
+              >
+                <span className={styles.iconWrap}>{item.icon}</span>
+                <span className={styles.label}>{item.label}</span>
+                {isAuthenticated && item.isNotification && unreadCount > 0 && (
+                  <span className={styles.indicator}>
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+              </button>
+            </li>
+          ))}
         </ul>
 
         {isAuthenticated && (
@@ -116,28 +119,20 @@ export default function Nav() {
               }
             >
               <span className={styles.iconWrap}>
-                {
-                  !user?.image_path && 
-                  <div className={styles.avatar}>
-                    {user?.username?.slice(0, 2).toUpperCase()}
-                  </div>
-                }
-
-                {
-                  user?.image_path &&
-                  <div className={styles.avatar}>
-                    <img src={`/api/${user.image_path}`} alt={user.username}/>
-                  </div>
-                }
+                <div className={styles.avatar}>
+                  {user?.image_path ? (
+                    <img src={`/api/${user.image_path}`} alt={user.username} />
+                  ) : (
+                    user?.username?.slice(0, 2).toUpperCase()
+                  )}
+                </div>
               </span>
               <span className={styles.label}>{user?.username}</span>
             </NavLink>
 
             <button
               className={styles.logoutBtn}
-              onClick={() => {
-                setOpenLogoutDialog(true);
-              }}
+              onClick={() => setOpenLogoutDialog(true)}
             >
               <span className={styles.iconWrap}>
                 <LogOut01 />
@@ -152,21 +147,14 @@ export default function Nav() {
             <div className={styles.authButtons}>
               <button
                 className={styles.btnSignup}
-                onClick={() => {
-                  navigate("/register");
-                }}
+                onClick={() => navigate("/register")}
               >
                 <User01 size={15} />
-                <span>
-                  Sign up
-                </span>
+                <span>Sign up</span>
               </button>
-
               <button
                 className={styles.btnLogin}
-                onClick={() => {
-                  navigate("/login");
-                }}
+                onClick={() => navigate("/login")}
               >
                 <LogIn01 size={15} />
                 <span>Log in</span>
@@ -176,11 +164,62 @@ export default function Nav() {
         )}
       </nav>
 
+      {/* ── Bottom tab bar (mobile) ── */}
+      <nav className={styles.tabBar}>
+        {visibleNavItems.slice(0, 5).map((item) => (
+          <button
+            key={item.to}
+            onClick={() => {
+              if (!isAuthenticated) return;
+              navigate(item.to);
+            }}
+            className={`${styles.tabItem} ${isActive(item.to) ? styles.tabActive : ""}`}
+            disabled={!isAuthenticated}
+          >
+            <span className={styles.tabIcon}>
+              {item.icon}
+              {isAuthenticated && item.isNotification && unreadCount > 0 && (
+                <span className={styles.tabIndicator}>
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </span>
+            <span className={styles.tabLabel}>{item.label}</span>
+          </button>
+        ))}
+
+        {isAuthenticated ? (
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `${styles.tabItem} ${isActive ? styles.tabActive : ""}`
+            }
+          >
+            <span className={styles.tabIcon}>
+              <div className={styles.tabAvatar}>
+                {user?.image_path ? (
+                  <img src={`/api/${user.image_path}`} alt={user.username} />
+                ) : (
+                  user?.username?.slice(0, 2).toUpperCase()
+                )}
+              </div>
+            </span>
+            <span className={styles.tabLabel}>Profile</span>
+          </NavLink>
+        ) : (
+          <button className={styles.tabItem} onClick={() => navigate("/login")}>
+            <span className={styles.tabIcon}>
+              <LogIn01 />
+            </span>
+            <span className={styles.tabLabel}>Log in</span>
+          </button>
+        )}
+      </nav>
+
       <main className={styles.main}>
         <Outlet />
       </main>
 
-      {/* ── Dialog ── */}
       <Dialog
         open={openLogoutDialog}
         title="Log out"
@@ -189,9 +228,7 @@ export default function Nav() {
         cancelLabel="Cancel"
         variant="danger"
         onConfirm={handleLogout}
-        onCancel={() => {
-          setOpenLogoutDialog(false);
-        }}
+        onCancel={() => setOpenLogoutDialog(false)}
         customIcon={<LogOut01 size={16} />}
       />
     </div>
