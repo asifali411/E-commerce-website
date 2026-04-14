@@ -16,7 +16,6 @@ import Dialog from "../../components/dialog/Dialog";
 import ItemDialog from "../../components/itemDialog/ItemDialog";
 import Spinner from "../../components/spinner/Spinner";
 import { useAction } from "../../context/ActionProvider";
-import { CATEGORIES } from "../../global/var";
 
 // ── Types ──────────────────────────────────────────────────
 type FilterTab = "All" | "Active" | "Sold";
@@ -43,7 +42,7 @@ function ListingRow({
   listing,
   onEdit,
   onDelete,
-  onClick
+  onClick,
 }: {
   listing: ItemResponse;
   onEdit: (id: number) => void;
@@ -58,75 +57,68 @@ function ListingRow({
       className={`${styles.row} ${isSold ? styles.rowSold : ""}`}
       onClick={() => onClick()}
     >
-      {/* Thumbnail */}
-      <div className={styles.rowThumb}>
-        {firstImage ? (
-          <img
-            src={`/api/${firstImage}`}
-            alt={listing.title}
-            className={styles.rowThumbImg}
-          />
-        ) : (
-          <Package size={20} className={styles.rowThumbIcon} />
-        )}
-        {isSold && <div className={styles.soldStamp}>Sold</div>}
-      </div>
+      <div className={styles.mobileHeader}>
+        <div className={styles.rowThumb}>
+          {firstImage ? (
+            <img
+              src={`/api/${firstImage}`}
+              alt={listing.title}
+              className={styles.rowThumbImg}
+            />
+          ) : (
+            <Package size={20} className={styles.rowThumbIcon} />
+          )}
+          {isSold && <div className={styles.soldStamp}>Sold</div>}
+        </div>
 
-      {/* Main info */}
-      <div className={styles.rowMain}>
-        <h3 className={styles.rowTitle}>{listing.title}</h3>
-        <p className={styles.rowDesc}>{listing.description}</p>
-        <div className={styles.rowTags}>
-          {listing.categories?.map((cat) => (
-            <span key={cat} className={styles.categoryTag}>
-              {CATEGORIES[cat] ?? <Package size={11} />}
-              {cat}
+        <div className={styles.rowMain}>
+          <h3 className={styles.rowTitle}>{listing.title}</h3>
+          <p className={styles.rowDesc}>{listing.description}</p>
+          <div className={styles.rowTags}>
+            {/* ... (same tag logic) */}
+            {listing.categories?.map((cat) => (
+              <span key={cat} className={styles.categoryTag}>
+                {cat}
+              </span>
+            ))}
+            <span
+              className={`${styles.conditionTag} ${CONDITION_CLASS[listing.condition] ?? ""}`}
+            >
+              {listing.condition.replace("_", " ")}
             </span>
-          ))}
-          <span
-            className={`${styles.conditionTag} ${
-              CONDITION_CLASS[listing.condition] ?? ""
-            }`}
-          >
-            {listing.condition.replace("_", " ")}
-          </span>
-          <span className={styles.metaChip}>Qty: {listing.quantity}</span>
+          </div>
         </div>
       </div>
 
-      {/* Bids */}
-      <div className={styles.rowBids}>
-        <Users01 size={14} className={styles.rowBidsIcon} />
-        <span className={styles.rowBidsCount}>{listing.bid_count}</span>
-        <span className={styles.rowBidsLabel}>
-          {listing.bid_count === 1 ? "bid" : "bids"}
-        </span>
-      </div>
+      <div className={styles.rowStatsGroup}>
+        <div className={styles.rowBids}>
+          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            <Users01 size={14} className={styles.rowBidsIcon} />
+            <span className={styles.rowBidsCount}>{listing.bid_count}</span>
+          </div>
+          <span className={styles.rowBidsLabel}>bids</span>
+        </div>
 
-      {/* Price */}
-      <div className={styles.rowPrice}>
-        <span className={styles.rowPriceLabel}>Min. price</span>
-        <span className={styles.rowPriceValue}>
-          ₹{listing.min_price.toLocaleString("en-IN")}
-        </span>
-      </div>
-
-      {/* Status badge */}
-      <div className={styles.rowStatus}>
-        {isSold ? (
-          <span className={`${styles.statusBadge} ${styles.statusSold}`}>
-            <CheckCircle size={11} />
-            Sold
+        <div className={styles.rowPrice}>
+          <span className={styles.rowPriceLabel}>Min. price</span>
+          <span className={styles.rowPriceValue}>
+            ₹{listing.min_price.toLocaleString("en-IN")}
           </span>
-        ) : (
-          <span className={`${styles.statusBadge} ${styles.statusActive}`}>
-            <span className={styles.activeDot} />
-            Active
-          </span>
-        )}
+        </div>
+
+        <div className={styles.rowStatus}>
+          {isSold ? (
+            <span className={`${styles.statusBadge} ${styles.statusSold}`}>
+              <CheckCircle size={11} /> Sold
+            </span>
+          ) : (
+            <span className={`${styles.statusBadge} ${styles.statusActive}`}>
+              <span className={styles.activeDot} /> Active
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Actions */}
       <div className={styles.rowActions}>
         {!isSold ? (
           <>
@@ -134,9 +126,8 @@ function ListingRow({
               className={styles.actionBtn}
               onClick={(e) => {
                 e.stopPropagation();
-                onEdit(listing.id)
+                onEdit(listing.id);
               }}
-              title="Edit listing"
             >
               <Edit01 size={14} />
             </button>
@@ -144,9 +135,8 @@ function ListingRow({
               className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
               onClick={(e) => {
                 e.stopPropagation();
-                onDelete(listing.id)
+                onDelete(listing.id);
               }}
-              title="Delete listing"
             >
               <Trash01 size={14} />
             </button>
