@@ -17,7 +17,7 @@ interface AdminContextType {
         limit?: number,
     ) => Promise<AdminItemResponse[]>;
     fetchAdminItem: (itemId: number) => Promise<AdminUniqueItemResponse | null>;
-    deleteAdminItem: (itemId: number) => Promise<boolean>;
+    deleteAdminItem: (itemId: number) => Promise<string | null>;
 }
 
 // --- Context ------------------------------------------------
@@ -65,13 +65,16 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    const deleteAdminItem = async (itemId: number): Promise<boolean> => {
+    const deleteAdminItem = async (itemId: number): Promise<string | null> => {
       try {
-        await api.delete(`/admin/${itemId}`);
-        return true;
+        const res = await api.delete(`/admin/${itemId}`);
+        if(res.status === 200){
+          res.data;
+        }
+        return res.data;
       } catch (error) {
         console.error("deleteAdminItem failed:", error);
-        return false;
+        return null;
       }
     };
 

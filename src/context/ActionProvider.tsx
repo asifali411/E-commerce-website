@@ -6,6 +6,7 @@ import type {
   CreateItemResponse,
   ItemResponse,
   RatingResponse,
+  ReportResponse,
   SellerTransactionResponse,
   UniqueItemResponse,
 } from "../global/schema";
@@ -52,7 +53,7 @@ interface ActionContextType {
   updateRating: (ratingId: number, score: number) => Promise<boolean>;
 
   // Reports
-  reportItem: (itemId: number, data: ReportCreate) => Promise<boolean>;
+  reportItem: (itemId: number, data: ReportCreate) => Promise<ReportResponse | null>;
 
   // Profile
   updateAvatar: (image: File) => Promise<boolean>;
@@ -322,13 +323,16 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const reportItem = async (
     itemId: number,
     data: ReportCreate,
-  ): Promise<boolean> => {
+  ): Promise<ReportResponse | null> => {
     try {
-      await api.post(`/reports/${itemId}`, data);
-      return true;
+      const res = await api.post(`/reports/${itemId}`, data);
+      if(res.status === 200){
+        return res.data;
+      }
+      return null;
     } catch (error) {
       console.error("reportItem failed:", error);
-      return false;
+      return null;
     }
   };  
 

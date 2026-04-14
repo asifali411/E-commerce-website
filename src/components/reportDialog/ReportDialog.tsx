@@ -3,6 +3,7 @@ import styles from "./ReportDialog.module.css";
 import { useAction } from "../../context/ActionProvider";
 import type { ReportCreate } from "../../global/request";
 import type { ReportCategory } from "../../global/types";
+import { useToast } from "../toast/Toast";
 
 interface ReportDialogProps {
   itemId: number;
@@ -20,6 +21,7 @@ const CATEGORIES: { value: ReportCategory; label: string }[] = [
 
 export default function ReportDialog({ itemId, onClose }: ReportDialogProps) {
   const { reportItem } = useAction();
+  const { addToast }   = useToast();
 
   const [selectedCategory, setSelectedCategory] = useState<ReportCategory | null>(null);
   const [description, setDescription] = useState("");
@@ -38,8 +40,20 @@ export default function ReportDialog({ itemId, onClose }: ReportDialogProps) {
     setErrorMessage(null);
 
     try {
-      await reportItem(itemId, data);
-      setStatus("success");
+      const res = await reportItem(itemId, data);
+      //@ts-ignore
+      if(res.error_code){
+        setStatus("error");
+        addToast({
+          type: "error",
+          title: "Failed to report item",
+          //@ts-ignore
+          message: res.message,
+          duration: 4000,
+        });
+      } else {
+        setStatus("success");
+      }
     } catch {
       setStatus("error");
       setErrorMessage("Something went wrong. Please try again.");

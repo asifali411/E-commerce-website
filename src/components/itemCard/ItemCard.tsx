@@ -20,9 +20,20 @@ const CONDITION_CLASS: Record<ItemCondition, string> = {
 };
 
 // ── Component ──────────────────────────────────────────────
-export default function ItemCard({ item, onReport, onClick }: { item: ItemResponse, onReport: (id: number) => void, onClick?: (id: number) => void }) {
+export default function ItemCard({ 
+  item, 
+  onReport, 
+  onClick,
+  hideHoverAction,
+}: { 
+  item: ItemResponse, 
+  onReport: (id: number) => void, 
+  onClick?: (id: number) => void,
+  hideHoverAction?: boolean;
+}) {
 
   const { addToast } = useToast();
+  const { user } = useAuth();
 
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -44,9 +55,14 @@ export default function ItemCard({ item, onReport, onClick }: { item: ItemRespon
   return (
     <article
       className={styles.card}
-      onClick={ onClick ? () => { onClick(item.id) } : handleNavigation }
+      onClick={
+        onClick
+          ? () => {
+              onClick(item.id);
+            }
+          : handleNavigation
+      }
     >
-
       {/* Image area */}
 
       <div className={styles.cardImagePlaceholder}>
@@ -61,7 +77,12 @@ export default function ItemCard({ item, onReport, onClick }: { item: ItemRespon
         )}
 
         {/* Hover actions */}
-        <div className={styles.cardActions}>
+        <div
+          className={styles.cardActions}
+          style={{
+            visibility: `${item?.seller?.username === user?.username || hideHoverAction ? "hidden" : "visible"}`,
+          }}
+        >
           <button
             className={`${styles.actionBtn} ${styles.actionBtnReport}`}
             onClick={(e) => {

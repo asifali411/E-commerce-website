@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { SearchLg, ArrowRight } from "@untitledui/icons";
 import styles from "./AdminPanel.module.css";
 import ItemCard from "../../components/itemCard/ItemCard";
-import type { ItemResponse } from "../../global/schema";
+import type { AdminItemResponse } from "../../global/schema";
 import type { ReportCategory } from "../../global/types";
 
 import { useNavigate } from "react-router-dom";
@@ -26,7 +26,7 @@ const CATEGORIES: { value: ReportCategory; label: string }[] = [
 // ── Main page ──────────────────────────────────────────────
 export default function AdminPanel() {
   const navigate = useNavigate();
-  const [items, setItems] = useState<ItemResponse[]>([]);
+  const [items, setItems] = useState<AdminItemResponse[]>([]);
   const { fetchReportedItems } = useAdmin();
   const [loading, setLoading] = useState(true);
   const [loadmoreLoading, setLoadmoreLoading] = useState(false);
@@ -71,12 +71,19 @@ export default function AdminPanel() {
     fetchItems();
   }, [fetchReportedItems]);
 
-  const filtered = items.filter((item) => {
-    if (selectedCategories.length === 0) return true;
-    // Assumes item has a `reportCategory` field of type ReportCategory.
-    // Adjust the field name below if your schema uses a different key.
-    return selectedCategories.includes((item as any).reportCategory);
-  });
+  // const filtered = items.filter((item: AdminUniqueItemResponse) => {
+  //   if (selectedCategories.length === 0) return true;
+  //   selectedCategories.forEach((cat: ReportCategory) => {
+  //     console.log(item);
+  //     item.reports.forEach((rep: ReportResponse) => {
+  //       if(cat === rep.category) return true;
+  //     })
+  //   });
+  //   return false;
+  // });
+  
+  //TODO: fix the filter function once the backend is properly configured
+  const filtered = items;
 
   const handleReport = (id: number) => {
     setShowReport(true);
@@ -118,8 +125,9 @@ export default function AdminPanel() {
               key={item.id}
               item={item}
               onReport={handleReport}
+              hideHoverAction={true}
               onClick={() => {
-                navigate(`/items/${item.id}`);
+                navigate(`/admin/reported-items/${item.id}`);
               }}
             />
           ))}

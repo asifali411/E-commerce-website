@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import Dialog from "../dialog/Dialog";
 import { useNotifications } from "../../context/NotificationProvider";
+import { useAdmin } from "../../context/AdminProvider";
 
 interface NavItem {
   to: string;
@@ -25,6 +26,7 @@ interface NavItem {
   icon: React.ReactNode;
   isNotification?: boolean;
   isHome?: boolean;
+  isAdminPanel?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -34,7 +36,7 @@ const navItems: NavItem[] = [
   { to: "/transactions",   label: "Transactions",   icon: <SwitchVertical01 />, },
   { to: "/ratings",        label: "Ratings",        icon: <Star01 />,           },
   { to: "/notifications",  label: "Notifications",  icon: <Bell01 />,            isNotification: true },
-  { to: "/admin",          label: "Admin panel",    icon: <Tool02 />,           }
+  { to: "/admin",          label: "Admin panel",    icon: <Tool02 />,            isAdminPanel: true }
 ];
 
 let activePath = "/";
@@ -46,7 +48,8 @@ export default function Nav() {
   const {isAuthenticated, user, logout} = useAuth();
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
   const { unreadCount } = useNotifications();
-
+  const { isAdmin } = useAdmin();
+ 
   const handleNavExpansion = (value: boolean): void => {
     setNavExpanded(value);
     setExpanded(value);
@@ -73,27 +76,32 @@ export default function Nav() {
 
         {/* Main links */}
         <ul className={styles.navList}>
-          {navItems.map((item) => (
-            <li key={item.to}>
-              <button
-                onClick={() => {
-                  if (!isAuthenticated) return;
-                  activePath = item.to;
-                  navigate(item.to);
-                }}
-                className={`${styles.navLink} ${activePath == item.to ? styles.active : ""}`}
-                disabled={!isAuthenticated}
-              >
-                <span className={styles.iconWrap}>{item.icon}</span>
-                <span className={styles.label}>{item.label}</span>
-                {isAuthenticated && item.isNotification && unreadCount > 0 && (
-                  <span className={styles.indicator}>
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
-              </button>
-            </li>
-          ))}
+          {navItems.map((item) => {
+
+            if(item.isAdminPanel && !isAdmin) return;
+
+            return (
+              <li key={item.to}>
+                <button
+                  onClick={() => {
+                    if (!isAuthenticated) return;
+                    activePath = item.to;
+                    navigate(item.to);
+                  }}
+                  className={`${styles.navLink} ${activePath == item.to ? styles.active : ""}`}
+                  disabled={!isAuthenticated}
+                >
+                  <span className={styles.iconWrap}>{item.icon}</span>
+                  <span className={styles.label}>{item.label}</span>
+                  {isAuthenticated && item.isNotification && unreadCount > 0 && (
+                    <span className={styles.indicator}>
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+              </li>
+            );
+          })}
         </ul>
 
         {isAuthenticated && (

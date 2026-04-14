@@ -25,6 +25,7 @@ import Error404 from "../pages/error/error404/Error404";
 import Error500 from "../pages/error/error500/Error500";
 
 import AdminPanel from "../pages/adminPanel/AdminPanel";
+import ReportItemDetail from "../pages/reportItemDetail/ReportItemDetail";
 
 function PageWrapper({ children }: any) {
   return (
@@ -62,7 +63,9 @@ function AnimatedRoutes() {
             
             <Route path="/notifications" element={<PageWrapper><Notifications /></PageWrapper>} />
             <Route path="/profile" element={<PageWrapper><Profile /></PageWrapper>} />
+
             <Route path="/admin" element={<PageWrapper><AdminPanel /></PageWrapper>} />
+            <Route path="/admin/reported-items/:id" element={<PageWrapper><ReportItemDetail /></PageWrapper>}></Route>
         </Route>
 
         <Route path="/index.html" element={<Navigate to="/" replace />} />
