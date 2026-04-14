@@ -78,7 +78,14 @@ function RatingRow({
   const isCompleted = rating.status === "Completed";
 
   return (
-    <article className={`${styles.row} ${isPending ? styles.rowPending : ""}`}>
+    <article 
+    className={`${styles.row} ${isPending ? styles.rowPending : ""}`}
+    onClick={() => {
+      if(isPending){
+        onRateNow(rating.id);
+      }
+    }}
+    >
       {/* Avatar */}
       <div className={styles.rowAvatar}>
         {rating.rated_user.image_path ? (
@@ -142,7 +149,10 @@ function RatingRow({
         {isPending ? (
           <button
             className={styles.actionBtnRate}
-            onClick={() => onRateNow(rating.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRateNow(rating.id)
+            }}
             title="Submit your rating"
           >
             Rate now
