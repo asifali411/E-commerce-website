@@ -8,12 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import type { NotificationResponse } from "../global/schema";
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "/api",
-  withCredentials: true,
-});
+import { api } from "./AuthProvider";
 
 interface NotificationContextType {
   notifications: NotificationResponse[];

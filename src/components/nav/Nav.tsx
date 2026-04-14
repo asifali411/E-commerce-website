@@ -19,6 +19,7 @@ import { useAuth } from "../../context/AuthProvider";
 import Dialog from "../dialog/Dialog";
 import { useNotifications } from "../../context/NotificationProvider";
 import { useAdmin } from "../../context/AdminProvider";
+import Logo from "../logo/Logo";
 
 interface NavItem {
   to: string;
@@ -70,7 +71,9 @@ export default function Nav() {
       >
         {/* Logo */}
         <div className={styles.logo}>
-          <div className={styles.logoMark}>CB</div>
+          <div className={styles.logoMark}>
+            <Logo />
+          </div>
           <span className={styles.logoText}>Campus Bid</span>
         </div>
 
