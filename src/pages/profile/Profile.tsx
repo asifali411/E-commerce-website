@@ -21,6 +21,7 @@ import { useState } from "react";
 import { useAction } from "../../context/ActionProvider";
 import AvatarDialog from "../../components/avatarDialog/AvatarDialog";
 import { useToast } from "../../components/toast/Toast";
+import { useAdmin } from "../../context/AdminProvider";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -133,6 +134,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
   const {user, refresh} = useAuth();
   const { updateAvatar } = useAction();
   const { addToast } = useToast();
+  const { isAdmin, setAdmin } = useAdmin();
 
   const memberSinceDate = new Date(user?.member_since!);
   const memberSinceFormatted = memberSinceDate.toLocaleDateString("en-IN", {
@@ -149,7 +151,9 @@ const Profile: React.FC<{ userId?: string }> = () => {
 
       <AvatarDialog
         open={openAvatarDialog}
-        currentAvatar={user?.image_path ? `/api/${user?.image_path}` : undefined}
+        currentAvatar={
+          user?.image_path ? `/api/${user?.image_path}` : undefined
+        }
         onClose={() => setOpenAvatarDialog(false)}
         onSave={async (blob: Blob) => {
           try {
@@ -232,6 +236,51 @@ const Profile: React.FC<{ userId?: string }> = () => {
                 )}
               </div>
               <StarRating rating={user?.rating!} />
+            </div>
+
+            <div className={styles.heroActions}>
+              {/* Role Toggle */}
+              {user?.role === "Admin" &&
+                <div className={styles.roleToggleWrap}>
+                  <span className={styles.roleLabel}>Role</span>
+                  <div className={styles.roleToggle}>
+                    <button
+                      className={`${styles.roleBtn} ${!isAdmin ? styles.roleBtnActive : ""}`}
+                      onClick={() => {
+                        setAdmin(false);
+                        addToast({
+                          type: "info",
+                          title: "Switched to normal user",
+                          message: "admin previlages are turned off.",
+                          duration: 4000,
+                        });
+                      }}
+                    >
+                      User
+                    </button>
+                    <button
+                      className={`${styles.roleBtn} ${isAdmin ? `${styles.roleBtnActive} ${styles.roleBtnAdmin}` : ""}`}
+                      onClick={() => {
+                        setAdmin(true);
+                        addToast({
+                          type: "info",
+                          title: "Switched to Admin",
+                          message: "admin previlages are active.",
+                          duration: 4000,
+                        });
+                      }}
+                    >
+                      Admin
+                    </button>
+                  </div>
+                  <div className={styles.roleBadge}>
+                    <span
+                      className={`${styles.badgeDot} ${isAdmin ? styles.dotAdmin : styles.dotUser}`}
+                    />
+                    <span>Currently: {isAdmin ? "Admin" : "User"}</span>
+                  </div>
+                </div>
+              }
             </div>
           </div>
         </div>

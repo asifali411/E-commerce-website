@@ -1,5 +1,5 @@
 import {
-  createContext,
+  createContext, 
   useContext,
   useEffect,
   useState,
@@ -12,6 +12,7 @@ import { api } from "./AuthProvider";
 // --- Admin Context Type --------------------------------------
 interface AdminContextType {
     isAdmin: boolean;
+    setAdmin: (newState: boolean) => void;
     fetchReportedItems: (
         skip?: number,
         limit?: number,
@@ -33,7 +34,13 @@ export const useAdmin = () => {
 export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
     const { user } = useAuth();
-    const [isAdmin, setIsAdmin] = useState(user?.role === "Admin");
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    const setAdmin = (newState: boolean) => {
+      if(user?.role === "Admin") {
+        setIsAdmin(newState);
+      } else setIsAdmin(false);
+    }
 
     const fetchReportedItems = async (
       skip = 0,
@@ -68,9 +75,6 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     const deleteAdminItem = async (itemId: number): Promise<string | null> => {
       try {
         const res = await api.delete(`/admin/${itemId}`);
-        if(res.status === 200){
-          res.data;
-        }
         return res.data;
       } catch (error) {
         console.error("deleteAdminItem failed:", error);
@@ -79,12 +83,15 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        setIsAdmin(user?.role === "Admin");
+      if (user?.role !== "Admin") {
+        setIsAdmin(false);
+      }
     }, [user])
 
     // --- Context Value ----------------------------------------
     const value: AdminContextType = {
         isAdmin,
+        setAdmin,
         fetchAdminItem,
         fetchReportedItems,
         deleteAdminItem
