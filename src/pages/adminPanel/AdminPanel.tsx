@@ -63,6 +63,7 @@ export default function AdminPanel() {
 
         setItems(Array.from(map.values()));
       } catch (error) {
+        error;
       } finally {
         setLoading(false);
       }

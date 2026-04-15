@@ -41,13 +41,13 @@ export default function ReportDialog({ itemId, onClose }: ReportDialogProps) {
 
     try {
       const res = await reportItem(itemId, data);
-      //@ts-ignore
+      //@ts-expect-error
       if(res.error_code){
         setStatus("error");
         addToast({
           type: "error",
           title: "Failed to report item",
-          //@ts-ignore
+          //@ts-expect-error
           message: res.message,
           duration: 4000,
         });

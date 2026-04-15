@@ -40,6 +40,7 @@ const CONDITIONS: { value: ItemCondition; label: string; desc: string }[] = [
 ];
 
 const { All, ...ITEM_CATEGORY } = CATEGORIES;
+All;
 
 // ── Helpers ────────────────────────────────────────────
 
@@ -153,7 +154,7 @@ export default function EditItem({ onCancel }: EditItemProps) {
         if (slot.kind === "new") URL.revokeObjectURL(slot.preview);
       });
     };
-  }, []);
+  }, [imageSlots]);
 
   // ── Validation ────────────────────────────────────────
 

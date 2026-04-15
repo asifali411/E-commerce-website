@@ -63,7 +63,7 @@ export default function Home() {
 
         setItems(Array.from(map.values()));
       } catch (error) {
-        
+        error;
       } finally {
         setLoading(false);
       }
@@ -98,7 +98,7 @@ export default function Home() {
       });
       setItems(Array.from(map.values()));
     } catch (err) {
-
+      err;
     } finally {
       setLoading(false);
     }

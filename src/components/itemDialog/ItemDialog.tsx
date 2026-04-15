@@ -216,7 +216,7 @@ export default function ItemDialog({
       setError("Failed to load item details.");
     }
     setLoading(false);
-  }, [itemId]);
+  }, [itemId, fetchItem]);
 
   useEffect(() => {
     loadItem();
@@ -248,7 +248,7 @@ export default function ItemDialog({
   async function handleReject(bidId: number) {
     setAccepting(bidId);
     setSuccessMsg(null);
-    //@ts-ignore
+    //@ts-expect-error
     const result = await updateBid(bidId, { price: null, quantity: null });
     
     await loadItem();

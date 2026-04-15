@@ -102,6 +102,7 @@ export default function ItemDetail() {
         }
       } catch (err) {
         if (isMounted) setError("Failed to fetch item details.");
+        err;
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -111,7 +112,7 @@ export default function ItemDetail() {
     return () => {
       isMounted = false;
     };
-  }, [itemId, fetchItem]);
+  }, [itemId, fetchItem, user?.username]);
 
   useEffect(() => {
     if(bidSuccess){
@@ -159,16 +160,18 @@ export default function ItemDetail() {
         const updated = await fetchItem(item.id);
         if (updated) setItem(updated);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
 
       addToast({
         type: "error",
         title: "Failed to place bid.",
-        message: e.message,
+        //@ts-expect-error
+        message: e?.message ?? "",
         duration: 4000,
       });
 
-      setBidError(e.message || "Failed to place bid.");
+      //@ts-expect-error
+      setBidError(e?.message || "Failed to place bid.");
     } finally {
       setBidLoading(false);
     }

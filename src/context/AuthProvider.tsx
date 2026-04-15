@@ -46,7 +46,7 @@ interface AuthContextType {
     phone_no: string;
     password: string;
   }) => Promise<void>;
-  logout: () => Promise<any>;
+  logout: () => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // --- Auth -------------------------------------------------
 
-  const login = async (username: string, password: string): Promise<any> => {
+  const login = async (username: string, password: string): Promise<void> => {
     const formData = new URLSearchParams();
     formData.append("username", username);
     formData.append("password", password);
@@ -92,7 +92,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     setUser(res.data);
-    return res;
   };
 
   const register = async (data: {

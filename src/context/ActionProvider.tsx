@@ -259,7 +259,8 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
         "/transactions/my-selled-transactions",
       );
       return Array.isArray(res.data) ? res.data : [];
-    } catch (error: any) {
+    } catch (error: unknown) {
+      //@ts-expect-error
       if (error?.response?.status === 404) return [];
       console.error("fetchSellerTransactions failed:", error);
       return [];

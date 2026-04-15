@@ -37,6 +37,7 @@ const CONDITIONS: { value: ItemCondition; label: string; desc: string }[] = [
 ];
 
 const {All, ...ITEM_CATEGORY} = CATEGORIES;
+All;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -146,7 +147,7 @@ export default function CreateItem({
       setDragOver(false);
       addFiles(e.dataTransfer.files);
     },
-    [imageFiles],
+    [imageFiles, addFiles],
   );
 
   // ── Submit ───────────────────────────────────────────────────────────────
@@ -179,7 +180,7 @@ export default function CreateItem({
         return;
       }
 
-      //@ts-ignore
+      //@ts-expect-error
       if(res.error_code) {
         addToast({
           type: "error",

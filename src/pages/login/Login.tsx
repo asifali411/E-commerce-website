@@ -59,8 +59,9 @@ export default function Login() {
       await login(formData.username, formData.password);
 
       navigate("/");
-    } catch (err: any) {
+    } catch (err: unknown) {
       
+      //@ts-expect-error
       switch(err?.response?.status) {
         case 400:
           setErrors({
