@@ -169,7 +169,6 @@ export default function CreateItem({
       const res: CreateItemResponse | null = await createItem(body);
 
       if(!res){
-        
         addToast({
           type: "error",
           title: isAuthenticated ? "Failed to create Item" : "You are logged out.",
@@ -177,6 +176,17 @@ export default function CreateItem({
           duration: 4000,
         });
         setLoading(false);
+        return;
+      }
+
+      //@ts-ignore
+      if(res.error_code) {
+        addToast({
+          type: "error",
+          title: "Failed to create Item",
+          message: res.message,
+          duration: 4000,
+        });
         return;
       }
 

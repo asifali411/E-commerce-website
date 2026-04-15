@@ -84,12 +84,10 @@ export default function TransactionDialog(props: TransactionDialogProps) {
 
   const isPending = props.tx.status === "Pending";
 
-  // Resolve counterparty + item based on role
-  const counterparty = role === "Buyer" ? props.tx.item.seller : props.tx.buyer;
+  const counterparty = role === "Buyer" ? props.tx.seller : props.tx.buyer;
   const counterpartyRole = role === "Buyer" ? "Seller" : "Buyer";
   const item = props.tx.item;
 
-  // Backdrop click to close
   function handleBackdrop(e: React.MouseEvent<HTMLDivElement>) {
     if (e.target === e.currentTarget) onClose();
   }

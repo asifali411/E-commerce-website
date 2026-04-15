@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import type { NotificationResponse } from "../global/schema";
-import { api } from "./AuthProvider";
+import { api, useAuth } from "./AuthProvider";
 
 interface NotificationContextType {
   notifications: NotificationResponse[];
@@ -24,8 +24,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
   const [unreadCount, setUnreadCount] = useState(0);
+  const { user } = useAuth();
 
   const isMounted = useRef(true);
+  const esRef = useRef<EventSource | null>(null);
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -44,41 +46,30 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       await api.get("/notifications/read_all");
       setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
       setUnreadCount(0);
-    } catch {
-      
+    } catch (error) {
+      console.error("Failed to mark notifications as read:", error);
     }
   }, []);
 
   useEffect(() => {
-    isMounted.current = true;
+    const connect = () => {
+      esRef.current = new EventSource(`api/notifications/stream`);
+
+      esRef.current.addEventListener("notification", (e) => {
+        const data = JSON.parse(e.data);
+        setNotifications((prev) => [data, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+      });
+    };
+
+    connect();
     fetchNotifications();
-
-    const es = new EventSource("/api/sse/notifications/", {
-      withCredentials: true,
-    });
-
-    es.onmessage = (event) => {
-      if (!isMounted.current) return;
-      try {
-        const notification: NotificationResponse = JSON.parse(event.data);
-        setNotifications((prev) => [notification, ...prev]);
-        if (!notification.is_read) {
-          setUnreadCount((prev) => prev + 1);
-        }
-      } catch {
-        
-      }
-    };
-
-    es.onerror = () => {
-      console.warn("SSE connection lost, retrying...");
-    };
 
     return () => {
       isMounted.current = false;
-      es.close();
+      esRef.current?.close();
     };
-  }, [fetchNotifications]);
+  }, [fetchNotifications, user]);
 
   return (
     <NotificationContext.Provider
