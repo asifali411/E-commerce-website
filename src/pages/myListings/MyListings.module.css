@@ -242,6 +242,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 .rowDesc {
@@ -252,6 +253,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 120px;
 }
 
 .rowTags {
@@ -384,6 +386,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 6px;
+  background-color: var(--color-card);
 }
 
 .actionBtn {

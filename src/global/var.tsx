@@ -3,20 +3,21 @@ import {
   Package,
   Monitor01,
   PencilLine,
-  Building07,
-  Tag01
+  Car01,
+  ShoppingCart02,
+  WatchCircle
 } from "@untitledui/icons";
 
 // ------ Variables ------------------------------------------------------
 export let navExpanded = false;
 
 export const CATEGORIES: Record<ItemCategory, React.ReactNode> = {
-  All: <Package size={12} />,
+  All: <ShoppingCart02 size={12} />,
   Electronics: <Monitor01 size={12} />,
   Stationary: <PencilLine size={12} />,
-  Rent: <Building07 size={12} />,
+  Rent: <Car01 size={12} />,
+  Accessories: <WatchCircle size={12} />,
   Miscellaneous: <Package size={12} />,
-  Accessories: <Tag01 size={12} />,
 };
 
 // ------ Setters --------------------------------------------------------
