@@ -32,12 +32,11 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const fetchNotifications = useCallback(async () => {
     try {
       const res = await api.get<NotificationResponse[]>("/notifications/");
-      const data = Array.isArray(res.data) ? res.data : [];
-      if (!isMounted.current) return;
+      const data = res.data;
       setNotifications(data);
       setUnreadCount(data.filter((n) => !n.is_read).length);
     } catch {
-      if (isMounted.current) setNotifications([]);
+      setNotifications([]);
     }
   }, []);
 

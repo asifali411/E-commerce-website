@@ -110,7 +110,7 @@ export default function ItemCard({
           <span
             className={`${styles.conditionTag} ${CONDITION_CLASS[item.condition]}`}
           >
-            {item.condition}
+            {item.condition?.replaceAll("_", " ")}
           </span>
         </div>
 

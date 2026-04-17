@@ -26,6 +26,7 @@ type FilterChip = "All" | "Unread" | "Bids" | "Items" | "Ratings";
 // ── Helpers ────────────────────────────────────────────────
 
 function timeAgo(iso: string): string {
+  if(!iso) return "";
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);

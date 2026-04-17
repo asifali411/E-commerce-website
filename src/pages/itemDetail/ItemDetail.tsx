@@ -199,7 +199,7 @@ export default function ItemDetail() {
     );
   }
 
-  const hasImages = item.images && item.images.length > 0 || item.images;
+  const hasImages = item.images && item.images.length > 0;
 
   return (
     <div className={styles.page}>
@@ -221,7 +221,7 @@ export default function ItemDetail() {
           <div className={styles.mainImage}>
             {hasImages && (
               <img
-                src={`/api/${item.images[activeImage].image_path}`}
+                src={`/api/${item?.images[activeImage]?.image_path}`}
                 alt={item.title}
                 className={styles.mainImg}
               />
