@@ -26,7 +26,7 @@ type FormErrors = {
 /* ── Regex ── */
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@gectcr\.ac\.in$/i;
-const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 const contactRegex = /^\d{10}$/;
 
 /* ── Component ── */
