@@ -21,6 +21,8 @@ import CreateItem from "../pages/createItem/CreateItem";
 import Profile from "../pages/profile/Profile";
 import EditItem from "../pages/editItem/EditItem";
 
+import ForgotPassword from "../pages/forgotPassword/ForgotPassword";
+
 import Error404 from "../pages/error/error404/Error404";
 import Error500 from "../pages/error/error500/Error500";
 
@@ -48,6 +50,7 @@ function AnimatedRoutes() {
 
         <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
         <Route path="/register" element={<PageWrapper><SignUp /></PageWrapper>} />
+        <Route path="/forgot-password" element={<PageWrapper><ForgotPassword /></PageWrapper>} />
 
         <Route element={<Nav />}>
             <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
