@@ -5,16 +5,10 @@ import {
   Calendar,
   AlertTriangle,
   Lock01,
+  Moon01,
+  Bell01,
+  LogOut01,
 } from "@untitledui/icons";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import styles from "./Profile.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import { useState } from "react";
@@ -26,36 +20,6 @@ import { useAdmin } from "../../context/AdminProvider";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type AccountStatus = "active" | "locked" | "disabled";
-
-export interface ActivityPoint {
-  month: string;
-  listings: number;
-  sales: number;
-}
-
-export interface CategoryPoint {
-  name: string;
-  value: number;
-  fill: string;
-}
-
-export interface MonthlyPoint {
-  month: string;
-  amount: number;
-  delta: number;
-}
-
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-
-const activityData = [
-  { month: "Aug", listings: 12, sales: 7 },
-  { month: "Sep", listings: 18, sales: 11 },
-  { month: "Oct", listings: 9, sales: 8 },
-  { month: "Nov", listings: 22, sales: 14 },
-  { month: "Dec", listings: 15, sales: 10 },
-  { month: "Jan", listings: 27, sales: 18 },
-  { month: "Feb", listings: 20, sales: 15 },
-];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -82,9 +46,7 @@ const StatusBanner: React.FC<{ status: AccountStatus }> = ({ status }) => {
   );
 };
 
-const StarRating: React.FC<{ rating: number }> = ({
-  rating,
-}) => {
+const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
   const full = Math.floor(rating);
   const partial = rating - full;
 
@@ -97,41 +59,66 @@ const StarRating: React.FC<{ rating: number }> = ({
           return (
             <span key={i} className={styles.starWrap}>
               <Star01 size={16} className={styles.starBg} />
-              <div className={`${fill > 0 ? styles.starFill : styles.starOutline}`} style={{opacity: `${fill === 0 ? 1 : fill / 100}` }}>
+              <div
+                className={`${fill > 0 ? styles.starFill : styles.starOutline}`}
+                style={{ opacity: `${fill === 0 ? 1 : fill / 100}` }}
+              >
                 <Star01 size={16} />
               </div>
             </span>
           );
         })}
       </div>
-      <span className={styles.ratingValue}>{rating.toFixed(1)}</span>
+      <span className={styles.ratingValue}>{rating?.toFixed(1)}</span>
     </div>
   );
 };
 
-const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className={styles.tooltip}>
-      <p className={styles.tooltipLabel}>{label}</p>
-      {payload.map((p: any) => (
-        <p
-          key={p.dataKey}
-          style={{ color: p.color }}
-          className={styles.tooltipItem}
-        >
-          {p.name}: <strong>{p.value}</strong>
-        </p>
-      ))}
+// ─── Toggle Switch ────────────────────────────────────────────────────────────
+
+const Toggle: React.FC<{
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  disabled?: boolean;
+}> = ({ checked, onChange, disabled }) => (
+  <button
+    role="switch"
+    aria-checked={checked}
+    disabled={disabled}
+    className={`${styles.toggle} ${checked ? styles.toggleOn : ""} ${disabled ? styles.toggleDisabled : ""}`}
+    onClick={() => onChange(!checked)}
+  >
+    <span className={styles.toggleThumb} />
+  </button>
+);
+
+// ─── Settings Row ─────────────────────────────────────────────────────────────
+
+const SettingRow: React.FC<{
+  icon: React.ReactNode;
+  iconColor?: string;
+  label: string;
+  description?: string;
+  right: React.ReactNode;
+  onClick?: () => void;
+}> = ({ icon, iconColor, label, description, right, onClick }) => (
+  <div
+    className={`${styles.settingRow} ${onClick ? styles.settingRowClickable : ""}`}
+    onClick={onClick}
+  >
+    <div className={`${styles.settingIcon} ${iconColor ?? ""}`}>{icon}</div>
+    <div className={styles.settingContent}>
+      <span className={styles.settingLabel}>{label}</span>
+      {description && <span className={styles.settingDesc}>{description}</span>}
     </div>
-  );
-};
+    <div className={styles.settingRight}>{right}</div>
+  </div>
+);
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const Profile: React.FC<{ userId?: string }> = () => {
-
-  const {user, refresh} = useAuth();
+  const { user, refresh, logout } = useAuth();
   const { updateAvatar } = useAction();
   const { addToast } = useToast();
   const { isAdmin, setAdmin } = useAdmin();
@@ -142,8 +129,83 @@ const Profile: React.FC<{ userId?: string }> = () => {
     year: "numeric",
   });
 
-  const accountStatus = user?.locked ? "locked" : (user?.disabled ? "disabled" : "active");
+  const accountStatus = user?.locked
+    ? "locked"
+    : user?.disabled
+      ? "disabled"
+      : "active";
+
   const [openAvatarDialog, setOpenAvatarDialog] = useState(false);
+
+  // ── Settings state ──
+  const [darkMode, setDarkMode] = useState(() =>
+    document.documentElement.classList.contains("dark"),
+  );
+  const [notifBids, setNotifBids] = useState(true);
+  const [notifItems, setNotifItems] = useState(true);
+  const [notifRatings, setNotifRatings] = useState(true);
+
+  function handleDarkMode(val: boolean) {
+    setDarkMode(val);
+    document.documentElement.classList.toggle("light", val);
+    addToast({
+      type: "info",
+      title: val ? "Dark mode enabled" : "Light mode enabled",
+      message: "Your display preference has been saved.",
+      duration: 3000,
+    });
+  }
+
+  function handleLogout() {
+    logout?.();
+  }
+
+  // --- Settings -----------------------------------------------------------------
+
+  {
+    /*
+      NOTE:
+        - there are a few icon colors that has been declared but not used.
+        - when adding new setting, please consider using these colors.
+        - iconPurple, iconBlue, iconAmber, [ iconGreen, iconGrey, iconRed ] <- not used
+    */
+  }
+
+  const SETTINGS = {
+    appearance: [
+      {
+        label: "Dark Mode",
+        description: "Switch between light and dark theme",
+        icon: Moon01,
+        iconColor: styles.iconPurple,
+        right: <Toggle checked={darkMode} onChange={handleDarkMode} />,
+      },
+    ],
+
+    notifications: [
+      {
+        label: "Bid Alerts",
+        description: "Get notified when bids are placed, accepted or rejected",
+        icon: Bell01,
+        iconColor: styles.iconBlue,
+        right: <Toggle checked={notifBids} onChange={setNotifBids} />,
+      },
+      {
+        label: "Item Updates",
+        description: "Notifications for your listing activity",
+        icon: Bell01,
+        iconColor: styles.iconTeal,
+        right: <Toggle checked={notifItems} onChange={setNotifItems} />,
+      },
+      {
+        label: "Rating Notifications",
+        description: "Know when someone leaves you a rating",
+        icon: Star01,
+        iconColor: styles.iconAmber,
+        right: <Toggle checked={notifRatings} onChange={setNotifRatings} />,
+      },
+    ],
+  };
 
   return (
     <div className={styles.page}>
@@ -161,7 +223,6 @@ const Profile: React.FC<{ userId?: string }> = () => {
               type: "image/jpeg",
               lastModified: Date.now(),
             });
-
             await updateAvatar(avatarFile);
             setOpenAvatarDialog(false);
             refresh();
@@ -171,7 +232,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
               message: "This may take a while.",
               duration: 4000,
             });
-          } catch (error) {
+          } catch {
             addToast({
               type: "error",
               title: "Failed to update avatar.",
@@ -239,8 +300,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
             </div>
 
             <div className={styles.heroActions}>
-              {/* Role Toggle */}
-              {user?.role === "Admin" &&
+              {user?.role === "Admin" && (
                 <div className={styles.roleToggleWrap}>
                   <span className={styles.roleLabel}>Role</span>
                   <div className={styles.roleToggle}>
@@ -251,7 +311,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
                         addToast({
                           type: "info",
                           title: "Switched to normal user",
-                          message: "admin previlages are turned off.",
+                          message: "Admin privileges are turned off.",
                           duration: 4000,
                         });
                       }}
@@ -265,7 +325,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
                         addToast({
                           type: "info",
                           title: "Switched to Admin",
-                          message: "admin previlages are active.",
+                          message: "Admin privileges are active.",
                           duration: 4000,
                         });
                       }}
@@ -280,7 +340,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
                     <span>Currently: {isAdmin ? "Admin" : "User"}</span>
                   </div>
                 </div>
-              }
+              )}
             </div>
           </div>
         </div>
@@ -289,113 +349,84 @@ const Profile: React.FC<{ userId?: string }> = () => {
         <div className={styles.infoGrid}>
           <div className={styles.infoItem}>
             <Mail01 size={16} className={styles.infoIcon} />
-            <span className={styles.infoLabel}>Email</span>
-            <span className={styles.infoValue}>{user?.email}</span>
+            <div>
+              <span className={styles.infoLabel}>Email</span>
+              <span className={styles.infoValue}>{user?.email}</span>
+            </div>
           </div>
           <div className={styles.infoItem}>
             <Phone size={16} className={styles.infoIcon} />
-            <span className={styles.infoLabel}>Phone</span>
-            <span className={styles.infoValue}>
-              {user?.phone_no?.slice(0, 3)} {user?.phone_no.slice(3)}
-            </span>
+            <div>
+              <span className={styles.infoLabel}>Phone</span>
+              <span className={styles.infoValue}>
+                {user?.phone_no?.slice(0, 3)} {user?.phone_no.slice(3)}
+              </span>
+            </div>
           </div>
           <div className={styles.infoItem}>
             <Calendar size={16} className={styles.infoIcon} />
-            <span className={styles.infoLabel}>Member Since</span>
-            <span className={styles.infoValue}>{memberSinceFormatted}</span>
+            <div>
+              <span className={styles.infoLabel}>Member Since</span>
+              <span className={styles.infoValue}>{memberSinceFormatted}</span>
+            </div>
           </div>
         </div>
 
-        <div className={`${styles.chartCard} ${styles.chartWide}`}>
-          <div className={styles.chartHeader}>
-            <div>
-              <h2 className={styles.chartTitle}>Marketplace Activity</h2>
-              <p className={styles.chartSub}>
-                Listings vs. sales over 7 months
-              </p>
-            </div>
-            <div className={styles.legendRow}>
-              <span
-                className={styles.legendDot}
-                style={{ background: "var(--color-primary)" }}
+        {/* ── Settings ── */}
+        <div className={styles.settingsWrap}>
+          <h2 className={styles.settingsTitle}>Settings</h2>
+
+          {/* Appearance */}
+          <div className={styles.settingsGroup}>
+            <p className={styles.settingsGroupLabel}>Appearance</p>
+            {SETTINGS.appearance.map((setting) => (
+              <SettingRow
+                key={crypto.randomUUID()}
+                icon={<setting.icon size={16} />}
+                iconColor={setting.iconColor}
+                label={setting.label}
+                description={setting.description}
+                right={setting.right}
               />
-              <span className={styles.legendLabel}>Listings</span>
-              <span
-                className={styles.legendDot}
-                style={{ background: "var(--color-accent)" }}
-              />
-              <span className={styles.legendLabel}>Sales</span>
-            </div>
+            ))}
           </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <AreaChart
-              data={activityData}
-              margin={{ top: 8, right: 8, left: -20, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="gListings" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="var(--color-primary)"
-                    stopOpacity={0.25}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="var(--color-primary)"
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-                <linearGradient id="gSales" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="var(--color-accent)"
-                    stopOpacity={0.25}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="var(--color-accent)"
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              </defs>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="var(--color-card-border)"
+
+          {/* Notifications */}
+          <div className={styles.settingsGroup}>
+            <p className={styles.settingsGroupLabel}>Notifications</p>
+            {SETTINGS.notifications.map((setting) => (
+              <SettingRow
+                key={crypto.randomUUID()}
+                icon={<setting.icon size={16} />}
+                iconColor={setting.iconColor}
+                label={setting.label}
+                description={setting.description}
+                right={setting.right}
               />
-              <XAxis
-                dataKey="month"
-                tick={{ fontSize: 12, fill: "var(--color-text-muted)" }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fontSize: 12, fill: "var(--color-text-muted)" }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="listings"
-                name="Listings"
-                stroke="var(--color-primary)"
-                strokeWidth={2}
-                fill="url(#gListings)"
-              />
-              <Area
-                type="monotone"
-                dataKey="sales"
-                name="Sales"
-                stroke="var(--color-accent)"
-                strokeWidth={2}
-                fill="url(#gSales)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+            ))}
+          </div>
+
+          {/* Logout */}
+          <div
+            className={`${styles.settingsGroup} ${styles.settingsGroupDanger}`}
+          >
+            <p className={styles.settingsGroupLabel}>Account</p>
+            <button className={styles.logoutBtn} onClick={handleLogout}>
+              <span className={`${styles.settingIcon} ${styles.iconRed}`}>
+                <LogOut01 size={16} />
+              </span>
+              <span className={styles.settingContent}>
+                <span className={styles.settingLabel}>Log Out</span>
+                <span className={styles.settingDesc}>
+                  Sign out of your account
+                </span>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
-};
+};;
 
 export default Profile;

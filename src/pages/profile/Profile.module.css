@@ -177,14 +177,6 @@
   color: var(--color-text);
 }
 
-.bio {
-  margin: 0;
-  font-size: 13.5px;
-  color: var(--color-text-muted);
-  max-width: 480px;
-  line-height: 1.55;
-}
-
 /* Status pill */
 .statusPill {
   display: inline-flex;
@@ -241,7 +233,7 @@
   display: inline-flex;
 }
 
-.starFill svg{
+.starFill svg {
   fill: var(--color-cta);
 }
 
@@ -255,12 +247,7 @@
   color: var(--color-text);
 }
 
-.ratingCount {
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
-
-/* Hero buttons */
+/* Hero actions / role toggle */
 .heroActions {
   display: flex;
   align-items: center;
@@ -268,48 +255,6 @@
   gap: 8px;
   flex-shrink: 0;
 }
-
-.btnPrimary {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 18px;
-  background: var(--color-primary);
-  color: #fff;
-  border-radius: var(--border-radius);
-  font-size: 13.5px;
-  font-weight: 600;
-  font-family: inherit;
-  border: none;
-  cursor: pointer;
-  transition: background 0.18s, transform 0.18s;
-}
-
-.btnPrimary:hover {
-  background: var(--color-primary-hover);
-  transform: translateY(-1px);
-}
-
-.btnGhost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: var(--border-radius);
-  background: var(--color-button);
-  color: var(--color-text-muted);
-  border: 1px solid var(--color-card-border);
-  cursor: pointer;
-  transition: background 0.18s, transform 0.18s;
-}
-
-.btnGhost:hover {
-  background: var(--color-button-hover);
-  transform: translateY(-1px);
-}
-
-/* User Role */
 
 .roleToggleWrap {
   display: flex;
@@ -348,11 +293,6 @@
   font-family: inherit;
   transition: background 0.15s, color 0.15s;
 }
-
-/* .roleBtn:hover {
-  background: var(--color-button-hover);
-  color: var(--color-text);
-} */
 
 .roleBtnActive {
   background: var(--color-surface);
@@ -428,257 +368,213 @@
   word-break: break-all;
 }
 
-/* ─── Quick Stats ─────────────────────────────────────────────────────────── */
-.statsRow {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+/* ─── Settings ────────────────────────────────────────────────────────────── */
+.settingsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.statCard {
+.settingsTitle {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.2px;
+}
+
+/* Group */
+.settingsGroup {
   background: var(--color-surface);
   border: 1px solid var(--color-card-border);
   border-radius: calc(var(--border-radius) + 4px);
-  padding: 18px 20px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.settingsGroupLabel {
+  margin: 0;
+  padding: 10px 18px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-card-border);
+  background: color-mix(in srgb, var(--color-card-border) 30%, var(--color-surface));
+}
+
+/* Individual row */
+.settingRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 14px;
-  transition: box-shadow 0.18s;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--color-card-border);
+  transition: background 0.15s;
 }
 
-.statCard:hover {
-  box-shadow: 0 4px 16px -4px rgba(0,0,0,0.1);
+.settingRow:last-child {
+  border-bottom: none;
 }
 
-.statIcon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--border-radius);
-  background: var(--color-button);
+.settingRowClickable {
+  cursor: pointer;
+}
+
+.settingRowClickable:hover {
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+}
+
+.settingIcon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: calc(var(--border-radius));
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-primary);
-  flex-shrink: 0;
 }
 
-.statBody {
+/* Icon colour variants */
+.iconPurple {
+  background: color-mix(in srgb, #a78bfa 12%, var(--color-surface));
+  color: #a78bfa;
+}
+
+.iconBlue {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  color: var(--color-primary);
+}
+
+.iconTeal {
+  background: color-mix(in srgb, var(--color-secondary) 12%, var(--color-surface));
+  color: var(--color-secondary);
+}
+
+.iconAmber {
+  background: color-mix(in srgb, var(--color-warning) 12%, var(--color-surface));
+  color: var(--color-warning);
+}
+
+.iconGreen {
+  background: color-mix(in srgb, var(--color-success) 12%, var(--color-surface));
+  color: var(--color-success);
+}
+
+.iconGrey {
+  background: color-mix(in srgb, var(--color-grey-300) 30%, var(--color-surface));
+  color: var(--color-text-muted);
+}
+
+.iconRed {
+  background: color-mix(in srgb, var(--color-error) 12%, var(--color-surface));
+  color: var(--color-error);
+}
+
+.settingContent {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
 
-.statLabel {
-  font-size: 11.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-text-muted);
-}
-
-.statValue {
-  font-size: 20px;
-  font-weight: 700;
+.settingLabel {
+  font-size: 13.5px;
+  font-weight: 500;
   color: var(--color-text);
-  letter-spacing: -0.3px;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
-.statSub {
-  font-size: 11.5px;
-  color: var(--color-text-muted);
-}
-
-/* ─── Charts ──────────────────────────────────────────────────────────────── */
-.chartsGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.chartCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-card-border);
-  border-radius: calc(var(--border-radius) + 4px);
-  padding: 22px 20px 16px;
-}
-
-.chartWide {
-  grid-column: 1 / -1;
-}
-
-.chartHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.chartTitle {
-  margin: 0 0 3px;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.chartSub {
-  margin: 0;
-  font-size: 12.5px;
-  color: var(--color-text-muted);
-}
-
-.legendRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.legendDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.legendLabel {
+.settingDesc {
   font-size: 12px;
   color: var(--color-text-muted);
+  line-height: 1.4;
 }
 
-/* Recharts tooltip */
-.tooltip {
-  background: var(--color-card);
-  border: 1px solid var(--color-card-border);
-  border-radius: var(--border-radius);
-  padding: 10px 14px;
-  font-size: 13px;
-  color: var(--color-text);
-  box-shadow: 0 4px 20px -4px rgba(0,0,0,0.15);
-}
-
-.tooltipLabel {
-  margin: 0 0 6px;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  font-size: 12px;
-}
-
-.tooltipItem {
-  margin: 2px 0;
-}
-
-/* Radial chart */
-.radialWrapper {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.categoryLegend {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-  min-width: 0;
-}
-
-.catRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.catDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+.settingRight {
   flex-shrink: 0;
-}
-
-.catName {
-  flex: 1;
-  font-size: 12.5px;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.catVal {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-/* ─── Delta Cards ─────────────────────────────────────────────────────────── */
-.deltaRow {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 10px;
-}
-
-.deltaCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-card-border);
-  border-radius: calc(var(--border-radius) + 4px);
-  padding: 14px 16px;
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.deltaMonth {
-  font-size: 11.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-text-muted);
-}
-
-.deltaAmount {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-text);
-  letter-spacing: -0.3px;
-}
-
-.deltaBadge {
-  display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-size: 11.5px;
-  font-weight: 600;
+}
+
+.chevron {
+  color: var(--color-grey-400);
+}
+
+/* ─── Toggle Switch ───────────────────────────────────────────────────────── */
+.toggle {
+  position: relative;
+  width: 42px;
+  height: 24px;
   border-radius: 999px;
-  padding: 2px 8px;
-  width: fit-content;
+  border: none;
+  cursor: pointer;
+  background: var(--color-grey-200);
+  transition: background 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
 }
 
-.deltaPos {
-  background: color-mix(in srgb, var(--color-success) 12%, transparent);
-  color: var(--color-success);
+.toggleOn {
+  background: var(--color-primary);
 }
 
-.deltaNeg {
-  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+.toggleDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease;
+  display: block;
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(18px);
+}
+
+/* ─── Logout button ───────────────────────────────────────────────────────── */
+.logoutBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.logoutBtn:hover {
+  background: color-mix(in srgb, var(--color-error) 6%, var(--color-surface));
+}
+
+.logoutBtn .settingLabel {
   color: var(--color-error);
+  font-weight: 600;
+}
+
+.logoutBtn .settingDesc {
+  color: color-mix(in srgb, var(--color-error) 60%, var(--color-text-muted));
 }
 
 /* ─── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .statsRow {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .chartsGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .chartWide {
-    grid-column: 1;
+  .infoGrid {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -699,9 +595,13 @@
     gap: 14px;
   }
 
-  .heroNameRow{
+  .heroNameRow {
     display: flex;
     justify-content: center;
+    align-items: center;
+  }
+
+  .heroInfo {
     align-items: center;
   }
 
@@ -717,34 +617,20 @@
 
   .heroActions {
     width: 100%;
-    justify-content: flex-start;
-  }
-
-  .btnPrimary {
-    flex: 1;
     justify-content: center;
-  }
-
-  .statsRow {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .statValue {
-    font-size: 17px;
   }
 
   .infoGrid {
     grid-template-columns: 1fr;
   }
 
-  .radialWrapper {
-    flex-direction: column;
-    align-items: flex-start;
+  .settingDesc {
+    display: none;
   }
 
-  .deltaRow {
-    grid-template-columns: repeat(3, 1fr);
+  .settingRow,
+  .logoutBtn {
+    padding: 13px 14px;
   }
 
   .banner {
@@ -753,15 +639,7 @@
 }
 
 @media (max-width: 380px) {
-  .statsRow {
-    grid-template-columns: 1fr;
-  }
-
   .infoGrid {
     grid-template-columns: 1fr;
-  }
-
-  .deltaRow {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
