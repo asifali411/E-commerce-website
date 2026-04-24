@@ -16,6 +16,7 @@ import { useAction } from "../../context/ActionProvider";
 import AvatarDialog from "../../components/avatarDialog/AvatarDialog";
 import { useToast } from "../../components/toast/Toast";
 import { useAdmin } from "../../context/AdminProvider";
+import { useSettings } from "../../context/SettingProcider";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -138,21 +139,16 @@ const Profile: React.FC<{ userId?: string }> = () => {
   const [openAvatarDialog, setOpenAvatarDialog] = useState(false);
 
   // ── Settings state ──
-  const [darkMode, setDarkMode] = useState(() =>
-    document.documentElement.classList.contains("dark"),
-  );
-  const [notifBids, setNotifBids] = useState(true);
-  const [notifItems, setNotifItems] = useState(true);
-  const [notifRatings, setNotifRatings] = useState(true);
+  const { settings, changeSetting } = useSettings();
 
   function handleDarkMode(val: boolean) {
-    setDarkMode(val);
+    changeSetting("darkMode" ,val);
     document.documentElement.classList.toggle("light", val);
     addToast({
       type: "info",
       title: val ? "Dark mode enabled" : "Light mode enabled",
       message: "Your display preference has been saved.",
-      duration: 3000,
+      duration: 2000,
     });
   }
 
@@ -178,7 +174,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
         description: "Switch between light and dark theme",
         icon: Moon01,
         iconColor: styles.iconPurple,
-        right: <Toggle checked={darkMode} onChange={handleDarkMode} />,
+        right: <Toggle checked={settings.darkMode} onChange={handleDarkMode} />,
       },
     ],
 
@@ -188,21 +184,45 @@ const Profile: React.FC<{ userId?: string }> = () => {
         description: "Get notified when bids are placed, accepted or rejected",
         icon: Bell01,
         iconColor: styles.iconBlue,
-        right: <Toggle checked={notifBids} onChange={setNotifBids} />,
+        right: <Toggle checked={settings.showBidAlert} onChange={(val: boolean) => {
+          changeSetting("showBidAlert", val);
+          addToast({
+            type: "info",
+            title: val ? "Bid Alerts turned on" : "Bid Alerts turned off",
+            message: "Your display preference has been saved.",
+            duration: 2000,
+          });
+        }} />,
       },
       {
         label: "Item Updates",
         description: "Notifications for your listing activity",
         icon: Bell01,
         iconColor: styles.iconTeal,
-        right: <Toggle checked={notifItems} onChange={setNotifItems} />,
+        right: <Toggle checked={settings.showItemUpdates} onChange={(val: boolean) => {
+          changeSetting("showItemUpdates", val);
+          addToast({
+            type: "info",
+            title: val ? "Item Updates turned on" : "Item Updates turned off",
+            message: "Your display preference has been saved.",
+            duration: 2000,
+          });
+        }} />,
       },
       {
         label: "Rating Notifications",
         description: "Know when someone leaves you a rating",
         icon: Star01,
         iconColor: styles.iconAmber,
-        right: <Toggle checked={notifRatings} onChange={setNotifRatings} />,
+        right: <Toggle checked={settings.showRatingNotification} onChange={(val: boolean) => {
+          changeSetting("showRatingNotification", val);
+          addToast({
+            type: "info",
+            title: val ? "Rating Notifications turned on" : "Rating Notifications turned off",
+            message: "Your display preference has been saved.",
+            duration: 2000,
+          });
+        }} />,
       },
     ],
   };
@@ -312,7 +332,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
                           type: "info",
                           title: "Switched to normal user",
                           message: "Admin privileges are turned off.",
-                          duration: 4000,
+                          duration: 2000,
                         });
                       }}
                     >
@@ -326,7 +346,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
                           type: "info",
                           title: "Switched to Admin",
                           message: "Admin privileges are active.",
-                          duration: 4000,
+                          duration: 2000,
                         });
                       }}
                     >
