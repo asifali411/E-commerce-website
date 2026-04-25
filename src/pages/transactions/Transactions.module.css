@@ -72,8 +72,11 @@
 }
 
 .roleBtn {
+  width: 50%;
   display: flex;
   align-items: center;
+  justify-content: center;
+  text-wrap: nowrap;
   gap: 6px;
   padding: 7px 14px;
   font-size: 13px;
@@ -547,5 +550,34 @@
     position: absolute;
     top: 12px;
     right: 12px;
+  }
+}
+
+@media (max-width: 468px) {
+  .rowTitle {
+    max-width: 200px;
+  }
+
+  .rowStatsGroup {
+    justify-content: space-around;
+    gap: 0px;
+  }
+
+  .roleChip, .rowChevron {
+    display: none;
+  }
+}
+
+@media (max-width: 369px) {
+  .page {
+    padding: 12px;
+  }
+
+  .tab {
+    font-size: 11px;
+  }
+
+  .roleSwitcher {
+    width: 100%;
   }
 }

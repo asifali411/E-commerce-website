@@ -17,6 +17,8 @@ import AvatarDialog from "../../components/avatarDialog/AvatarDialog";
 import { useToast } from "../../components/toast/Toast";
 import { useAdmin } from "../../context/AdminProvider";
 import { useDarkMode, useSettings } from "../../context/SettingProcider";
+import { useNavigate } from "react-router-dom";
+import Dialog from "../../components/dialog/Dialog";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -123,6 +125,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
   const { updateAvatar } = useAction();
   const { addToast } = useToast();
   const { isAdmin, setAdmin } = useAdmin();
+  const navigate = useNavigate();
 
   const memberSinceDate = new Date(user?.member_since!);
   const memberSinceFormatted = memberSinceDate.toLocaleDateString("en-IN", {
@@ -137,6 +140,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
       : "active";
 
   const [openAvatarDialog, setOpenAvatarDialog] = useState(false);
+  const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 
   // ── Settings state ──
   const { settings, changeSetting } = useSettings();
@@ -153,9 +157,11 @@ const Profile: React.FC<{ userId?: string }> = () => {
     });
   }
 
-  function handleLogout() {
-    logout?.();
-  }
+  const handleLogout = (): void => {
+    logout();
+    setOpenLogoutDialog(false);
+    navigate("/");
+  };
 
   // --- Settings -----------------------------------------------------------------
 
@@ -448,8 +454,20 @@ const Profile: React.FC<{ userId?: string }> = () => {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={openLogoutDialog}
+        title="Log out"
+        description="Are you sure you want to log out?"
+        confirmLabel="Log out"
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleLogout}
+        onCancel={() => setOpenLogoutDialog(false)}
+        customIcon={<LogOut01 size={16} />}
+      />
     </div>
   );
-};;
+};
 
 export default Profile;

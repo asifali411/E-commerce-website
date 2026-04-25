@@ -533,6 +533,18 @@
   }
 }
 
+@media (max-width: 468px) {
+  .tabs {
+    display: none;
+  }
+}
+
+@media (max-width: 369px) {
+  .page {
+    padding: 12px;
+  }
+}
+
 /* ── Empty state ──────────────────────────────────────────── */
 .empty {
   display: flex;
