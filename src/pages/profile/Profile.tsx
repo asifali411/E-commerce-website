@@ -16,7 +16,7 @@ import { useAction } from "../../context/ActionProvider";
 import AvatarDialog from "../../components/avatarDialog/AvatarDialog";
 import { useToast } from "../../components/toast/Toast";
 import { useAdmin } from "../../context/AdminProvider";
-import { useSettings } from "../../context/SettingProcider";
+import { useDarkMode, useSettings } from "../../context/SettingProcider";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -140,10 +140,11 @@ const Profile: React.FC<{ userId?: string }> = () => {
 
   // ── Settings state ──
   const { settings, changeSetting } = useSettings();
+  const { setTheme } = useDarkMode();
 
   function handleDarkMode(val: boolean) {
     changeSetting("darkMode" ,val);
-    document.documentElement.classList.toggle("light", val);
+    setTheme(val ? "dark" : "light");
     addToast({
       type: "info",
       title: val ? "Dark mode enabled" : "Light mode enabled",
@@ -412,8 +413,8 @@ const Profile: React.FC<{ userId?: string }> = () => {
           </div>
 
           {/* Notifications */}
-          <div className={styles.settingsGroup}>
-            <p className={styles.settingsGroupLabel}>Notifications</p>
+          <div className={`${styles.settingsGroup} ${styles.commingSoon}`}>
+            <p className={styles.settingsGroupLabel}>Notifications - (comming soon)</p>
             {SETTINGS.notifications.map((setting) => (
               <SettingRow
                 key={crypto.randomUUID()}
@@ -424,6 +425,8 @@ const Profile: React.FC<{ userId?: string }> = () => {
                 right={setting.right}
               />
             ))}
+
+            <div className={styles.commingSoonOverlay} title="comming soon" />
           </div>
 
           {/* Logout */}
