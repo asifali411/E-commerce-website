@@ -73,6 +73,8 @@ export default function ItemCard({
           <img
             src={`/api/${item.images[0].image_path}`}
             className={styles.cardImage}
+            alt={item.title}
+            loading="lazy"
           ></img>
         )}
 

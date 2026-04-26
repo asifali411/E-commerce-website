@@ -39,24 +39,18 @@ export default function ReportDialog({ itemId, onClose }: ReportDialogProps) {
     setStatus("loading");
     setErrorMessage(null);
 
-    try {
-      const res = await reportItem(itemId, data);
-      //@ts-expect-error
-      if(res.error_code){
-        setStatus("error");
-        addToast({
-          type: "error",
-          title: "Failed to report item",
-          //@ts-expect-error
-          message: res.message,
-          duration: 4000,
-        });
-      } else {
-        setStatus("success");
-      }
-    } catch {
+    const res = reportItem(itemId, data);
+
+    if(!res) {
       setStatus("error");
-      setErrorMessage("Something went wrong. Please try again.");
+      addToast({
+        type: "error",
+        title: "Failed to report item",
+        message: "Something went wrong. Please try again later.",
+        duration: 4000,
+      });
+    } else {
+      setStatus("success");
     }
   };
 

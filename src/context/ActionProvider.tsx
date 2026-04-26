@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
 import { api } from "./AuthProvider";
 import type {
   BidHistoryResponse,
@@ -20,15 +20,15 @@ import type {
 } from "../global/request";
 
 interface ActionContextType {
-  fetchFeed: (skip?: number, limit?: number) => Promise<ItemResponse[]>;
+  fetchFeed: (skip?: number, limit?: number) => Promise<ItemResponse[] | [] | null>;
   fetchSearchItems: (params: {
     search?: string;
     categories?: ItemCategory[];
     skip?: number;
     limit?: number;
-  }) => Promise<ItemResponse[]>;
-  fetchSelledItems: (skip?: number, limit?: number) => Promise<ItemResponse[]>;
-  fetchBids: (skip?: number, limit?: number) => Promise<BidHistoryResponse[]>;
+  }) => Promise<ItemResponse[] | [] | null>;
+  fetchSelledItems: (skip?: number, limit?: number) => Promise<ItemResponse[] | [] | null>;
+  fetchBids: (skip?: number, limit?: number) => Promise<BidHistoryResponse[] | [] | null>;
   fetchItem: (id: number) => Promise<UniqueItemResponse | null>;
   createItem: (data: ItemCreate) => Promise<CreateItemResponse | null>;
   updateItem: (id: number, data: ItemUpdate) => Promise<string>;
@@ -44,12 +44,12 @@ interface ActionContextType {
   deleteBid: (bidId: number) => Promise<boolean>;
 
   // Transactions
-  fetchSellerTransactions: () => Promise<SellerTransactionResponse[]>;
-  fetchBuyerTransactions: () => Promise<BuyerTransactionResponse[]>;
+  fetchSellerTransactions: () => Promise<SellerTransactionResponse[] | [] | null>;
+  fetchBuyerTransactions: () => Promise<BuyerTransactionResponse[] | [] | null>;
   createTransaction: (itemId: number, bidId: number) => Promise<boolean>;
 
   // Ratings
-  fetchMyRatings: () => Promise<RatingResponse[]>;
+  fetchMyRatings: () => Promise<RatingResponse[] | [] | null>;
   updateRating: (ratingId: number, score: number) => Promise<boolean>;
 
   // Reports
@@ -70,109 +70,165 @@ export const useAction = () => {
   return context;
 };
 
+// --- Helpers ------------------------------------------------
+
+interface ErrorType {
+  error_code: number;
+  message: string;
+}
+
+async function handleRequest_GET<T>(
+  url: string,
+  config?: any,
+): Promise<T | [] | null> {
+  try {
+    const res = await api.get<T | ErrorType>(url, config);
+    const data = res.data;
+
+    if (typeof data === "object" && data !== null && "error_code" in data) {
+      if (data.error_code === 404) return [];
+
+      console.error(data.message);
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+
+async function handleRequest_POST<T>(
+  url: string,
+  data?: any,
+  config?: any,
+): Promise<T | [] | null> {
+  try {
+    const res = await api.post<T | ErrorType>(url, data, config);
+    const responseData = res.data;
+
+    if (typeof responseData === "object" && responseData !== null && "error_code" in responseData) {
+      console.error(responseData.message);
+      return responseData.error_code === 404 ? [] : null;
+    }
+
+    return responseData;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+
+async function handleRequest_PATCH<T>(
+  url: string,
+  data?: any,
+  config?: any,
+): Promise<T | [] | null> {
+  try {
+    const res = await api.patch<T | ErrorType>(url, data, config);
+    const responseData = res.data;
+
+    if (typeof responseData === "object" && responseData !== null && "error_code" in responseData) {
+      console.error(responseData.message);
+      return responseData.error_code === 404 ? [] : null;
+    }
+
+    return responseData;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+
+
 // --- Provider -----------------------------------------------
 export const ActionProvider = ({ children }: { children: ReactNode }) => {
 
   // --- Items ------------------------------------------------
 
-  const fetchFeed = async (skip = 0, limit = 10): Promise<ItemResponse[]> => {
-    try {
-      const res = await api.get<ItemResponse[]>("/items/feed", {
+  const fetchFeed = useCallback(
+    async (skip = 0, limit = 10): Promise<ItemResponse[] | [] | null> => {
+      return await handleRequest_GET("/items/feed", {
         params: { skip, limit },
       });
-      return Array.isArray(res.data) ? res.data : [];
-    } catch (error) {
-      console.error("fetchFeed failed:", error);
-      return [];
-    }
-  };
+    }, []);
 
-  const fetchSearchItems = async ({
-    search,
-    categories,
-    skip = 0,
-    limit = 10,
-  }: {
-    search?: string;
-    categories?: ItemCategory[];
-    skip?: number;
-    limit?: number;
-  }): Promise<ItemResponse[]> => {
-    try {
-      const res = await api.get<ItemResponse[]>("/items/search", {
+  const fetchSearchItems = useCallback(
+    async ({
+      search,
+      categories,
+      skip = 0,
+      limit = 10,
+    }: {
+      search?: string;
+      categories?: ItemCategory[];
+      skip?: number;
+      limit?: number;
+    }): Promise<ItemResponse[] | [] | null> => {
+      return handleRequest_GET("/items/search", {
         params: { search, categories, skip, limit },
       });
-      return Array.isArray(res.data) ? res.data : [];
-    } catch (error) {
-      console.error("fetchSearchItems failed:", error);
-      return [];
-    }
-  };
+    }, []);
 
-  const fetchSelledItems = async (
+  const fetchSelledItems = useCallback(async (
     skip = 0,
     limit = 10,
-  ): Promise<ItemResponse[]> => {
-    try {
-      const res = await api.get<ItemResponse[]>("/items/selled-items", {
-        params: { skip, limit },
-      });
-      return Array.isArray(res.data) ? res.data : [];
-    } catch (error) {
-      console.error("fetchSelledItems failed:", error);
-      return [];
-    }
-  };
+  ): Promise<ItemResponse[] | [] | null> => {
+    return await handleRequest_GET<ItemResponse[]>("/items/selled-items", {
+      params: {skip, limit},
+    });
+  }, []);
 
-  const fetchBids = async (
+  const fetchBids = useCallback(async (
     skip = 0,
     limit = 10,
-  ): Promise<BidHistoryResponse[]> => {
-    try {
-      const res = await api.get<BidHistoryResponse[]>("/items/bided-items", {
-        params: { skip, limit },
-      });
-      return Array.isArray(res.data) ? res.data : [];
-    } catch (error) {
-      console.error("fetchBidedItems failed:", error);
-      return [];
-    }
-  };
+  ): Promise<BidHistoryResponse[] | [] | null> => {
+    return await handleRequest_GET<BidHistoryResponse[]>("/items/bided-items", {
+      params: { skip, limit },
+    });
+  }, []);
 
-  const fetchItem = async (id: number): Promise<UniqueItemResponse | null> => {
+  const fetchItem = useCallback(async (id: number): Promise<UniqueItemResponse | null> => {
     try {
-      const res = await api.get<UniqueItemResponse>(`/items/${id}`);
-      return res.data;
-    } catch (error) {
-      console.error("fetchItem failed:", error);
-      return null;
-    }
-  };
+      const res = await api.get<UniqueItemResponse | ErrorType | null>(`/items/${id}`);
+      const data = res.data;
 
-  const createItem = async (data: ItemCreate): Promise<CreateItemResponse | null> => {
-    try {
-      const res = await api.post("/items/create", data);
-      if(res.status === 200){
-        return res.data;
+      if(!res || !data) return null;
+
+      if (typeof data === "object" && data !== null && "error_code" in data) {
+        console.error(data.message);
+        return null;
       }
+
+      return data;
+    } catch (err) {
+      console.error(err);
       return null;
+    }
+  }, []);
+
+  const createItem = useCallback(async (data: ItemCreate): Promise<CreateItemResponse | null> => {
+    try {
+      const result = await handleRequest_POST<CreateItemResponse>("/items/create", data);
+      return result as CreateItemResponse | null;
     } catch (error) {
       console.error("createItem failed:", error);
       return null;
     }
-  };
+  }, []);
 
-  const updateItem = async (id: number, data: ItemUpdate): Promise<string> => {
+  const updateItem = useCallback(async (id: number, data: ItemUpdate): Promise<string> => {
     try {
-      const res = await api.patch<string>(`/items/${id}`, data);
-      return res.data;
+      const result = await handleRequest_PATCH<string>(`/items/${id}`, data);
+      return (result as string) ?? "";
     } catch (error) {
       console.error("updateItem failed:", error);
       return "";
     }
-  };
+  }, []);
 
-  const deleteItem = async (id: number): Promise<boolean> => {
+  const deleteItem = useCallback(async (id: number): Promise<boolean> => {
     try {
       await api.delete(`/items/${id}`);
       return true;
@@ -180,11 +236,11 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       console.error("deleteItem failed:", error);
       return false;
     }
-  };
+  }, []);
 
   // --- Images -----------------------------------------------
 
-  const uploadImage = async (itemId: number, file: File): Promise<boolean> => {
+  const uploadImage = useCallback(async (itemId: number, file: File): Promise<boolean> => {
     try {
       const formData = new FormData();
       formData.append("image", file);
@@ -196,9 +252,9 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       console.error("uploadImage failed:", error);
       return false;
     }
-  };
+  }, []);
 
-  const deleteImage = async (imageId: number): Promise<boolean> => {
+  const deleteImage = useCallback(async (imageId: number): Promise<boolean> => {
     try {
       await api.delete(`/images/${imageId}`);
       return true;
@@ -206,27 +262,24 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       console.error("deleteImage failed:", error);
       return false;
     }
-  };
+  }, []);
 
   // --- Bids -------------------------------------------------
 
-  const createBid = async (
+  const createBid = useCallback(async (
     itemId: number,
     data: BidCreate,
   ): Promise<boolean> => {
     try {
       const res = await api.post(`/bids/${itemId}`, data);
-      if(res.status === 200){
-        return true;
-      }
-      return false;
+      return res.status === 200;
     } catch (error) {
       console.error("createBid failed:", error);
       return false;
     }
-  };
+  }, []);
 
-  const updateBid = async (
+  const updateBid = useCallback(async (
     bidId: number,
     data: BidUpdate,
   ): Promise<boolean> => {
@@ -237,9 +290,9 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       console.error("updateBid failed:", error);
       return false;
     }
-  };
+  }, []);
 
-  const deleteBid = async (bidId: number): Promise<boolean> => {
+  const deleteBid = useCallback(async (bidId: number): Promise<boolean> => {
     try {
       await api.delete(`/bids/${bidId}`);
       return true;
@@ -247,41 +300,23 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       console.error("deleteBid failed:", error);
       return false;
     }
-  };
+  }, []);
 
   // --- Transactions -----------------------------------------
 
-  const fetchSellerTransactions = async (): Promise<
-    SellerTransactionResponse[]
+  const fetchSellerTransactions = useCallback(async (): Promise<
+    SellerTransactionResponse[] | [] | null
   > => {
-    try {
-      const res = await api.get<SellerTransactionResponse[]>(
-        "/transactions/my-selled-transactions",
-      );
-      return Array.isArray(res.data) ? res.data : [];
-    } catch (error: unknown) {
-      //@ts-expect-error
-      if (error?.response?.status === 404) return [];
-      console.error("fetchSellerTransactions failed:", error);
-      return [];
-    }
-  };
+    return await handleRequest_GET("/transactions/my-selled-transactions");
+  }, []);
 
-  const fetchBuyerTransactions = async (): Promise<
-    BuyerTransactionResponse[]
+  const fetchBuyerTransactions = useCallback(async (): Promise<
+    BuyerTransactionResponse[] | [] | null
   > => {
-    try {
-      const res = await api.get<BuyerTransactionResponse[]>(
-        "/transactions/my-buyed-transactions",
-      );
-      return Array.isArray(res.data) ? res.data : [];
-    } catch (error) {
-      console.error("fetchBuyerTransactions failed:", error);
-      return [];
-    }
-  };
+    return await handleRequest_GET("/transactions/my-buyed-transactions");
+  }, []);
 
-  const createTransaction = async (
+  const createTransaction = useCallback(async (
     itemId: number,
     bidId: number,
   ): Promise<boolean> => {
@@ -292,21 +327,15 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       console.error("createTransaction failed:", error);
       return false;
     }
-  };
+  }, []);
 
   // --- Ratings ----------------------------------------------
 
-  const fetchMyRatings = async (): Promise<RatingResponse[]> => {
-    try {
-      const res = await api.get<RatingResponse[]>("/ratings/my-ratings");
-      return Array.isArray(res.data) ? res.data : [];
-    } catch (error) {
-      console.error("fetchMyRatings failed:", error);
-      return [];
-    }
-  };
+  const fetchMyRatings = useCallback(async (): Promise<RatingResponse[] | [] | null> => {
+    return await handleRequest_GET("/ratings/my-ratings");
+  }, []);
 
-  const updateRating = async (
+  const updateRating = useCallback(async (
     ratingId: number,
     score: number,
   ): Promise<boolean> => {
@@ -317,29 +346,26 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       console.error("updateRating failed:", error);
       return false;
     }
-  };
+  }, []);
 
   // --- Reports ----------------------------------------------
 
-  const reportItem = async (
+  const reportItem = useCallback(async (
     itemId: number,
     data: ReportCreate,
   ): Promise<ReportResponse | null> => {
     try {
-      const res = await api.post(`/reports/${itemId}`, data);
-      if(res.status === 200){
-        return res.data;
-      }
-      return null;
+      const result = await handleRequest_POST<ReportResponse>(`/reports/${itemId}`, data);
+      return result as ReportResponse | null;
     } catch (error) {
       console.error("reportItem failed:", error);
       return null;
     }
-  };  
+  }, []);
 
   // --- Profile ----------------------------------------------
 
-  const updateAvatar = async (image: File): Promise<boolean> => {
+  const updateAvatar = useCallback(async (image: File): Promise<boolean> => {
     try {
       const formData = new FormData();
       formData.append("image", image);
@@ -351,39 +377,40 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       console.error("updateAvatar failed:", error);
       return false;
     }
-  };
+  }, []);
 
-  const value: ActionContextType = {
-    // fetch
-    fetchFeed,
-    fetchSearchItems,
-    fetchSelledItems,
-    fetchBids,
-    fetchItem,
-    fetchSellerTransactions,
-    fetchBuyerTransactions,
-    fetchMyRatings,
+  const value = useMemo(
+    () => ({
+      // fetch
+      fetchFeed,
+      fetchSearchItems,
+      fetchSelledItems,
+      fetchBids,
+      fetchItem,
+      fetchSellerTransactions,
+      fetchBuyerTransactions,
+      fetchMyRatings,
 
-    // create
-    createItem,
-    createBid,
-    createTransaction,
+      // create
+      createItem,
+      createBid,
+      createTransaction,
 
-    // update
-    updateItem,
-    updateBid,
-    updateRating,
-    updateAvatar,
+      // update
+      updateItem,
+      updateBid,
+      updateRating,
+      updateAvatar,
 
-    // delete
-    deleteItem,
-    deleteImage,
-    deleteBid,
+      // delete
+      deleteItem,
+      deleteImage,
+      deleteBid,
 
-    // other
-    uploadImage,
-    reportItem,
-  };
+      // other
+      uploadImage,
+      reportItem,
+  }), []);
 
   return (
     <ActionContext.Provider value={value}>{children}</ActionContext.Provider>

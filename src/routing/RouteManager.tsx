@@ -6,28 +6,30 @@ import {
   useLocation,
 } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { lazy } from "react";
 
 import Nav from "../components/nav/Nav";
-import Home from "../pages/home/Home";
-import MyListings from "../pages/myListings/MyListings";
-import MyBids from "../pages/myBids/MyBids";
-import Transactions from "../pages/transactions/Transactions";
-import Ratings from "../pages/ratings/Ratings";
-import Notifications from "../pages/notifications/Notifications";
-import Login from "../pages/login/Login";
-import SignUp from "../pages/signup/SignUp";
-import ItemDetail from "../pages/itemDetail/ItemDetail";
-import CreateItem from "../pages/createItem/CreateItem";
-import Profile from "../pages/profile/Profile";
-import EditItem from "../pages/editItem/EditItem";
 
-import ForgotPassword from "../pages/forgotPassword/ForgotPassword";
+const Home = lazy(() => import("../pages/home/Home"));
+const MyListings = lazy(() => import("../pages/myListings/MyListings"));
+const MyBids = lazy(() => import("../pages/myBids/MyBids"));
+const Transactions = lazy(() => import("../pages/transactions/Transactions"));
+const Ratings = lazy(() => import("../pages/ratings/Ratings"));
+const Notifications = lazy(() => import("../pages/notifications/Notifications"));
+const Login = lazy(() => import("../pages/login/Login"));
+const SignUp = lazy(() => import("../pages/signup/SignUp"));
+const ItemDetail = lazy(() => import("../pages/itemDetail/ItemDetail"));
+const CreateItem = lazy(() => import("../pages/createItem/CreateItem"));
+const Profile = lazy(() => import("../pages/profile/Profile"));
+const EditItem = lazy(() => import("../pages/editItem/EditItem"));
 
-import Error404 from "../pages/error/error404/Error404";
-import Error500 from "../pages/error/error500/Error500";
+const ForgotPassword = lazy(() => import("../pages/forgotPassword/ForgotPassword"));
 
-import AdminPanel from "../pages/adminPanel/AdminPanel";
-import ReportItemDetail from "../pages/reportItemDetail/ReportItemDetail";
+const Error404 = lazy(() => import("../pages/error/error404/Error404"));
+const Error500 = lazy(() => import("../pages/error/error500/Error500"));
+
+const AdminPanel = lazy(() => import("../pages/adminPanel/AdminPanel"));
+const ReportItemDetail = lazy(() => import("../pages/reportItemDetail/ReportItemDetail"));
 
 function PageWrapper({ children }: any) {
   return (

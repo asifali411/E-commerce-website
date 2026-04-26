@@ -248,10 +248,12 @@ export default function Transactions() {
 
   useEffect(() => {
     fetchBuyerTransactions().then((data) => {
+      if(!data) return;
       setBuyerTxs(data);
       setLoadingBuyer(false);
     });
     fetchSellerTransactions().then((data) => {
+      if(!data) return;
       setSellerTxs(data);
       setLoadingSeller(false);
     });

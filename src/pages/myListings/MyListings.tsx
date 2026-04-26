@@ -171,6 +171,7 @@ export default function MyListings() {
       try {
         if (isAuthenticated) {
           const items = await fetchSelledItems(0, 50);
+          if(!items) return;
           setListings(items);
         }
       } finally {

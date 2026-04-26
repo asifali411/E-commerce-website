@@ -173,21 +173,10 @@ export default function CreateItem({
         addToast({
           type: "error",
           title: isAuthenticated ? "Failed to create Item" : "You are logged out.",
-          message: isAuthenticated ? "Please try again later." : "Please login to continue.",
+          message: isAuthenticated ? "Something went wrong. Please try again later." : "Please login to continue.",
           duration: 4000,
         });
         setLoading(false);
-        return;
-      }
-
-      //@ts-expect-error
-      if(res.error_code) {
-        addToast({
-          type: "error",
-          title: "Failed to create Item",
-          message: res.message,
-          duration: 4000,
-        });
         return;
       }
 
@@ -195,7 +184,6 @@ export default function CreateItem({
         uploadImage(res.id, file);
       }
 
-      // onSuccess?.(item);
       addToast({
         type: "success",
         title: "Item created successfully",

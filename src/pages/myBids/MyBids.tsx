@@ -203,6 +203,7 @@ export default function MyBids() {
         try {
           if (isAuthenticated) {
             const items = await fetchBids(0, 50);
+            if(!items) return;
             setBidings(items);
           }
         } finally {

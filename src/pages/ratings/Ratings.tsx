@@ -248,6 +248,7 @@ export default function Ratings() {
     (async () => {
       setLoading(true);
       const data = await fetchMyRatings();
+      if(!data) return;
       setRatings(data);
       setLoading(false);
     })();

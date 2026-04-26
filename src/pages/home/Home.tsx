@@ -43,6 +43,7 @@ export default function Home() {
     setLoadmoreLoading(true);
     const nextPage = page + 1;
     const newItems = await fetchFeed(nextPage * 10, 10);
+    if(!newItems) return;
     setItems((prev) => [...prev, ...newItems]);
     setPage(nextPage);
     setLoadmoreLoading(false);
@@ -53,6 +54,7 @@ export default function Home() {
       try {
         setLoading(true);
         const data = await fetchFeed(0, 10);
+        if(!data) return;
 
         const map = new Map();
         data.forEach((item) => {
@@ -89,6 +91,7 @@ export default function Home() {
       setLoading(true);
 
       const data = search.length > 0 ? await fetchSearchItems({search: search}) : await fetchFeed(0, 10);
+      if(!data) return;
 
       const map = new Map();
       data.forEach((item) => {
