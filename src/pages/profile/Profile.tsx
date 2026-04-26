@@ -440,7 +440,7 @@ const Profile: React.FC<{ userId?: string }> = () => {
             className={`${styles.settingsGroup} ${styles.settingsGroupDanger}`}
           >
             <p className={styles.settingsGroupLabel}>Account</p>
-            <button className={styles.logoutBtn} onClick={handleLogout}>
+            <button className={styles.logoutBtn} onClick={() => setOpenLogoutDialog(true)}>
               <span className={`${styles.settingIcon} ${styles.iconRed}`}>
                 <LogOut01 size={16} />
               </span>

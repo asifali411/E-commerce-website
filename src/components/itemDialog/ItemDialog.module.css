@@ -27,6 +27,7 @@
   padding: 1rem;
   width: 100%;
   max-width: 880px;
+  min-width: 0;
   max-height: 88vh;
   overflow: hidden;
   display: flex;
@@ -116,7 +117,7 @@
 .content {
   display: grid;
   grid-template-columns: 290px 1fr;
-  overflow: hidden;
+  overflow-x: hidden;
   flex: 1;
   min-height: 0;
 }
@@ -331,7 +332,6 @@
 .right {
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   min-height: 0;
   background: var(--color-surface);
 }

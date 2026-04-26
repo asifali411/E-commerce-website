@@ -132,10 +132,8 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
   }, [toast.id, onRemove]);
 
   useEffect(() => {
-    // Trigger enter animation
     const enterTimer = setTimeout(() => setState("visible"), 10);
 
-    // Auto-dismiss
     timerRef.current = setTimeout(startLeave, duration);
 
     return () => {

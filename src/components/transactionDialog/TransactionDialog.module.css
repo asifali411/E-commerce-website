@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   z-index: 100;
-  padding: 24px;
+  padding: 16px;
   animation: fadeIn 0.15s ease;
 }
 
@@ -21,12 +21,13 @@
 .dialog {
   position: relative;
   width: 100%;
+  min-width: 0;
   max-width: 480px;
   background: var(--color-surface);
   border: 1px solid var(--color-card-border);
   border-radius: calc(var(--border-radius) + 4px);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
-  overflow: hidden;
+  overflow-x: hidden;
   animation: slideUp 0.18s ease;
   padding: 1rem;
 }
@@ -64,10 +65,11 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  padding: 20px 20px 16px;
   border-bottom: 1px solid var(--color-card-border);
   background: var(--color-card);
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 14px 12px;
 }
 
 .dialogHeaderLeft {
@@ -319,4 +321,109 @@
 .conditionHeavy {
   background: color-mix(in srgb, var(--color-warning) 12%, transparent);
   color: var(--color-warning);
+}
+
+/* ── Responsive ─────────────────────────── */
+@media (max-width: 480px) {
+  .dialogHeader {
+    padding: 14px 14px 12px;
+  }
+
+  .section {
+    padding: 12px 14px;
+  }
+
+  .detailRow {
+    grid-template-columns: 18px 80px 1fr;
+    gap: 6px;
+  }
+
+  .dialog {
+    max-height: 80vh;
+    margin-bottom: 4rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .backdrop {
+    padding: 8px;
+  }
+
+  .dialog {
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+  }
+
+  .dialogHeader {
+    padding: 12px 12px 10px;
+    gap: 6px;
+  }
+
+  .dialogHeaderLeft {
+    gap: 8px;
+  }
+
+  .itemThumb {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dialogTitle {
+    font-size: 13px;
+    padding-right: 28px;
+  }
+
+  .section {
+    padding: 10px 12px;
+  }
+
+  /* Stack icon + label above value on very narrow screens */
+  .detailRow {
+    grid-template-columns: 18px 1fr;
+    grid-template-rows: auto auto;
+    row-gap: 1px;
+  }
+
+  .detailValue {
+    grid-column: 2;
+    font-size: 12px;
+  }
+
+  .detailLabel {
+    font-size: 11px;
+  }
+
+  .priceValue {
+    font-size: 13px;
+  }
+
+  .counterpartyCard {
+    padding: 8px 10px;
+  }
+
+  .counterpartyAvatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .counterpartyName {
+    font-size: 13px;
+  }
+
+  .sectionTitle {
+    font-size: 9px;
+    margin-bottom: 10px;
+  }
+
+  .statusBadge {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  .closeBtn {
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+  }
 }

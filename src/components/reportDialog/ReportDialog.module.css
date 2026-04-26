@@ -30,7 +30,7 @@
   width: 100%;
   max-width: 880px;
   max-height: 88vh;
-  overflow: hidden;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   box-shadow:

@@ -298,7 +298,6 @@ export default function CreateItem({
                     id="item-price"
                     type="number"
                     min={0}
-                    step="0.01"
                     className={`${styles.input} ${styles.inputWithPrefix} ${errors.min_price ? styles.inputError : ""}`}
                     placeholder="0.00"
                     value={minPrice}

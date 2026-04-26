@@ -358,7 +358,7 @@
     border: none;
     cursor: pointer;
     font-family: inherit;
-    color: var(--color-grey-400);
+    color: var(--color-grey-500);
 
     transition: color 0.15s ease;
     text-decoration: none;

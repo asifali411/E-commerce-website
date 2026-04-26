@@ -225,3 +225,13 @@
     transform: translateY(calc(100% + 24px));
   }
 }
+
+@media (max-width: 640px) {
+  .container {
+    top: 24px;
+  }
+
+  .close, .icon {
+    margin-block: auto;
+  }
+}

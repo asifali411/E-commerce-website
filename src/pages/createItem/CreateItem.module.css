@@ -166,7 +166,6 @@
 
 .input::-webkit-inner-spin-button { opacity: 0.5; }
 
-
 .charRow {
   display: flex;
   justify-content: space-between;
@@ -183,7 +182,6 @@
   color: var(--color-warning);
   font-weight: 600;
 }
-
 
 .twoCol {
   display: grid;

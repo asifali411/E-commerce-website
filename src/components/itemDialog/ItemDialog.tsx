@@ -257,8 +257,8 @@ export default function ItemDialog({
 
   if (itemId == null) return null;
 
-  const pendingBids = item?.bids.filter((b) => b.status === "Pending") ?? [];
-  const otherBids = item?.bids.filter((b) => b.status !== "Pending") ?? [];
+  const pendingBids = item?.bids?.filter((b) => b.status === "Pending") ?? [];
+  const otherBids = item?.bids?.filter((b) => b.status !== "Pending") ?? [];
   const isSold = item?.status === "Sold";
 
   return (
