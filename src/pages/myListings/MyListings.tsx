@@ -8,7 +8,7 @@ import {
   CheckCircle,
   Users01,
   Tag01,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import styles from "./MyListings.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import type { ItemResponse } from "../../global/schema";

@@ -6,7 +6,7 @@ import {
   Car01,
   ShoppingCart02,
   WatchCircle
-} from "@untitledui/icons";
+} from "./icons";
 
 // ------ Variables ------------------------------------------------------
 export let navExpanded = false;

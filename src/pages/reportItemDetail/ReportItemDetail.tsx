@@ -9,7 +9,7 @@ import type {
 import Spinner from "../../components/spinner/Spinner";
 import { useToast } from "../../components/toast/Toast";
 import { useAdmin } from "../../context/AdminProvider";
-import { Trash01 } from "@untitledui/icons";
+import { Trash01 } from "../../global/icons";
 import Dialog from "../../components/dialog/Dialog";
 
 // ── Sub-components ─────────────────────────────────────────────────────────

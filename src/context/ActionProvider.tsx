@@ -410,7 +410,32 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
       // other
       uploadImage,
       reportItem,
-  }), []);
+    }),
+    
+    // below deps is not neccessarily needed, but it makes linter happy :D
+     [
+      fetchFeed,
+      fetchSearchItems,
+      fetchSelledItems,
+      fetchBids,
+      fetchItem,
+      fetchSellerTransactions,
+      fetchBuyerTransactions,
+      fetchMyRatings,
+      createItem,
+      createBid,
+      createTransaction,
+      updateItem,
+      updateBid,
+      updateRating,
+      updateAvatar,
+      deleteItem,
+      deleteImage,
+      deleteBid,
+      uploadImage,
+      reportItem,
+    ],
+  );
 
   return (
     <ActionContext.Provider value={value}>{children}</ActionContext.Provider>

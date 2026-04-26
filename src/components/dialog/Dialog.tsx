@@ -4,7 +4,7 @@ import {
     Trash01,
     AlertTriangle,
     CheckCircleBroken
-} from "@untitledui/icons";
+} from "../../global/icons";
 
 export type DialogVariant = "default" | "danger" | "warning" | "success";
 

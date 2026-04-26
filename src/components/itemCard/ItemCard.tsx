@@ -3,7 +3,7 @@ import {
   Star01,
   Package,
   Flag01,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import styles from "./ItemCard.module.css";
 import { useNavigate } from "react-router-dom";
 import type { ItemCondition } from "../../global/types";

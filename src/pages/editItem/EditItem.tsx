@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./EditItem.module.css";
 import {
   Image01,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import { useToast } from "../../components/toast/Toast";
 import { useNavigate, useParams } from "react-router-dom";
 import type { ItemCategory, ItemCondition } from "../../global/types";

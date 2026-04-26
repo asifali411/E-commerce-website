@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LogIn01, Eye, EyeOff } from "@untitledui/icons";
+import { LogIn01, Eye, EyeOff } from "../../global/icons";
 import styles from "./Login.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import { useToast } from "../../components/toast/Toast";

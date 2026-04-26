@@ -9,7 +9,7 @@ import {
   ArrowRight,
   CurrencyRupee,
   ShoppingBag01,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import styles from "./MyBids.module.css";
 import type { ItemCondition, BidStatus } from "../../global/types";
 import type { BidHistoryResponse } from "../../global/schema";

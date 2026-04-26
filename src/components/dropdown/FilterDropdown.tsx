@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, } from "@untitledui/icons";
+import { ChevronDown, } from "../../global/icons";
 import styles from "./FilterDropdown.module.css";
 import type { ItemCategory } from "../../global/types";
 import { CATEGORIES } from "../../global/var";

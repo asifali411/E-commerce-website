@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SearchLg, ArrowRight } from "@untitledui/icons";
+import { SearchLg, ArrowRight } from "../../global/icons";
 import styles from "./AdminPanel.module.css";
 import ItemCard from "../../components/itemCard/ItemCard";
 import type { AdminItemResponse } from "../../global/schema";

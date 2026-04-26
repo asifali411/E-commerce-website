@@ -4,7 +4,7 @@ import {
   User01,
   LogIn01,
   ArrowRight,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import styles from "./Home.module.css";
 import ItemCard from "../../components/itemCard/ItemCard";
 import type { ItemResponse } from "../../global/schema";

@@ -12,7 +12,7 @@ import {
   Star01,
   LayersThree01,
   AlertCircle,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import styles from "./ItemDialog.module.css";
 import type { BidResponse, ItemImageResponse, UniqueItemResponse } from "../../global/schema";
 import type { ItemCondition } from "../../global/types";

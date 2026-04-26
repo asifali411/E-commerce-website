@@ -6,7 +6,7 @@ import {
   ArrowRight,
   CheckCircle,
   Clock,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import styles from "./Ratings.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import type { RatingResponse } from "../../global/schema";

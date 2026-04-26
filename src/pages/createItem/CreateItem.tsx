@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import styles from "./CreateItem.module.css";
 import {
   Image01
-} from "@untitledui/icons";
+} from "../../global/icons";
 import { useAuth } from "../../context/AuthProvider";
 import { useToast } from "../../components/toast/Toast";
 import { useNavigate } from "react-router-dom";

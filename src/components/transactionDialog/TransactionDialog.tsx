@@ -11,7 +11,7 @@ import {
   ShoppingBag01,
   Hash01,
   CurrencyDollar,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import type {
   SellerTransactionResponse,
   BuyerTransactionResponse,

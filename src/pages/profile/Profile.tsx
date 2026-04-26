@@ -8,7 +8,7 @@ import {
   Moon01,
   Bell01,
   LogOut01,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import styles from "./Profile.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import { useState } from "react";

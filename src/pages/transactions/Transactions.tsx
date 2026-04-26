@@ -8,7 +8,7 @@ import {
   ShoppingBag01,
   Tag01,
   ChevronRight,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import styles from "./Transactions.module.css";
 import type {
   SellerTransactionResponse,

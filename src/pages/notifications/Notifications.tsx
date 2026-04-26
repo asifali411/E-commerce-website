@@ -11,7 +11,7 @@ import {
   CurrencyRupee,
   CheckDone01,
   Tag01,
-} from "@untitledui/icons";
+} from "../../global/icons";
 import styles from "./Notifications.module.css";
 import { useAuth } from "../../context/AuthProvider";
 import type { NotificationResponse } from "../../global/schema";

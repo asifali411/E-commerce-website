@@ -12,8 +12,8 @@ import {
   LogIn01,
   LogOut01,
   User01,
-  Tool02,
-} from "@untitledui/icons";
+  Tool02
+} from "../../global/icons";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import Dialog from "../dialog/Dialog";

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, CheckSquare, Square } from "@untitledui/icons";
+import { ChevronDown, CheckSquare, Square } from "../../global/icons";
 import styles from "./CategoryDropdown.module.css";
 import type { ReportCategory } from "../../global/types";
 
