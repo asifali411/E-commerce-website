@@ -16,7 +16,7 @@ import { useAction } from "../../context/ActionProvider";
 import AvatarDialog from "../../components/avatarDialog/AvatarDialog";
 import { useToast } from "../../components/toast/Toast";
 import { useAdmin } from "../../context/AdminProvider";
-import { useDarkMode, useSettings } from "../../context/SettingProcider";
+import { useDarkMode, useSettings } from "../../context/SettingProvider";
 import { useNavigate } from "react-router-dom";
 import Dialog from "../../components/dialog/Dialog";
 

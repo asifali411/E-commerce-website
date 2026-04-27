@@ -6,7 +6,7 @@ import { AuthProvider } from './context/AuthProvider.tsx'
 import { NotificationProvider } from './context/NotificationProvider.tsx'
 import { ActionProvider } from './context/ActionProvider.tsx'
 import { AdminProvider } from './context/AdminProvider.tsx'
-import { SettingProvider } from './context/SettingProcider.tsx'
+import { SettingProvider } from './context/SettingProvider.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

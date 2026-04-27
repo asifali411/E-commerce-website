@@ -2,6 +2,10 @@
 
 A modern, full-featured e-commerce platform built with React, TypeScript, and Vite. This application provides a seamless shopping experience with real-time bidding, user authentication, and administrative capabilities.
 
+## 🎨 Preview
+
+![Home](./public/screenshots/HomePage.jpeg)
+
 ## 🚀 Features
 
 - **User Authentication**: Secure login and registration system
@@ -55,18 +59,21 @@ src/
 │   ├── logo/                    # Logo component
 │   ├── nav/                     # Navigation bar
 │   ├── reportDialog/            # Report submission dialog
+│   ├── spinner/                 # Spinner loader
 │   ├── toast/                   # Notification toast
 │   └── transactionDialog/       # Transaction details dialog
 ├── context/                     # React Context providers
 │   ├── ActionProvider.tsx       # Global actions
 │   ├── AdminProvider.tsx        # Admin state
 │   ├── AuthProvider.tsx         # Authentication state
-│   └── NotificationProvider.tsx # Notifications
+│   ├── NotificationProvider.tsx # Notifications
+│   └── SettingProvider.tsx      # Settings
 ├── pages/                       # Page components
 │   ├── adminPanel/              # Admin dashboard
 │   ├── createItem/              # Create new listing
 │   ├── editItem/                # Edit existing listing
 │   ├── error/                   # Error pages (404, 500)
+│   ├── forgotPassword/          # Forgot password page
 │   ├── home/                    # Home page
 │   ├── itemDetail/              # Product details
 │   ├── login/                   # Login page
@@ -80,6 +87,7 @@ src/
 │   └── transactions/            # Transaction history
 ├── routing/                     # Route configuration
 ├── global/                      # Global utilities
+│   ├── icons.ts                 # Icons
 │   ├── request.ts               # API request configuration
 │   ├── schema.ts                # Data schemas/types
 │   ├── types.ts                 # TypeScript type definitions
@@ -97,7 +105,7 @@ src/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone "https://github.com/asifali411/E-commerce-website.git"
    cd e-commerce-website
    ```
 
@@ -175,6 +183,11 @@ Run ESLint to check code quality and identify potential issues.
 - Monitor user activities
 - Handle reports and disputes
 - View platform analytics
+
+## 🎨 Screenshots
+
+![ITEM](./public/screenshots/ItemDetail.jpeg)
+![BIDS](./public/screenshots/MyBids.jpeg)
 
 ## 🤝 Contributing
 
